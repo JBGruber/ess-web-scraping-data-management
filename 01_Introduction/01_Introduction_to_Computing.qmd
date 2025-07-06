@@ -61,13 +61,13 @@ General Goals:
 In this session, you learn how to use the **tools** of the hunt.
 We will:
 
-- discuss some useful tools and learn about:
-  - each other
-  - the course material and structure
+- learn about:
+  1. each other
+  2. the course material and structure
 - go over some principles of using the programming language `R`:
   - `R` Refresher
   - literate programming
-- wrap up with some tips and tricks
+- wrap up with some useful tools, tips and tricks
 :::
 
 ::: {.column width="30%" }
@@ -82,25 +82,26 @@ We will:
 
 :::: {.columns}
 ::: {.column width="60%"}
-- PostDoc at Department of Language, Literature and Communication at Vrije Universiteit Amsterdam and University of Amsterdam
+- Senior Researcher/Team Lead in Data Services for the Social Sciences @ GESIS
+- Previously PostDoc in Communication at VU Amsterdam, University of Amsterdam, and European New School of Digital Studies  
 - Interested in:
   - Computational Social Science
-  - Automated Text Analysis
+  - Open and reproducible science
+  - Automated Content Analysis
   - Hybrid Media Systems and Information Flows
   - Protest and Democracy
 - Experience:
-  - R user since 2015 years
+  - R user since 2015
   - R package developer since 2017
-  - Worked on several packages for text analysis, API access and web scraping (spacyr, quanteda.textmodels, LexisNexisTools, paperboy, traktok, rollama, amcat4-r, and more)
+  - Worked on several packages for text analysis, API access and web scraping (spacyr, quanteda.textmodels, LexisNexisTools, paperboy, traktok, rollama, amcat4-r, atrrr, rwhatsapp and more)
 :::
 ::: {.column width="40%"}
 ![](https://johannesbgruber.eu/img/JBGruber.jpg)
 
 Contact: 
 
-- [j.b.gruber@vu.nl](mailto:j.b.gruber@vu.nl) 
+- [johannes.gruber@gesis.org](mailto:johannes.gruber@gesis.org) 
 - [\@jbgruber.bsky.social](https://bsky.app/profile/jbgruber.bsky.social)
-- [\@JohannesBGruber](https://twitter.com/JohannesBGruber)
 :::
 ::::
 
@@ -117,6 +118,7 @@ Contact:
   - data management
 - Why are you taking this course?
 - Do you have specific plans that include webscraping and data management?
+- Additional fact (optional)
 :::
 
 ::: {.column width="40%"}
@@ -146,9 +148,10 @@ R.Version()$version.string
 
 Navigate here and clone the repository:
 
-<https://github.com/JBGruber/ess-v2-web-scraping-data-management>
+<https://github.com/JBGruber/ess-web-scraping-data-management>
 
 In RStudio go to "Create a project" (top left corner with this symbol ![](media/new_project.png)).
+(If you do not have this symbol, you need to install [Git](https://happygitwithr.com/install-git.html) or [GitHib Desktop](https://docs.github.com/en/desktop/installing-and-authenticating-to-github-desktop/installing-github-desktop) first.)
 Then select "Version Control":
 
 ![](media/wizard.png)
@@ -156,7 +159,7 @@ Then select "Version Control":
 Or if you are using the command line, you can simply type:
 
 ```bash
-git clone https://github.com/JBGruber/ess-v2-web-scraping-data-management.git
+git clone https://github.com/JBGruber/ess-web-scraping-data-management.git
 # OR
 git clone git@github.com:JBGruber/ess-v2-web-scraping-data-management.git
 ```
@@ -201,7 +204,7 @@ See the qmd file in each session folder
 2. Open the file `readme.qmd` from the file explorer of your IDE
 3. Execute the final code Chunk to install all packages we will need for this course
 
-# `R` (re-)fresher
+# `R` refresher
 ## Packages
 
 - `R` organises its functions in packages (even base functions)
@@ -234,7 +237,7 @@ mutate(iris, sepal_length = Sepal.Length * 10) |>
 
 - Central repository for `R` packages
 - Rigorous policies and testing
-- Currently more than 21k packages (July 2024)
+- Currently more than 22k packages (July 2025)
 
 ```{r}
 #| echo: false
@@ -267,7 +270,7 @@ current |>
   ggplot2::ggplot(ggplot2::aes(x = date, y = n)) +
   ggplot2::geom_line(linewidth = 2) +
   ggplot2::scale_x_date(date_breaks = "2 year", date_labels = "%Y", 
-                        limits = as.Date(c("1997-01-01", "2025-01-01"))) +
+                        limits = as.Date(c("1997-01-01", "2026-01-01"))) +
   ggplot2::labs(x = NULL, y = NULL, title = "Number of R packages on CRAN*", 
                 caption = "*Archived packages were ignored") +
   ggplot2::theme_minimal()
@@ -347,7 +350,7 @@ install_github("JBGruber/paperboy", Ncpus = 6)
   - stackoverflow.com (if you want to ask a question instead see [how to ask a good question](http://stackoverflow.com/help/how-to-ask) and use a [reproducible example](http://stackoverflow.com/questions/5963269))
   - R help list (stat.ethz.ch) 
   - https://www.r-bloggers.com/ (collection of personal blog posts related to R -- so quality varies)
-- ChatGPT
+- ChatGPT/Claude/Gemini/DeepSeek
 
 ```{r}
 #| eval: false
@@ -655,7 +658,7 @@ The abstract should include:
 
 - general goal
 - research question
-- (preliminary) assessment what data you need what data can be found on the website and what potential research questions you have in mind.
+- (preliminary) assessment what data you need, what data can be found on the website and what potential research questions you have in mind.
 
 Deadline: Tuesday midnight
 
