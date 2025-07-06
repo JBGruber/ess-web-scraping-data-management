@@ -2,7 +2,7 @@
 title: "Session 8: Application Programming Interface (APIs)"
 subtitle: "Introduction to Web Scraping and Data Management for Social Scientists"
 author: "Johannes B. Gruber"
-date: 2024-07-31
+date: 2025-07-16
 from: markdown+emoji
 format:
   revealjs:

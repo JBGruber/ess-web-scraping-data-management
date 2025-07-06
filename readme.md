@@ -1,10 +1,10 @@
-# 2V Introduction to Web Scraping and Data Management for Social Scientists
+# 1C Introduction to Web Scraping and Data Management for Social Scientists
 [Dr Johannes B. Gruber](https://www.johannesbgruber.eu/)
 
 - [Schedule](#schedule)
 - [Required software](#required-software)
 
-This is the course material for the Essex Summer School in Social Science Data Analysis course [2V Introduction to Web Scraping and Data Management for Social Scientists](https://essexsummerschool.com/summer-school-facts/courses/ess-2024-course-list/2v-introduction-to-web-scraping-and-data-management-for-social-scientists/), Monday 22 July-–Friday 2 August 2024.
+This is the course material for the Essex Summer School in Social Science Data Analysis course [2C Introduction to Web Scraping and Data Management for Social Scientists](https://essexsummerschool.com/summer-school-facts/courses/ess-2025-course-list/2v-introduction-to-web-scraping-and-data-management-for-social-scientists/), Monday 7 July-–Friday 18 July 2025.
 
 # Schedule
 

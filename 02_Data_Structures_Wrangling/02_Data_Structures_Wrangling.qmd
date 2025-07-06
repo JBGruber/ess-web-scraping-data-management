@@ -2,7 +2,7 @@
 title: "Session 2:	Data Structures and Wrangling"
 subtitle: "ESS: Introduction to Web Scraping and Data Management for Social Scientists"
 author: "Johannes B. Gruber"
-date: 2024-07-23
+date: 2025-07-08
 from: markdown+emoji
 format:
   revealjs:
@@ -165,7 +165,7 @@ Sure! Here are the common data types in R along with a brief explanation for eac
 - **Numeric or Double**: Represents decimal numbers or real numbers. Example: `42`, `3.14`
 - **Character**: Represents text or string values. Example: `"hello"`
 - **Factor**: Represents categorical data, data is stored as codes and levels. Example: `factor(c("male", "female"))`
-- **Date**: Represents dates. Example: `as.Date("2024-07-15")`
+- **Date**: Represents dates. Example: `as.Date("-15")`
 - **POSIXct / POSIXlt**: Represents date-time objects. Examples: `as.POSIXct("2024-07-15 12:34:56")`, `as.POSIXlt("2024-07-15 12:34:56")`
 - **Raw**: Represents raw bytes, often used for binary data. Example: `charToRaw("A")`
 - **Matrix**: A 2-dimensional array where all elements must be of the same type (numeric, character, etc.). Example:

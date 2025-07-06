@@ -2,7 +2,7 @@
 title: "Session 9: Scraping Interactive Web Pages"
 subtitle: "Introduction to Web Scraping and Data Management for Social Scientists"
 author: "Johannes B. Gruber"
-date: 2024-08-01
+date: 2025-07-17
 from: markdown+emoji
 format:
   revealjs:

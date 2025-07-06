@@ -2,7 +2,7 @@
 title: "Session 3:	Working with Files"
 subtitle: "ESS: Introduction to Web Scraping and Data Management for Social Scientists"
 author: "Johannes B. Gruber"
-date: 2024-07-24
+date: 2025-07-09
 from: markdown+emoji
 format:
   revealjs:

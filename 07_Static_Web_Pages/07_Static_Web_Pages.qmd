@@ -2,7 +2,7 @@
 title: "Session 7: Scraping Static Web Pages"
 subtitle: "Introduction to Web Scraping and Data Management for Social Scientists"
 author: "Johannes B. Gruber"
-date: 2024-07-30
+date: 2025-07-15
 from: markdown+emoji
 format:
   revealjs:

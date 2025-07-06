@@ -2,7 +2,7 @@
 title: "Session 4:	Linking and joining data & SQL"
 subtitle: "ESS: Introduction to Web Scraping and Data Management for Social Scientists"
 author: "Johannes B. Gruber"
-date: 2024-07-25
+date: 2025-07-10
 format:
   revealjs:
     smaller: true

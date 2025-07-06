@@ -32,7 +32,7 @@ opinion_tidy <- opinion_table |>
          date = lubridate::dmy(paste(date_clean, 2024))) |> 
   filter(!is.na(result_pct),
          # some dates are parsed wrong and are in the future
-         date < "2024-07-03")
+         date < "-03")
 
 # Plot!
 opinion_tidy |> 

@@ -2,7 +2,7 @@
 title: "Session 6: Introduction to the Web"
 subtitle: "Introduction to Web Scraping and Data Management for Social Scientists"
 author: "Johannes B. Gruber"
-date: 2024-07-29
+date: 2025-07-14
 from: markdown+emoji
 format:
   revealjs:
