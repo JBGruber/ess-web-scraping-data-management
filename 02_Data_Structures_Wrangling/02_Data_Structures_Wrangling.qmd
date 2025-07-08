@@ -156,17 +156,13 @@ Source: @weidmann_data_2023
 
 ## Core Data Structures in `R`
 
-They can take on a few different forms:
-
-Sure! Here are the common data types in R along with a brief explanation for each:
-
 - **Logical**: Represents Boolean values, either `TRUE` or `FALSE`.
 - **Integer**: Specifically represents integer values. Example: `42L` (The `L` indicates that the number is an integer)
 - **Numeric or Double**: Represents decimal numbers or real numbers. Example: `42`, `3.14`
 - **Character**: Represents text or string values. Example: `"hello"`
 - **Factor**: Represents categorical data, data is stored as codes and levels. Example: `factor(c("male", "female"))`
-- **Date**: Represents dates. Example: `as.Date("-15")`
-- **POSIXct / POSIXlt**: Represents date-time objects. Examples: `as.POSIXct("2024-07-15 12:34:56")`, `as.POSIXlt("2024-07-15 12:34:56")`
+- **Date**: Represents dates. Example: `as.Date("2025-07-08")`
+- **POSIXct / POSIXlt**: Represents date-time objects. Examples: `as.POSIXct("2025-07-08 12:34:56")`, `as.POSIXlt("2025-07-08 12:34:56")`
 - **Raw**: Represents raw bytes, often used for binary data. Example: `charToRaw("A")`
 - **Matrix**: A 2-dimensional array where all elements must be of the same type (numeric, character, etc.). Example:
 
@@ -183,10 +179,10 @@ Sure! Here are the common data types in R along with a brief explanation for eac
 - **Data Frame**: A table or 2-dimensional array-like structure where each column can contain different types of data (numeric, character, factor, etc.). Example:
 
     ```R
-    data <- tibble(
+    data <- data.frame(
       name = c("Alice", "Bob", "Charlie"),
       age = c(25, 30, 35),
-      gender = c("F", "M", "M")
+      gender = factor(c("F", "M", "M"))
     )
     ```
 - **List**: A versatile data structure that can contain elements of different types, including vectors, data frames, and even other lists. Example:
@@ -203,7 +199,7 @@ Sure! Here are the common data types in R along with a brief explanation for eac
 ## Your turn (Exercises 2)
 
 - Did I forget any data structures?
-- head to https://www.menti.com/ and vote with code "12 15 72 6"
+- head to https://www.menti.com/ and vote with code "6800 3260"
 
 
 # From information to structured data
@@ -254,37 +250,37 @@ easy to extract for humans, but it is much more difficult to process computation
   
 ## Regular Expression: your "friend" when working with strings
 
-| Function                                                                  | Syntax     | Example      | Matches                                                                      |
-| :------------------------------------------------------------------------ | :--------: | :----------: | :--------------------------------------------------------------------------: |
-| **Specifier: What to match**                                              |            |              |                                                                              |
-| All characters except for new lines                                       | `.`        | `d.g`        | <code>d**i**g</code>, <code>d**!**g</code>                                   |
-| Word characters `(letters, digits,_)`                                     | `\\w`      | `d\\wg`      | `dig`, `dog`                                                                 |
-| Digits `(0 to 9)`                                                         | `\\d`      | `202\\d`     | `2020`, `2021`                                                               |
-| Whitespace `(space, tab, newline)`                                        | `\\s`      |              |                                                                              |
-| Newline                                                                   | `\n`       |              |                                                                              |
-| Beginning of the string                                                   | `^`        | `^go`        | <code>**go**<span class='gray'></span>go go</code>                           |
-| Ending of the string                                                      | `$`        | `go$`        | <code><span class='gray'></span>go go**go**</code>                           |
-| Beginning or end of word                                                  | `\\b`      | `\\bword\\b` | <code><span class='gray'>a</span> **word**<span class='gray'></span>!</code> |
-| Either first or second option                                             | `…|…`      | `cat| dog`   | `cat`, `dog`                                                                 |
-| **Quantifier: How many to match**                                         |            |              |                                                                              |  
-| Zero or more                                                              | `*`        | `d.*g`       | `dg`, `drag`, `d = g`                                                        |
-| Zero or more (non-greedy)                                                 | `*?`       | `d.*?g`      | <code>**dog**<span class='gray'></span>g</code>                              |
-| One or more                                                               | `+`        | `\\d+%`      | `1%`, `200%`                                                                 |
-| One or more (non-greedy)                                                  | `+?`       | `\\d+%`      | <code><span class='gray'></span>20**0\\%**</code>                            |
-| Zero or one                                                               | `?`        | `colou?r`    | `color`, `colour`                                                            |
-| Exactly *n* times                                                         | `{n}`      | `\\d{4}`     | `1940`, `2020`                                                               |
-| At least *n* times                                                        | `{n,}`     | `\\d{3,}`    | `194`, `2020` but not `19`                                                   |
-| Between *n* and *m* times                                                 | `{n,m}`    | `\\d{3,4}`   | `194`, `2020` but not `19`, `20200`                                          |  
-| **Other constructs**                                                      |            |              |                                                                              |
-| Groups                                                                    | `(…)`      | `'(bla )+'`  | `'bla bla bla'`                                                              |
-| Back references                                                           | `\\1`      | `str_replace("this", "(th)is", "\\1ose")` | produces "those"                                |
-| Selection of characters                                                   | `[…]`      | `d[iuo]g`    | `dig`, `dug`, `dog`                                                          |
-| Range of characters in selection                                          | `[A-z]`    | `[Hhl]`      | `H`, `h`, `l`                                                                |
-| Everything except selection                                               | `[^...]`   | `[^Hhl]`     |                                                                              |
-| Escape special character                                                  | `\\`       | `3\\.14`     | `3.14` but not `3,14`                                                        |
-| Lookahead                                                                 | `(?=)`     | `thi(?=s)`   | `thi`                                                                        |
-| Lookbehind                                                                | `(?<=)`    | `(?<=t)his`  | `his`                                                                        |
-| Negative lookahead                                                        | `(?!)`     | `(?!W)his`   | `his`                                                                        |
+| **Specifier: What to match**                                                                  | Syntax     | Example      | Matches                                                                      |
+| :----------------------------------------| :--------: | :----------: | :--------------------------------------------------------------------------: |
+| All characters except for new lines      | `.`        | `d.g`        | <code>**dig**</code>, <code>**d!g**</code>                                   |
+| Word characters `(letters, digits,_)`    | `\\w`      | `d\\wg`      | <code>**dig**</code>, <code>**dog**</code>, `d2g`                            |
+| Digits `(0 to 9)`                        | `\\d`      | `202\\d`     | <code>**2020**</code>, <code>**2021**</code>                                 |
+| Whitespace `(space, tab, newline)`       | `\\s`      |              |                                                                              |
+| Newline                                  | `\n`       |              |                                                                              |
+| Beginning of the string                  | `^`        | `^go`        | <code>**go**<span class='gray'></span>go go</code>                           |
+| Ending of the string                     | `$`        | `go$`        | <code><span class='gray'></span>go go**go**</code>                           |
+| Beginning or end of word                 | `\\b`      | `\\bword\\b` | <code>a **word**! And two words</code>                                       |
+| Either first or second option            | `…|…`      | `cat|dog`    | <code>A **cat** is chased by a **dog**</code>                                |
+| **Quantifier: How many to match**        |            |              |                                                                              |  
+| Zero or more                             | `*`        | `d.*g`       | <code>**dg**</code>, <code>**drag**</code>, <code>**d = g**</code>           |
+| Zero or more (non-greedy)                | `*?`       | `d.*?g`      | <code>**dog**<span class='gray'></span>g</code>                              |
+| One or more                              | `+`        | `\\d+%`      | <code>**1%**</code>, <code>an increase from **25% to 30%**</code>            |
+| One or more (non-greedy)                 | `+?`       | `\\d+%`      | <code>an increase from **25%** to 30%</code>                                 |
+| Zero or one                              | `?`        | `colou?r`    | <code>**color**</code>, <code>**colour**</code>                              |
+| Exactly *n* times                        | `{n}`      | `\\d{4}`     | <code>**1940**</code>, <code>**2020**</code>                                 |
+| At least *n* times                       | `{n,}`     | `\\d{3,}`    | <code>**194**</code>, <code>**2020**</code> but not `19`                     |
+| Between *n* and *m* times                | `{n,m}`    | `\\d{3,4}`   | <code>**194**</code>, <code>**2020**</code> but not `19`, `20200`            |  
+| **Other constructs**                     |            |              |                                                                              |
+| Groups                                   | `(…)`      | `'(bla ){2}'`| <code>**bla bla **bla</code>                                                 |
+| Back references                          | `\\1`      | `str_replace("this", "(th)is", "\\1ose")` | produces "those"                                |
+| Selection of characters                  | `[…]`      | `d[ieo]g`    | <code>**dig**</code>, <code>**dog**</code>, `dug`                            |
+| Range of characters in selection         | `[A-z]`    | `[Hhu]`      | <code>**H**i, **h**ow are yo**u**</code>                                     |
+| Everything except selection              | `[^...]`   | `[^Hhl]`     | <code>H**i, **h**ow are yo**u</code>                                         |
+| Escape special character                 | `\\`       | `3\\.14`     | `3.14` but not `3,14`                                                        |
+| Lookahead                                | `(?=)`     | `thi(?=s)`   | <code>**thi**s</code>                                                        |
+| Lookbehind                               | `(?<=)`    | `(?<=t)his`  | <code>t**his**</code>                                                        |
+| Negative lookahead                       | `(?!)`     | `thi(?!s)`   | <code>**thi**n</code>, <code>thistle</code>                                  |
+| Negative lookbehind                      | `(?<!)`    | `(?<!t)his`  | <code>w**his**per</code>, <code>thistle</code>                               |
 
 : Regular expression syntax (adapted from @cssbook) {.striped .hover}
 
@@ -393,6 +389,7 @@ country_df <- tibble(input = data_input) |>
     founded     = str_extract(input, "\\d{1,2} [A-z]+ \\d{3,4}")
   ) |> 
   mutate(
+    inhabitants = str_replace(inhabitants, "\\.(\\d) million", "\\100000"),
     inhabitants = str_replace(inhabitants, " million", "000000"),
     inhabitants = str_remove(inhabitants, ","),
     inhabitants = as.integer(inhabitants),
@@ -449,8 +446,7 @@ vec <- c(
 :::
 ::: {.column width="40%" }
 ```{r}
-country_df |> 
-  print(n = 46)
+country_df
 ```
 :::
 ::::
@@ -697,7 +693,7 @@ ggplot(good_table) +
 ::: {.column width="50%" }
 ```{r}
 bad_table2 <- tibble(
-    country = c(rep("Switzerland", 3), rep("Austria", 3)),
+  country = c(rep("Switzerland", 3), rep("Austria", 3)),
   year = c(rep(c(1950, 1960, 1970), 2)),
   population = c(4.7, 5.3, 6.2, 6.9, 7.1, 7.5),
   capital = c("Bern", "Bern", "Bern", "Vienna", "Vienna", "Vienna")
@@ -911,6 +907,8 @@ good_table |>
 ```
 
 We have reconstructed bad table :sweat:
+
+[-> What is a variable and what is an observation depends on the questions you ask]{.fragment}
 
 ## `pivot_wider`: fix patient data
 
@@ -1212,6 +1210,26 @@ music_collection <- repurrrsive::discog
 
 5. Now add the title of the songs to the artists table
 
+# Reminder: Social Programme
+
+```{r}
+#| echo: false
+tibble::tribble(
+  ~DATE,               ~Event,                                  ~Time,           ~Venue,
+  "MONDAY 7 July",     "Meet and Greet - in person",            "19:00 start",   "SU Bar",
+  "TUESDAY 8 July",    "Climbing",               "18:30 start",   "Sports Centre",
+  "WEDNESDAY 9 July",  "Harold Clarke Speaker Series - hybrid", "18:45 - 20.00", "EBS",
+  "THURSDAY 10 July",  "Sports Night",                          "18:30 - 20:30", "Sports Centre",
+  "FRIDAY 11 July",    "Wivenhoe Pub Run",                      "18:30 start",   "Wivenhoe pubs",
+  "MONDAY 14 JULY",    "SU bar Quiz",                           "19:00 start",   "SU Bar",
+  "TUESDAY 15 JULY",   "Sports Night",                          "18:30 - 20:30", "Sports Centre",
+  "WEDNESDAY 16 JULY", "Harold Clarke Speaker Series - hybrid", "18:30",         "EBS",
+  "THURSDAY 17 JULY",  "Farewell Party Karaoke",                "20:30 - 23:30", "SU Bar"
+) |> 
+  tt() |> 
+  style_tt(fontsize = 0.6) |> 
+  style_tt(i = 2, background = "#FDE000")
+```
 
 # Wrap Up
 

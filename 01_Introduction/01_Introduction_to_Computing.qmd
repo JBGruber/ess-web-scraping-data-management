@@ -663,6 +663,28 @@ The abstract should include:
 
 Deadline: Tuesday midnight
 
+# Reminder: Social Programme
+
+```{r}
+#| echo: false
+tibble::tribble(
+  ~DATE,               ~Event,                                  ~Time,           ~Venue,
+  "MONDAY 7 July",     "Meet and Greet - in person",            "19:00 start",   "SU Bar",
+  "TUESDAY 8 July",    "Staff briefing - hybrid",               "18:30 start",   "NTC",
+  "TUESDAY 8 July",    "Climbing (participants)",               "18:30 start",   "Sports Centre",
+  "WEDNESDAY 9 July",  "Harold Clarke Speaker Series - hybrid", "18:45 - 20.00", "EBS",
+  "THURSDAY 10 July",  "Sports Night",                          "18:30 - 20:30", "Sports Centre",
+  "FRIDAY 11 July",    "Wivenhoe Pub Run",                      "18:30 start",   "Wivenhoe pubs",
+  "MONDAY 14 JULY",    "SU bar Quiz",                           "19:00 start",   "SU Bar",
+  "TUESDAY 15 JULY",   "Sports Night",                          "18:30 - 20:30", "Sports Centre",
+  "WEDNESDAY 16 JULY", "Harold Clarke Speaker Series - hybrid", "18:30",         "EBS",
+  "THURSDAY 17 JULY",  "Farewell Party Karaoke",                "20:30 - 23:30", "SU Bar"
+) |> 
+  tt() |> 
+  style_tt(fontsize = 0.6) |> 
+  style_tt(i = 1, background = "#FDE000")
+```
+
 # Wrap Up
 
 Save some information about the session for reproducibility.
