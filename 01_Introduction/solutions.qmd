@@ -25,7 +25,7 @@ ggplot(data = mtcars,
 - `ignore_fails` ignores individual connections failing and moves on to the next URL to download data from
 - `connections` sets the number of connections opened at once
 
-3. Write a function that takes a numeric vector of miles per gallon consumption data and transforms it to kilometer per liter. If anything other than a numeric vector is entered, the function should display an error (hint: see ?stop).
+3. Write a function that takes a numeric vector of miles per gallon consumption data and converts it to kilometer per liter. If anything other than a numeric vector is entered, the function should display an error (hint: see ?stop).
 
 ```{r}
 # reusing the formula from the section 'The pipe"
