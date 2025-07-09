@@ -284,14 +284,10 @@ readLines("data/files/csv-example-quotes.csv") |>
 :::
 :::
 ::: {.column width="50%" }
-```{r}
-readLines("data/files/csv-example.csv") |> 
-  head(15)
-```
 
 ```{r}
 #| classes: fragment
-rio::import("data/files/csv-example.csv")
+rio::import("data/files/unsc-membership.xls", sheet = "data")
 ```
 
 :::
@@ -310,8 +306,8 @@ rio::import("data/files/csv-example.csv")
 - advantages :heavy_plus_sign::
   + you can work with your team
 - downside :heavy_minus_sign::
-  + not particularly well suited for data
   + not really used by any other programs
+  + not particularly well suited for data storage
 :::
 :::
 ::: {.column width="50%" }
@@ -401,12 +397,12 @@ readLines("data/elites_data_UK.json") |>
 
 ## Excercises 1
 
-1. Download the file from this address into the "data" folder and name it "internet_usage.xlsx" using R: <https://api.worldbank.org/v2/en/indicator/IT.NET.USER.ZS?downloadformat=excel>
+1. Download the file from this address into the "data" folder and name it "internet_usage.xlsx" using R: <https://api.worldbank.org/v2/en/indicator/IT.NET.USER.ZS?downloadformat=excel> (hint: there are several R functions to download files, we've even seen one above)
 2. Reproduce this plot (hint: you can get grey out cases with `gghighlight`):
 
 ![](media/individuals-using-the-internet.png)
 
-3. I created a terrible CSV file. Try to read it in anyway: "data/csv-bad-example.csv"
+3. I created a terrible CSV file. Try to read it in anyway: "data/csv-bad-example.csv" (hint: since csvs are text files, you can look at them with any text editor)
 4. Even when you manage to read in the file, the table still has issue. Explain what they are and how to correct them (hint: look at the data types of the columns)
 
 # Transparent and efficient use of files
@@ -494,7 +490,7 @@ This won't, even though it works on my machine :stuck_out_tongue::
 
 ```{r}
 #| eval: false
-plenary_speeches_raw <- rio::import("/home/johannes/GitHub/ess-v2-web-scraping-data-management/03_Working_with_Files/data/files/csv-example.csv")
+plenary_speeches_raw <- rio::import("/home/johannes/Documents/GitHub/ess-web-scraping-data-management/03_Working_with_Files/data/files/csv-example.csv")
 ```
 
 RStudio projects are not really necessary for this, especially given that Quarto sets the working directory of your documents to it's source location by default.
@@ -660,7 +656,6 @@ bind_rows(dataset_list)
 
 ```{r}
 #| classes: fragment
-#| eval: false
 read_dat <- function(x) {
   rio::import(x) |> 
     mutate(kmdist = str_replace(kmdist, ",", "."),
@@ -679,7 +674,7 @@ map(dataset_files, read_dat) |>
 - "big data" is often defined as datasets larger than your memory
 - in these cases you have three choices
 
-1. Let each file Quarto file do less (you don't have to have different slightly different objects)
+1. Let each Quarto file do less (and break up tasks into more files)
 2. Chunk your analysis. Often, you can perform analysis or pre-processing on one subset of the data after the other and combine the results
 3. Get better hardware or use cloud computing (both are expensive, [but possible](https://cloudyr.github.io/packages/index.html))
 :::
@@ -711,12 +706,12 @@ corp_hoc_df <- readRDS(corp_hoc) |>
   mutate(date = as.Date(date))
 ```
 
-Let's say this was not stored as one file, but a colelction of CSV files:
+Let's say this was not stored as one file, but a collection of CSV files:
 
 ```{r hoc_export}
 #| cache-lazy: false
 if (!dir.exists("data/house_of_commons")) {
-  # I split this into file just for demonstration puposes
+  # I split this into file just for demonstration purposes
   corp_hoc_list <- split(corp_hoc_df, corp_hoc_df$party)
   dir.create("data/house_of_commons")
   for (party in names(corp_hoc_list)) {
@@ -731,7 +726,7 @@ list.files("data/house_of_commons")
 We could read all of them in and combine them, like above.
 Or we can use `arrow` to treat them as a database:
 
-```{r}
+```{r open_dataset}
 #| cache-lazy: false
 library(arrow)
 corp_hoc_con <- open_dataset(sources = "data/house_of_commons",
@@ -749,20 +744,19 @@ object.size(corp_hoc_df) |>
 
 Yet we can still treat it like a normal data.frame:
 
-```{r}
+```{r count_data}
 #| cache-lazy: false
 corp_hoc_con |> 
   mutate(date = as.Date(date)) |> 
   filter(date >= "2000-01-01",
          date < "2001-01-01") |> 
   select(party) |> 
-  collect() |> 
+  collect() |>                 # special function when working with DBs
   count(party, sort = TRUE)
 ```
 
 The only difference is that we have to call collect at some point, to load the data into memory.
 Since we can filter it though, the memory footprint will still be much smaller.
-We could also 
 
 ## Exercises 3
 
@@ -778,6 +772,15 @@ We could also
 - it is excellently suited for research projects as well!
 - you can get a free Github premium account with your university address
 - this enables you to have private repositories (otherwise all repositories are public)
+- widely used system with good learning materials, for example: @happygitwithr
+
+[-> GitHub is for code though, not data!]{.fragment}
+
+:::{.notes}
+- data is often in binary files, meaning git creates an almost identical copy of the data even with small changes
+- GitHub limits file sizes for upload
+- synchronising projects becomes slow if large binary files are committed
+:::
 
 ## Google Sheets
 
@@ -820,7 +823,7 @@ Pitfalls:
 
 :::{.notes}
 3 copies of your data
-2 different media
+2 different media (or today devices)
 1 copy off-site for disaster recovery
 :::
 
@@ -838,6 +841,26 @@ Save some information about the session for reproducibility.
 sessionInfo()
 ```
 
+# Reminder: Social Programme
+
+```{r}
+#| echo: false
+tibble::tribble(
+  ~DATE,               ~Event,                                  ~Time,           ~Venue,
+  "MONDAY 7 July",     "Meet and Greet - in person",            "19:00 start",   "SU Bar",
+  "TUESDAY 8 July",    "Climbing",               "18:30 start",   "Sports Centre",
+  "WEDNESDAY 9 July",  "Harold Clarke Speaker Series - hybrid", "18:45 - 20.00", "EBS",
+  "THURSDAY 10 July",  "Sports Night",                          "18:30 - 20:30", "Sports Centre",
+  "FRIDAY 11 July",    "Wivenhoe Pub Run",                      "18:30 start",   "Wivenhoe pubs",
+  "MONDAY 14 JULY",    "SU bar Quiz",                           "19:00 start",   "SU Bar",
+  "TUESDAY 15 JULY",   "Sports Night",                          "18:30 - 20:30", "Sports Centre",
+  "WEDNESDAY 16 JULY", "Harold Clarke Speaker Series - hybrid", "18:30",         "EBS",
+  "THURSDAY 17 JULY",  "Farewell Party Karaoke",                "20:30 - 23:30", "SU Bar"
+) |> 
+  tt() |> 
+  style_tt(fontsize = 0.6) |> 
+  style_tt(i = 3, background = "#FDE000")
+```
 
 <!-- This is just some extra CSS code to make presentation look pretty -->
 ```{css}
