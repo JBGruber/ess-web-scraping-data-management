@@ -561,7 +561,7 @@ read_html("data/example.html") |>
   html_element("#table-1") |> 
   html_table()
 
-read_html("data/example.html") %>% 
+read_html("data/example.html") |> 
   html_element("#table-1 > tr")
 
 ```

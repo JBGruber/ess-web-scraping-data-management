@@ -1010,8 +1010,8 @@ find_scholar("Adam Smith")
 We are only interested in some of the fields, so let's build a new request and see what we get:
 
 ```{r}
-resp <- request("https://api.semanticscholar.org/graph/v1/author/search") %>%
-  req_url_query(query = "Adam Smith") %>%
+resp <- request("https://api.semanticscholar.org/graph/v1/author/search") |>
+  req_url_query(query = "Adam Smith") |>
   req_url_query(fields = "name,papers.title,papers.year,papers.fieldsOfStudy,papers.authors",
                 limit = 10) |> 
   req_headers(accept = "application/json") |> 
@@ -1059,8 +1059,8 @@ find_scholar <- function(name,
                          limit = 100) {
   
   # make initial request
-  res <- request("https://api.semanticscholar.org/graph/v1/author/search") %>%
-    req_url_query(query = name) %>%
+  res <- request("https://api.semanticscholar.org/graph/v1/author/search") |>
+    req_url_query(query = name) |>
     req_url_query(fields = fields,
                   limit = limit) |> 
     req_headers(accept = "application/json") |> 
