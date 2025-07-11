@@ -78,7 +78,7 @@ In this session, you learn:
 ::: {.column width="50%"}
 ::: {.incremental}
 - most DBMS are set up in client-server architecture:
-  + server: can be a computer somewhere or a process on your own computer that fullfills requests
+  + server: can be a computer somewhere or a process on your own computer that fulfills requests
   + DBMS server: contains the database and database management system
   + client: interacts with server (sends requests, receives responses)
   + DBMS client: can upload and retrieve data from server or send processing instructions
@@ -173,7 +173,7 @@ volumes:
 
 ## Connecting from `R`
 
-```{r}
+```{r connect_postgres}
 library(DBI)
 library(RPostgres)
 db <- dbConnect(
@@ -356,7 +356,7 @@ We first give the "gatherer" user permission to update a table:
 dbExecute(db, "GRANT UPDATE,INSERT ON flights TO gatherer")
 ```
 
-Since we do not fully trust the analyser, we give him read-only access to flights, but access to everything in `df1`, which we pretend that the results of the analysis are stored in:
+Since we do not fully trust the analyser, we give them read-only access to flights, but access to everything in `df1`, which we pretend that the results of the analysis are stored in:
 
 ```{r}
 dbExecute(db, "GRANT SELECT ON flights TO analyser")
@@ -385,6 +385,17 @@ dbExecute(db_analyser,
           "INSERT INTO flights (year)
             VALUES (2013)")
 ```
+
+:::{.fragment}
+We can add data to the tables that we were granted access to though:
+
+```{r}
+#| error: true
+dbExecute(db_analyser,
+          "INSERT INTO df1
+            VALUES (1, 'A', '2025-07-11')")
+```
+:::
 
 ## User-based authentication: roles (gatherer)
 
@@ -486,6 +497,63 @@ Configure the AmCAT server:
 
 ```sh
 docker exec -it amcat4 amcat4 config
+#> Reading/writing settings from .env
+#> 
+#> host: Host this instance is served at (needed for checking tokens)
+#> The current value for host is http://localhost/amcat.
+#> Enter a new value, press [enter] to leave unchanged, or press #> [control+c] to abort: 
+#> 
+#> elastic_password: Elasticsearch password. This the password for the #> 'elastic' user when Elastic xpack security is enabled
+#> The current value for elastic_password is None.
+#> Enter a new value, press [enter] to leave unchanged, or press #> [control+c] to abort: 
+#> 
+#> elastic_host: Elasticsearch host. Default: https://localhost:9200 if #> elastic_password is set, http://localhost:9200 otherwise
+#> The current value for elastic_host is http://elastic8:9200.
+#> Enter a new value, press [enter] to leave unchanged, or press #> [control+c] to abort: 
+#> 
+#> elastic_verify_ssl: Elasticsearch verify SSL (only used if #> elastic_password is set). Default: True unless host is localhost)
+#> The current value for elastic_verify_ssl is True.
+#> Enter a new value, press [enter] to leave unchanged, or press #> [control+c] to abort: 
+#> 
+#> system_index: Elasticsearch index to store authorization information #> in
+#> The current value for system_index is amcat4_system.
+#> Enter a new value, press [enter] to leave unchanged, or press #> [control+c] to abort: 
+#> 
+#> auth: Do we require authorization?
+#>   Possible choices:
+#>   - no_auth: everyone (that can reach the server) can do anything #> they want
+#>   - allow_guests: everyone can use the server, dependent on #> index-level guest_role authorization settings
+#>   - allow_authenticated_guests: everyone can use the server, if they #> have a valid middlecat login,
+#> and dependent on index-level guest_role authorization settings
+#>   - authorized_users_only: only people with a valid middlecat login #> and an explicit server role can use the server
+#> 
+#> The current value for auth is AuthOptions.no_auth.
+#> Enter a new value, press [enter] to leave unchanged, or press #> [control+c] to abort: 
+#> 
+#> middlecat_url: Middlecat server to trust as ID provider
+#> The current value for middlecat_url is https://middlecat.net.
+#> Enter a new value, press [enter] to leave unchanged, or press #> [control+c] to abort: 
+#> 
+#> admin_email: Email address for a hardcoded admin email (useful for #> setup and recovery)
+#> The current value for admin_email is None.
+#> Enter a new value, press [enter] to leave unchanged, or press #> [control+c] to abort: 
+#> 
+#> minio_host: None
+#> The current value for minio_host is None.
+#> Enter a new value, press [enter] to leave unchanged, or press #> [control+c] to abort: 
+#> 
+#> minio_tls: None
+#> The current value for minio_tls is False.
+#> Enter a new value, press [enter] to leave unchanged, or press #> [control+c] to abort: 
+#> 
+#> minio_access_key: None
+#> The current value for minio_access_key is None.
+#> Enter a new value, press [enter] to leave unchanged, or press #> [control+c] to abort: 
+#> 
+#> minio_secret_key: None
+#> The current value for minio_secret_key is None.
+#> Enter a new value, press [enter] to leave unchanged, or press #> [control+c] to abort: 
+#> *** Written .env file to .env ***
 ```
 
 
@@ -493,7 +561,7 @@ docker exec -it amcat4 amcat4 config
 
 We need to log in, which you can do without a user by default:
 
-```{r}
+```{r connect_amcat}
 # remotes::install_github("ccs-amsterdam/amcat4r")
 library(amcat4r)
 amcat_login("http://localhost/amcat")
@@ -511,35 +579,40 @@ query_documents(index = "state_of_the_union")
 Load data from @ParlSpeech into AmCAT:
 
 ```{r}
-#| eval: false
-corp_hoc_df <- readRDS("../03_Working_with_Files/data/Corp_HouseOfCommons_V2.rds") |> 
-  mutate(date = as.Date(date)) |> 
-  rename(title = agenda) |> 
-  filter(!is.na(date)) |> 
-  replace_na(list(title = "", text = "")) |> 
-  select(-party.facts.id)
-
-# define types of fields
-fields = list(
-  date = "date",
-  text = "text",
-  title = "text",        
-  speechnumber = "integer",   
-  speaker = "keyword",       
-  party = "keyword",
-  chair = "boolean",      
-  terms = "integer",          
-  parliament = "keyword", 
-  iso3country = "keyword"
-)
-# create the index
-create_index(index = "houseofcommons", 
-             name = "House Of Commons", 
-             description = "HouseOfCommons", 
-             create_fields = fields)
-
-# upload the data
-upload_documents("houseofcommons", documents = corp_hoc_df, chunk_size = 1000, verbose = TRUE)
+if (!"houseofcommons" %in% list_indexes()$id) {
+  corp_hoc_df <- readRDS("../03_Working_with_Files/data/Corp_HouseOfCommons_V2.rds") |> 
+    mutate(date = as.Date(date)) |> 
+    rename(title = agenda) |> 
+    filter(!is.na(date)) |> 
+    replace_na(list(title = "", text = "")) |> 
+    select(-party.facts.id)
+  
+  # speed this up by only using a sample
+  # corp_hoc_df <- corp_hoc_df |> 
+  #   sample_n(size = 500)
+  
+  # define types of fields
+  fields = list(
+    date = "date",
+    text = "text",
+    title = "text",        
+    speechnumber = "integer",   
+    speaker = "keyword",       
+    party = "keyword",
+    chair = "boolean",      
+    terms = "integer",          
+    parliament = "keyword", 
+    iso3country = "keyword"
+  )
+  # create the index
+  create_index(index = "houseofcommons", 
+               name = "House Of Commons", 
+               description = "HouseOfCommons", 
+               create_fields = fields)
+  
+  # upload the data
+  upload_documents("houseofcommons", documents = corp_hoc_df, chunk_size = 1000, verbose = TRUE) 
+}
 ```
 
 ## AmCAT GUI
@@ -581,7 +654,7 @@ https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-query-
 - Search, upload, download, modify data (e.g., add keywords/categories)
 - User and access management
 - Easy way to make research reproducible by querying data for analysis
-- Great for larger than memory datasets
+- Great for larger than memory data sets
 :::
 ::: {.column width="35%"}
 <iframe src="https://giphy.com/embed/o0vwzuFwCGAFO" width="480" height="480" frameBorder="0" class="giphy-embed" allowFullScreen></iframe><p><a href="https://giphy.com/gifs/cat-hacker-webs-o0vwzuFwCGAFO"></a></p>
@@ -596,8 +669,10 @@ query_documents(index = "houseofcommons", queries = '"European Union" OR EU')
 ```
 
 ```{r}
-query_aggregate(index = "houseofcommons", 
-                axes = list(list(field="party", list(field="date", interval="year"))),
+query_aggregate(index = "houseofcommons",
+                filters = list(party = c("Con", "Lab"),
+                               date = list(gte = "2000-01-01")),
+                axes = list(list(field="party"), list(field="date", interval="year")),
                 queries = '"European Union" OR EU')
 ```
 
@@ -621,13 +696,24 @@ query_aggregate(index = "houseofcommons",
 - show in browser y setting metareader
 :::
 
+## Exercises 2
+
+1. Connect to your own AmCAT server (alternatively,  connect to mine)
+2. Create a new index and add some toy data to it that has: a date, a title, and a text field
+3. Query all documents from your index
+4. query the documents from the "houseofcommons" index that have:
+   1) mentions of protest, protesters, protester, or protesting
+   2) no mentions of protestant, in addition to 4.1
+   3) contain speeches by the Conservative Party, in addition to 4.1 and 4.2 (hint: use a filter)
+5. Count (hint: aggregate) how often the Conservatives mention protest words each month after 2000
+
 
 # Scaling your research
 ## Benchmarking
 
 - when your data grows, it becomes important that your code is fast, since it is applied to many cases
 - benchmarking helps you identify bottlenecks
-- it can make the difference between minutes and days whether your code is optimised for speed
+- it can make the difference between minutes and days whether your code is optimized for speed
 
 ## Benchmarking with `bench`
 
@@ -696,11 +782,13 @@ summary(res, relative = TRUE)
 ## Fix bottlenecks
 
 Without an index, the search in the database takes longer.
-You can create it automatically with `opy_to()` (see [this](https://dbplyr.tidyverse.org/articles/dbplyr.html?q=nyc#connecting-to-the-database))
+You can create it automatically with `copy_to()` (see [this](https://dbplyr.tidyverse.org/articles/dbplyr.html?q=nyc#connecting-to-the-database){target="_blank"})
 
 ```{r}
-dbExecute(db, "CREATE INDEX ON flights (time_hour)")
-dbExecute(db, "CREATE INDEX ON weather (time_hour)")
+dbWriteTable(db, "flights_w_index", flights, overwrite = TRUE)
+dbWriteTable(db, "weather_w_index", weather, overwrite = TRUE)
+dbExecute(db, "CREATE INDEX ON flights_w_index (time_hour)")
+dbExecute(db, "CREATE INDEX ON weather_w_index (time_hour)")
 ```
 
 1. define functions that wrap your code
@@ -718,12 +806,25 @@ in_db <- function() {
     filter(time_hour < "2013-03-01") |> 
     collect()
 }
+
+in_db_w_index <- function() {
+  tbl(db, "flights_w_index") |> 
+    inner_join(tbl(db, "weather_w_index"), by = c("time_hour", "origin")) |> 
+    filter(time_hour < "2013-03-01") |> 
+    collect()
+}
 ```
 
 2. run `mark`
 
 ```{r}
-res <- mark(in_memory = in_memory, in_db = in_db, check = FALSE, iterations = 15)
+res <- mark(
+  in_memory = in_memory, 
+  in_db = in_db, 
+  in_db_w_index = in_db_w_index, 
+  check = FALSE, 
+  iterations = 25
+)
 ```
 
 3. check summary
@@ -761,6 +862,27 @@ dbDisconnect(db_reader)
 ```
 
 - This closes the connection, discards all pending work, and frees resources
+
+# Reminder: Social Programme
+
+```{r}
+#| echo: false
+tibble::tribble(
+  ~DATE,               ~Event,                                  ~Time,           ~Venue,
+  "MONDAY 7 July",     "Meet and Greet - in person",            "19:00 start",   "SU Bar",
+  "TUESDAY 8 July",    "Climbing",               "18:30 start",   "Sports Centre",
+  "WEDNESDAY 9 July",  "Harold Clarke Speaker Series - hybrid", "18:45 - 20.00", "EBS",
+  "THURSDAY 10 July",  "Sports Night",                          "18:30 - 20:30", "Sports Centre",
+  "FRIDAY 11 July",    "Wivenhoe Pub Run",                      "18:30 start",   "Wivenhoe pubs",
+  "MONDAY 14 JULY",    "SU bar Quiz",                           "19:00 start",   "SU Bar",
+  "TUESDAY 15 JULY",   "Sports Night",                          "18:30 - 20:30", "Sports Centre",
+  "WEDNESDAY 16 JULY", "Harold Clarke Speaker Series - hybrid", "18:30",         "EBS",
+  "THURSDAY 17 JULY",  "Farewell Party Karaoke",                "20:30 - 23:30", "SU Bar"
+) |> 
+  tt() |> 
+  style_tt(fontsize = 0.6) |> 
+  style_tt(i = 5, background = "#FDE000")
+```
 
 
 # Wrap Up
