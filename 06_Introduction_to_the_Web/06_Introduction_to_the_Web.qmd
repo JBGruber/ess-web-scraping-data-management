@@ -536,7 +536,7 @@ Browser View:
 
 ## Exercises 2
 
-1. Add another image and another paragraph to `data/example.html` and display it in your browser
+1. Add another paragraph to `data/example.html` and display it in your browser
 2. Add a second level headline to the page
 3. Add another image to the page
 4. Manipulate the files `data/example.html` and/or `data/example.css` so that "content" is displayed in italics
@@ -690,7 +690,7 @@ To keep track of the relations we speak of ancestors, descendants, parents, chil
 
 ## Exercises 3
 
-1. Practice finding the right selector with the CSS Diner game: <https://flukeout.github.io/>
+1. Practice finding the right selector with the CSS Diner game (level 1-16 and 27-32): <https://flukeout.github.io/>
 2. Consider the toy HTML example below. Which selectors do you need to put into `html_elements()` (which extracts all elements matching the selector) to extract the information
 
 
