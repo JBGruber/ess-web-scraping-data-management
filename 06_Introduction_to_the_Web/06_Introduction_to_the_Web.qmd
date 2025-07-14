@@ -8,7 +8,7 @@ format:
   revealjs:
     smaller: true
     width: 1600
-    height: 900
+    height: 1100
     scrollable: true
     code-line-numbers: true
     slide-number: c/t
@@ -102,7 +102,7 @@ We will:
 
 :::: {.columns}
 
-::: {.column width="70%" .incremental}
+::: {.column width="60%" .incremental}
 - Used when other means are unavailable
 - Scrape the (unstructured) Data from a website
   - E.g: get the author, title, date and body of an online news article
@@ -117,20 +117,32 @@ We will:
   - then saves the data to a file or a database
 :::
 
-::: {.column width="30%"}
+::: {.column width="40%"}
 
-![](media/raw-html.jpg)
+![](media/raw-html.jpg){width=100%}
+![](media/ChatGPT_gold-scraping.jpeg)
 
 :::
 ::::
 
 ## Web Scraping: A Three-Step Process
 
-1. Send an HTTP request to the webpage -> server responds to the request by returning HTML content
-2. Parse the HTML content -> extract the information you want from the nested structure of HTML code
-3. Wrangle the data into a useful format
 
-![Original Image Source: prowebscraper.com](media/web_scraping_steps.png)
+:::: {.columns}
+
+::: {.column width="60%"}
+1. Request & Collect:
+    - you send an HTTP request to the webpage
+    - server responds to the request by returning HTML content
+2. Parse the HTML content
+    - extract the information you want from the nested structure of HTML code
+3. Wrangle the data into a useful format
+    - usually a tidy table
+:::
+::: {.column width="40%"}
+![](media/web_scraping_steps.png)
+:::
+::::
 
 ## Hurdles
 
@@ -142,15 +154,17 @@ We will:
   - Websites change (some more frequently than others)
 - Some web pages are easier to scrape than others (by accident or on purpose!):
 
+### Difficulty levels {.fragment}
+
 1. Well behaved static HTML with recurring patterns
 2. Haphazard HTML not clearly differentiating between different types of information
 3. Interactive web sites loading content by executing code (usually JavaScript or PHP)
 4. Interactive web sites with mechanisms against data extraction (rate limits, captchas etc.)
-5. Collecting raw data might be limited, data wrangling might be made difficult
+5. Server requests fail without the correct (frequently changing) token
 :::
 
 ::: {.column width="60%"}
-![](https://hackernoon.com/hn-images/0*MPt2rectMhwklT63.jpg)
+![](https://hackernoon.com/hn-images/0*MPt2rectMhwklT63.jpg){width=100%}
 :::
 ::::
 
@@ -162,7 +176,7 @@ We will:
 - The internet is a data gold mine!
 - Data was not created for research, but are often traces of what people are *actually* doing on the internet
 - Reproducible and renewable data collection (e.g., rehydrate data that is copyrighted)
-- Web Scraping let's you automate data retrieval (as opposed to using tedious copy & past on some web site)
+- Web Scraping let's you automate data retrieval (as opposed to using tedious copy & paste on some web site)
 - It's one of the most fun tasks to learn R and programming!
   - It's engaging and satisfying to find repeating patterns that you can employ to structure data (every website becomes a little puzzle)
   - It touches on many important computational skills
@@ -202,20 +216,25 @@ We will:
 Web Scraping is not a shady or illegal activity, **but** not all web scraping is unproblematic and the **data** does not become **yours**.
 
 ::: {.incremental}
+- Collecting **copyrighted** data
+  - Complicated legal situation
+  - Public facing content is probably okay ([9th circuit ruling](https://www.vice.com/en/article/9kek83/linkedin-data-scraping-lawsuit-shot-down)
+  - "research organisations and cultural heritage institutions" can collect copyrighted data through "text and data mining" if "they they have lawful access" it [Digital Single Market Directive Article 3](https://eur-lex.europa.eu/eli/dir/2019/790/oj)
+  - You will probably get in trouble if you distribute the material
+  - "there have been no lawsuits in [...] major western democratic countries stemming from a researcher scraping publicly accessible data from a website for personal or academic use." [@luscombewebscraping2022]
 - Collecting **personal data** of people in the EU might violate GDPR (General Data Protection Regulation)
   - The GDPR defines personal data as "any information relating to an identified or identifiable natural person." (Art. 4 [GDPR](https://gdpr-info.eu/art-4-gdpr/))
   - Exceptions
     - if you get consent from the people whose data it is
     - personal data processing is legitimate when "necessary for the performance of a task carried out in the public interest" (Art. 6 [GDPR](https://gdpr-info.eu/art-6-gdpr/))
-- Collecting **copyrighted** data
-  - Complicated legal situation
-  - Public facing content is probably okay ([9th circuit ruling](https://www.vice.com/en/article/9kek83/linkedin-data-scraping-lawsuit-shot-down), [DAS Article 40](https://www.eu-digital-services-act.com/Digital_Services_Act_Article_40.html))
-  - You will probably get in trouble if you distribute the material
-  - "there have been no lawsuits in [...] major western democratic countries stemming from a researcher scraping publicly accessible data from a website for personal or academic use." [@luscombewebscraping2022]
-- Honouring Terms of Service and robots.txt
+    - Under [DSA Article 40](https://www.eu-digital-services-act.com/Digital_Services_Act_Article_40.html) Very Large Online Platforms/Search Engines (VLOPs/VLOSEs) must provide access to publicly accessible data for vetted researchers upon request. If they don't [there is a court ruling you can scrape](https://www.politico.eu/article/berlin-court-orders-x-hand-over-election-data-legal-blow-elon-musk-platform/)
+- Honoring Terms of Service and robots.txt
   - Many companies have ToS that might prohibit you from scraping (these are not laws, might not be binding and whether they can be enforced is a separate question)
   - /robots.txt is often where guidelines are communicated to automated crawlers (these are not legally binding either)
 :::
+
+<!-- source: source: https://themarkup.org/levelup/2023/08/23/how-to-legally-scrape-eu-data-for-investigations -->
+![](https://mrkp-static-production.themarkup.org/uploads/2023/08/eu-scraping-flow-chart-edited_aug22_v2-1280x1119.png){.fragment .absolute top=50 left=100}
 
 ## ToS and Robots.txt
 
@@ -254,7 +273,7 @@ It is worth reading, but can be summarised in three general pieces of advice
 
 ## Exercises 1
 
-Twitter recently made access to their API punishingly expensive and stopped free academic access for research.
+Twitter made access to their API punishingly expensive and stopped free academic access for research in 2023.
 If you wanted to do research on Twitter data through web-scraping anyway what implications would that have:
 
 1. Legally
@@ -263,6 +282,7 @@ If you wanted to do research on Twitter data through web-scraping anyway what im
 
 3. Practical
 
+Discuss!
 
 # What are HTML and CSS
 ## What is HTML
@@ -568,7 +588,7 @@ read_html("data/example.html") |>
 
 ## Extracting attributes
 
-Instead of selecting by arrtibute, you can also extract one or all attributes:
+Instead of selecting by attribute, you can also extract one or all attributes:
 
 ```{r}
 read_html("data/example.html") |> 
@@ -584,7 +604,7 @@ read_html("data/example.html") |>
 
 ## Chaining selectors
 
-If there is more than one element that fits your selector, but you only want one of them, see if you can make your selection more specific by chaining selectors with `>` (for the immediate next one) or an empty space (for any children of an element):
+If there is more than one element that fits your selector, but you only want one of them, see if you can make your selection more specific by chaining selectors with `>` (for the immediate children) or an empty space (for any children and descendants of an element):
 
 ```{r}
 read_html("data/example.html") |> 
@@ -618,10 +638,18 @@ There are quite a lot of [CSS selectors](https://www.w3schools.com/cssref/css_se
 | id              | `#table-1`        | **unique** element with `id="table-1"`                     |
 | element.class   | `tr.headerRow`    | **all** `<tr>` elements with the `headerRow` class         |
 | class1.class2   | `.someTable.blue` | **all** elements with the `someTable` AND `blue` class     |
-| element,element | `tr,p`            | **all** `<tr>` elements AND **all** `<pr>` elements        |
+| element,element | `tr,p`            | **all** `<tr>` elements AND **all** `<p>` elements         |
 | class1 tag      | `.table-1 tr`     | **all** `<tr>` elements that are descendants of `.table-1` |
-| class1 > tag    | `.table-1 > tr`   | **all** `<tr>` elements that with `.table-1` as parent     |
-| class1 + tag    | `.table-1 + a`   | the `<a>` element directly following an element `.table-1`  |
+| class1 > tag    | `.table-1 > tr`   | **all** `<tr>` elements that are direct children of `.table-1` |
+| class1 + tag    | `.table-1 + a`    | the `<a>` element directly following an element `.table-1` |
+| [attribute]     | `[required]`      | **all** elements with a `required` attribute              |
+| [attr=value]    | `[type="text"]`   | **all** elements with `type` attribute equal to "text"    |
+| [attr^=value]   | `[class^="btn"]`  | **all** elements with `class` attribute starting with "btn" |
+| [attr$=value]   | <code>[src&#36;=".jpg"]</code>   | **all** elements with `src` attribute ending with ".jpg"  |
+| [attr*=value]   | `[class*="nav"]`  | **all** elements with `class` attribute containing "nav"  |
+| :first-child    | `tr:first-child`  | **all** `<tr>` elements that are the first child of their parent |
+| :last-child     | `tr:last-child`   | **all** `<tr>` elements that are the last child of their parent |
+| :nth-child(n)   | `tr:nth-child(2)` | **all** `<tr>` elements that are the 2nd child of their parent |
 
 ## Family Relations
 
@@ -720,6 +748,26 @@ bullet_point_three_ordered <- html_elements(webpage, "")
 bullet_point_three_ordered
 ```
 
+# Reminder: Social Programme
+
+```{r}
+#| echo: false
+tibble::tribble(
+  ~DATE,               ~Event,                                  ~Time,           ~Venue,
+  "MONDAY 7 July",     "Meet and Greet - in person",            "19:00 start",   "SU Bar",
+  "TUESDAY 8 July",    "Climbing",               "18:30 start",   "Sports Centre",
+  "WEDNESDAY 9 July",  "Harold Clarke Speaker Series - hybrid", "18:45 - 20.00", "EBS",
+  "THURSDAY 10 July",  "Sports Night",                          "18:30 - 20:30", "Sports Centre",
+  "FRIDAY 11 July",    "Wivenhoe Pub Run",                      "18:30 start",   "Wivenhoe pubs",
+  "MONDAY 14 JULY",    "SU bar Quiz",                           "19:00 start",   "SU Bar",
+  "TUESDAY 15 JULY",   "Sports Night",                          "18:30 - 20:30", "Sports Centre",
+  "WEDNESDAY 16 JULY", "Harold Clarke Speaker Series - hybrid", "18:30",         "EBS",
+  "THURSDAY 17 JULY",  "Farewell Party Karaoke",                "20:30 - 23:30", "SU Bar"
+) |> 
+  tt() |> 
+  style_tt(fontsize = 0.6) |> 
+  style_tt(i = 6, background = "#FDE000")
+```
 
 # Wrap Up
 
