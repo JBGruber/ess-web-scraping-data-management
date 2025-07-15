@@ -226,7 +226,7 @@ html <- "<p>This is some text
 2. How could you convert the `links` objects so that it contains actual URLs?
 3. How could you add the links we extracted above to the `pm_table` to keep everything together?
 
-# Example: Amazon product reviews
+# Example: thomann customer reviews
 ## Goal
 
 :::: {.columns}
@@ -235,42 +235,39 @@ html <- "<p>This is some text
 2. Identify and extract relevant variables for each review
 :::
 ::: {.column width="50%" }
-[![](media/amazon.png)](https://www.amazon.co.uk/Discovering-Statistics-Using-Andy-Field/dp/1446200469/){target="_blank"}
+[![](media/thomann.png)](https://www.thomann.co.uk/Discovering-Statistics-Using-Andy-Field/dp/1446200469/){target="_blank"}
 :::
 ::::
 
 ## Scout
 
-After clicking on reviews, then "See more reviews", these are the links to the first three pages:
+After clicking on reviews, then "Read all reviews", these are the links to the first three pages:
 
-```
-https://www.amazon.co.uk/Discovering-Statistics-Using-Andy-Field/product-reviews/1446200469/ref=cm_cr_dp_d_show_all_btm?ie=UTF8&reviewerType=all_reviews
-https://www.amazon.co.uk/Discovering-Statistics-Using-Andy-Field/product-reviews/1446200469/ref=cm_cr_arp_d_paging_btm_next_2?ie=UTF8&reviewerType=all_reviews&pageNumber=2
-https://www.amazon.co.uk/Discovering-Statistics-Using-Andy-Field/product-reviews/1446200469/ref=cm_cr_arp_d_paging_btm_next_2?ie=UTF8&reviewerType=all_reviews&pageNumber=3
-```
+1. https://www.thomann.co.uk/beyerdynamic_dt770_pro80_ohm_reviews.htm
+2. https://www.thomann.co.uk/beyerdynamic_dt770_pro80_ohm_reviews.htm?order=&page=2&rating=0
+3. https://www.thomann.co.uk/beyerdynamic_dt770_pro80_ohm_reviews.htm?order=&page=3&rating=0
+
 
 ## URLs explained
 
 - Uniform Resource Locator (URL) is a key mechanisms used to identify resources on a website for retrieval
 
-![](https://media.geeksforgeeks.org/wp-content/uploads/20210625160610/urldiag.PNG)
+[![](https://media.geeksforgeeks.org/wp-content/uploads/20210625160610/urldiag.PNG)](https://www.geeksforgeeks.org/computer-networks/components-of-a-url/)
 
 ## Getting all URLs to product reviews
 
 - We can spot two things:
-  - there are 185 reviews for this product
-  - there are 10 reviews per page
-- Which means: there should be 19 pages
-- However: Amazon limits results to 10 pages per query
-- To get more results, you could filter by stars, change sorting, etc.
+  - there are 2715 reviews for this product (441 in English)
+  - there are 45 pages with reviews
+- (here you can get all reviews. E.g., Amazon limits results to 10 pages per query)
 
 ```{r}
-pages <- 1:10
+pages <- 1:45
 links <- paste0(
-  "https://www.amazon.co.uk/Discovering-Statistics-Using-Andy-Field/product-reviews/1446200469/ref=cm_cr_arp_d_paging_btm_next_", 
-  pages, "?ie=UTF8&reviewerType=all_reviews&pageNumber=", 
+  "https://www.thomann.co.uk/beyerdynamic_dt770_pro80_ohm_reviews.htm", 
+  "?page=", 
   pages,
-  "&sortBy=recent"
+  "&order=&page=2&rating=0"
 )
 links
 ```
@@ -285,80 +282,125 @@ html <- read_html(links[1])
 
 # we select review elements first
 reviews <- html |> 
-  # this is a trick I had to google, ^= means starts with
-  html_elements("[id^=customer_review-]")
+  html_elements(".customer-review")
 
 # then extract the information from these reviews
+star_ratings <- function(pct) {
+  as.integer(pct) / 100 * 5
+}
 rating <- reviews |> 
-  html_element(".review-rating") |> 
-  html_text2()
+  html_elements(".fx-rating-stars__filler") |> 
+  html_attr("style") |> 
+  str_extract("(?<=width: )\\d+?(?=%)") |> 
+  star_ratings()
 
 title <- reviews |> 
-  html_elements(".a-letter-space+span") |> 
+  html_elements(".review-intro__headline.js-headline-original") |> 
   html_text2()
 
 date <- reviews |> 
-  html_elements(".review-date") |> 
-  html_text2()
+  html_elements(".review-intro__author") |> 
+  html_text2() |> 
+  str_extract("\\d{2}.\\d{2}.\\d{4}") |> 
+  lubridate::dmy()
 
 text <- reviews |> 
-  html_elements(".review-text-content") |> 
+  html_elements(".review-text .fx-text-collapsible__fallback") |> 
   html_text2()
 
 tibble(date, rating, title, text)
 ```
 :::
 ::: {.column width="50%" }
-![](media/amazon-review.png)
+![](media/thomann-review.png)
 :::
 ::::
 
-## X people found this helpful: incomplete cases
+## (Un)helpful reviews rating
 
+:::: {.columns}
+::: {.column width="50%"}
 ```{r}
 helpful <- reviews |> 
-  html_elements("[data-hook=\"helpful-vote-statement\"]") |> 
-  html_text2()
+  html_elements(".action [data-vote-rating-type=\"up\"] .action__value") |> 
+  html_text2() |> 
+  as.integer()
 helpful
 ```
 
 ```{r}
-#| error: true
-tibble(date, rating, helpful, title, text)
+unhelpful <- reviews |> 
+  html_elements(".action [data-vote-rating-type=\"down\"] .action__value") |> 
+  html_text2() |> 
+  as.integer()
+unhelpful
 ```
 
-## Iterate over cases, rather than variable values
+```{r}
+tibble(date, rating, helpful, unhelpful, title, text)
+```
 
-What we did before extracts one specific value from each case.
-But we have no mechanism to deal with missing values! To solve that, we need to iterate over reviews rather than extracting title, text, date and rating from all elements at once.
+:::
+::: {.column width="50%" }
+![](media/thomann-review.png)
+:::
+::::
+
+## Make it safer: Iterate over cases, rather than variable values
+
+- you can go over a nodeset and extract every matching value, then assemble results
+- as soon as one element is missing in one of the nodesets, it errors
+- safer: treat nodeset of reviews as list and iterate over each element
 
 ```{r}
+#| output-location: column
+check_len <- function(x, len = 1, .default = NA) {
+  if (length(x) != len) {
+    return(rep(.default, len))
+  } else {
+    return(x)
+  }
+}
+
 parse_review <- function(r) {
-  rating <- r |> 
-    html_element(".review-rating") |> 
-    html_text2()
-  
-  title <- r |> 
-    html_elements(".a-letter-space+span") |> 
-    html_text2()
   
   date <- r |> 
-    html_elements(".review-date") |> 
-    html_text2()
+    html_elements(".review-intro__author") |> 
+    html_text2() |> 
+    str_extract("\\d{2}.\\d{2}.\\d{4}") |> 
+    lubridate::dmy() |> 
+    check_len()
   
-  text <- r |> 
-    html_elements(".review-text-content") |> 
-    html_text2()
+  rating <- r |> 
+    html_elements(".fx-rating-stars__filler") |> 
+    html_attr("style") |> 
+    str_extract("(?<=width: )\\d+?(?=%)") |> 
+    star_ratings() |> 
+    check_len()
   
   helpful <- r |> 
-    html_elements("[data-hook=\"helpful-vote-statement\"]") |> 
-    html_text2()
+    html_elements(".action [data-vote-rating-type=\"up\"] .action__value") |> 
+    html_text2() |> 
+    as.integer() |> 
+    check_len()
   
-  if (length(helpful) == 0) {
-    helpful <- NA_character_
-  }
+  unhelpful <- r |> 
+    html_elements(".action [data-vote-rating-type=\"down\"] .action__value") |> 
+    html_text2() |> 
+    as.integer() |> 
+    check_len()
   
-  tibble(date, rating, helpful, title, text)
+  title <- r |> 
+    html_elements(".review-intro__headline.js-headline-original") |> 
+    html_text2() |> 
+    check_len()
+  
+  text <- r |> 
+    html_elements(".review-text .fx-text-collapsible__fallback") |> 
+    html_text2() |> 
+    check_len()
+  
+  tibble(date, rating, helpful, unhelpful, title, text)
 }
 
 map(reviews, parse_review) |> 
@@ -367,12 +409,12 @@ map(reviews, parse_review) |>
 
 ## Iterate over pages to collect all reviews
 
-```{r}
+```{r thomann}
 get_reviews_from_page <- function(link) {
   html <- read_html(link)
   
   reviews <- html |> 
-    html_elements("[id^=customer_review-]")
+    html_elements(".customer-review")
   
   map(reviews, parse_review) |> 
     bind_rows()
@@ -386,11 +428,12 @@ glimpse(all_reviews)
 
 ## Exercises 3
 
-We might be interested in whether a purchase was verified or not
+We might be interested in product specific rating scales (sound, comfort, and quality)
 
-1. Extract that information from the first review page
-2. Add the variable verified to the `parse_review` function
-3. Create `all_reviews` again, but with the verified variable this time
+1. Extract that information from the first review page (hint: it works similar to the star rating and you can reuse that function)
+2. Each review has 3 feature ratings, extract the labels to those ratings and combine them with the ratings themselves into a data.frame
+3. Add the variables sound, comfort, and quality to the `parse_review` function (hint: you will need `pivot_wider`)
+4. Create `all_reviews` again, but with the feature ratings this time
 
 # Example: Getting content from embedded json
 ## Goal
@@ -401,7 +444,7 @@ We might be interested in whether a purchase was verified or not
 2. Get the text of an article, the headline, date, and author
 :::
 ::: {.column width="50%" }
-[![](media/sky.png)](https://www.amazon.co.uk/Discovering-Statistics-Using-Andy-Field/dp/1446200469/){target="_blank"}
+[![](media/sky.png)](https://news.sky.com/story/crowdstrike-company-that-caused-global-techno-meltdown-offers-partners-10-vouchers-to-say-sorry-and-they-dont-work-13184488){target="_blank"}
 :::
 ::::
 
@@ -573,7 +616,9 @@ html <- request("https://web.archive.org/web/20240519142346/https://www.parliame
 
 links <- html |> 
   html_elements(".parly-h2+ul a") |> 
-  html_attr("href")
+  html_attr("href") |> 
+  # some links are malformed
+  str_remove("^/web/20240519142346/")
 
 years <- html |> 
   html_elements(".parly-h2+ul a") |> 
@@ -839,6 +884,27 @@ Note that down and try another website.
 
 Deadline: **Friday before class**
 
+
+# Reminder: Social Programme
+
+```{r}
+#| echo: false
+tibble::tribble(
+  ~DATE,               ~Event,                                  ~Time,           ~Venue,
+  "MONDAY 7 July",     "Meet and Greet - in person",            "19:00 start",   "SU Bar",
+  "TUESDAY 8 July",    "Climbing",               "18:30 start",   "Sports Centre",
+  "WEDNESDAY 9 July",  "Harold Clarke Speaker Series - hybrid", "18:45 - 20.00", "EBS",
+  "THURSDAY 10 July",  "Sports Night",                          "18:30 - 20:30", "Sports Centre",
+  "FRIDAY 11 July",    "Wivenhoe Pub Run",                      "18:30 start",   "Wivenhoe pubs",
+  "MONDAY 14 JULY",    "SU bar Quiz",                           "19:00 start",   "SU Bar",
+  "TUESDAY 15 JULY",   "Sports Night",                          "18:30 - 20:30", "Sports Centre",
+  "WEDNESDAY 16 JULY", "Harold Clarke Speaker Series - hybrid", "18:30",         "EBS",
+  "THURSDAY 17 JULY",  "Farewell Party Karaoke",                "20:30 - 23:30", "SU Bar"
+) |> 
+  tt() |> 
+  style_tt(fontsize = 0.9) |> 
+  style_tt(i = 7, background = "#FDE000")
+```
 
 # Wrap Up
 
