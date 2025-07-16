@@ -128,6 +128,8 @@ APIs respond to a call. The response usually also contains several elements:
   - responses are deconstructed using `resp_*`
   - makes wrapping an API in a few functions or a package straightforward
 
+![](https://httr2.r-lib.org/logo.png){.absolute right=100 top=100 width=350}
+
 # Example: The Guardian API
 ## Background
 
@@ -416,6 +418,7 @@ Some pointers:
 
 - make sure to escape `"` when translating curl calls. You can use the search and replace tool in RStudio and turn `"` inside the curl string into `\"`
 - when you call just `curl_translate()`, it uses what is currently in your clipboard, parses it, and copies the result back to your clipboard
+- alternatively, use <https://curlconverter.com/r-httr2/>
 
 ## Making the first request from `R`
 
@@ -423,13 +426,18 @@ We can copy the output from `curl_translate()` and run it in `R`.
 I also added the `resp_body_json()` since we already know the returned data will be json.
 
 ```{r}
-search <- request("https://members-api.parliament.uk/api/Members/Search?Name=Major&skip=0&take=20") |>
-  req_method("GET") |>
+search <- request("https://members-api.parliament.uk/api/Members/Search") |> 
+  req_method("GET") |> 
+  req_url_query(
+    Name = "Major",
+    skip = "0",
+    take = "20",
+  ) |> 
   req_headers(
     accept = "text/plain",
-  ) |>
-  req_perform() |>
-  resp_body_json()
+  ) |> 
+  req_perform()|>
+  resp_body_json() # <- I added this line to process the response
 ```
 
 ```{r}
@@ -487,7 +495,7 @@ tibble(
 
 This code is relatively busy, so let's deconstruct it a little:
 
-- we included the test column simply to show why we use `pluck` here instead of e.g., `i[["value"]][["id"]]`: we can set a default value if nothing is found
+- I included the test column simply to show why we use `pluck` here instead of e.g., `i[["value"]][["id"]]`: we can set a default value if nothing is found
   - many APIs are inconsistent in what they return
   - if you try to extract a field deep in a list with `[[]]`, you will get an error that the field does not exist or `NULL` (which causes an error with `tibble()`)
   - returning `NA` instead makes the parsing safer and is good practice
@@ -533,11 +541,11 @@ search_members <- function(name) {
 }
 ```
 
+## Next Step: testing our function
+
 ```{r}
 search_members("Blair")
 ```
-
-## Wrapping the endpoint in a function
 
 ```{r}
 search_members("Smith")
@@ -798,7 +806,7 @@ search_members("Smith", partyid = 4, house = 1, gender = "M", iscurrentmember = 
 
 In its current form, the function is working well, but to find out what the parameters do, you would have to visit the documentation website, which isn't great.
 To make this more useful, we should add some documentation.
-In `R`, `roxygen2` package handles parsing documentation for package
+In `R`, the `roxygen2` package handles parsing documentation for packages
 We can use it here to add explanations to the parameters.
 You can easily add roxygen code to a function using the Code menu in RStudio and Insert Roxygen Skeleton:
 
@@ -880,10 +888,7 @@ Bonus:
 :::: {.columns}
 
 ::: {.column width="45%"}
-- Get information about scholars
-- We want to use Semantic Scholar
-  - Semantic Scholar collects scientific papers and their authors
-  - Semantic Scholar API supports Paper and Author Look-up
+- Get information about scholars and the papers they write
 :::
 
 ::: {.column width="50%" }
@@ -897,9 +902,9 @@ Bonus:
 ## Exploring the documentation
 
 - The documentation for the API can be found here: <https://api.semanticscholar.org/api-docs/graph>
-- It is shown in the other common documentation format calledReDoc
+- It is shown in the other common documentation format called [ReDoc](https://github.com/Redocly/redoc)
 - I personally prefer swagger, however, this format can be produced by the OpenAPI specification linked on the website (you can use ReDoc though if you want)
-- There is a tool in `R` which opens a small server on your computer that can display OpenAPI specifications in the swagger format
+- There is a tool in `R` which opens a small server on your computer that can display OpenAPI specifications in the swagger format (url for semnatic scholar: https://api.semanticscholar.org/graph/v1/swagger.json)
 
 ```{r}
 #| eval: false
@@ -1127,10 +1132,10 @@ parse_response <- function(resp) {
 }
 ```
 
-Let's test it with Ryan:
+Let's test it with Royce:
 
 ```{r}
-find_scholar("Ryan Bakker")
+find_scholar("Royce Carroll")
 ```
 
 
@@ -1150,6 +1155,26 @@ Bonus:
 
 4. Write a function that wraps "/author/{author_id}"
 
+# Reminder: Social Programme
+
+```{r}
+#| echo: false
+tibble::tribble(
+  ~DATE,               ~Event,                                  ~Time,           ~Venue,
+  "MONDAY 7 July",     "Meet and Greet - in person",            "19:00 start",   "SU Bar",
+  "TUESDAY 8 July",    "Climbing",               "18:30 start",   "Sports Centre",
+  "WEDNESDAY 9 July",  "Harold Clarke Speaker Series - hybrid", "18:45 - 20.00", "EBS",
+  "THURSDAY 10 July",  "Sports Night",                          "18:30 - 20:30", "Sports Centre",
+  "FRIDAY 11 July",    "Wivenhoe Pub Run",                      "18:30 start",   "Wivenhoe pubs",
+  "MONDAY 14 JULY",    "SU bar Quiz",                           "19:00 start",   "SU Bar",
+  "TUESDAY 15 JULY",   "Sports Night",                          "18:30 - 20:30", "Sports Centre",
+  "WEDNESDAY 16 JULY", "Harold Clarke Speaker Series - hybrid", "18:30",         "EBS",
+  "THURSDAY 17 JULY",  "Farewell Party Karaoke",                "20:30 - 23:30", "SU Bar"
+) |> 
+  tt() |> 
+  style_tt(fontsize = 0.9) |> 
+  style_tt(i = 8, background = "#FDE000")
+```
 
 # Wrap Up
 
