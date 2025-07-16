@@ -1,0 +1,351 @@
+---
+title: "solutions session 7"
+format: html
+---
+
+## Exercises 1
+
+1. Get the table with 2023 opinion polling for the next United Kingdom general election from <https://en.wikipedia.org/w/index.php?title=Opinion_polling_for_the_2024_United_Kingdom_general_election&oldid=1232596394>
+
+```{r}
+library(tidyverse)
+library(rvest)
+# 1. Request & collect raw html
+html <- read_html("https://en.wikipedia.org/w/index.php?title=Opinion_polling_for_the_2024_United_Kingdom_general_election&oldid=1232596394")
+
+# 2. Parse
+opinion_table <- html |>
+  html_elements(".wikitable") |> 
+  html_table() |>                
+  pluck(2)                    
+```
+
+
+2. Wrangle and plot the data opinion polls
+
+```{r}
+# 3. Wrangle
+opinion_tidy <- opinion_table |> 
+  pivot_longer(Con:Others, names_to = "party", values_to = "result") |> 
+  mutate(result_pct = as.numeric(str_extract(result, "\\d+(?=%)")),
+         date_clean = str_extract(Datesconducted, "\\d{1,2} [A-z]{3}"),
+         date = lubridate::dmy(paste(date_clean, 2024))) |> 
+  filter(!is.na(result_pct),
+         # some dates are parsed wrong and are in the future
+         date < "2024-07-03")
+
+# Plot!
+opinion_tidy |> 
+  ggplot(aes(x = date, y = result_pct, colour = party)) +
+  geom_line()
+```
+
+## Exercises 2
+
+1. For extracting text, `rvest` has two functions: `html_text` and `html_text2`. Explain the difference. You can test your explanation with the example html below.
+
+```{r}
+html <- "<p>This is some text
+         some more text</p><p>A new paragraph!</p>
+         <p>Quick Question, is web scraping:
+
+         a) fun
+         b) tedious
+         c) I'm not sure yet!</p>" |> 
+  read_html()
+```
+
+- You should almost always use `html_text2`, as the help page says (`?html_text2`)
+- `html_text2`, put briefly, extracts text as the browser would display it
+- `html_text`, retains the original line breaks and extra space in the raw html content
+- You can easily test that with
+
+```{r}
+html_text(html)
+html_text2(html)
+```
+
+The superfluous line breaks and extra space from the html code is not displayed
+
+2. How could you convert the `links` objects so that it contains actual URLs?
+
+The links are all relative to https://en.wikipedia.org. So we need to add that part to the links:
+
+```{r}
+# using base R's paste
+paste0("https://en.wikipedia.org", links)
+# Or str_c from stringr
+str_c("https://en.wikipedia.org", links)
+```
+
+3. How could you add the links we extracted above to the `pm_table` to keep everything together?
+
+- We can use `left_join` for that. First, we need to put `links` int a table. But we already did to construct `links_df`
+- The primary key in pm_table would be `Prime ministerOffice(Lifespan)` and the foreign key is just `name`
+- This is basically all I wanted to know here, but if you want to go through with it, we need to clean up  `Prime ministerOffice(Lifespan)` a bit first
+
+```{r}
+# 1. Request & collect raw html
+html <- read_html("https://en.wikipedia.org/w/index.php?title=List_of_prime_ministers_of_the_United_Kingdom&oldid=1166167337") # I'm using an older version of the site since some just changed it
+
+# 2. Parse
+pm_table <- html |> 
+  html_element(".wikitable:contains('List of prime ministers')") |>
+  html_table() |> 
+  as_tibble(.name_repair = "unique") |> 
+  filter(!duplicated(`Prime ministerOffice(Lifespan)`))
+
+# 3. No wrangling necessary
+pm_table
+
+pm_links <- tibble(name = title, link = links)
+pm_table_clean <- pm_table |> 
+  mutate(pm = str_extract(`Prime ministerOffice(Lifespan)`, ".+\\["),
+         pm = str_remove(pm, "\\["))
+
+pm_table_clean |> 
+  left_join(pm_links, by = c("pm"= "name"))
+```
+
+## Exercises 3
+
+We might be interested in product specific rating scales (sound, comfort, and quality)
+
+1. Extract the ratings from the first review page (hint: it works similar to the star rating and you can reuse that function)
+
+```{r}
+# I add some setup code to make sure this runs:
+html <- read_html("https://www.thomann.co.uk/beyerdynamic_dt770_pro80_ohm_reviews.htm?page=1&order=&page=2&rating=0")
+reviews <- html |> 
+  html_elements(".customer-review")
+
+star_ratings <- function(pct) {
+  as.integer(pct) / 100 * 5
+}
+
+# this is where the solution itself starts
+ratings <- reviews |> 
+  html_elements(".features-widget .fx-feature-bars__item--stretch") |> 
+  html_attr("style") |> 
+  str_extract("(?<=width: )\\d+?(?=%)") |> 
+  star_ratings()
+```
+
+2. Each review has 3 feature ratings, extract the labels to those ratings and combine them with the ratings themselves into a data.frame
+
+```{r}
+rating_labels <- reviews |> 
+  html_elements(".features-widget__description .features-widget__label") |> 
+  html_text2()
+tibble(rating_labels, ratings)
+```
+
+
+3. Add the variables sound, comfort, and quality to the `parse_review` function (hint: you will need `pivot_wider`)
+
+```{r}
+parse_review <- function(r) {
+  
+  date <- r |> 
+    html_elements(".review-intro__author") |> 
+    html_text2() |> 
+    str_extract("\\d{2}.\\d{2}.\\d{4}") |> 
+    lubridate::dmy() |> 
+    check_len()
+  
+  rating <- r |> 
+    html_elements(".fx-rating-stars__filler") |> 
+    html_attr("style") |> 
+    str_extract("(?<=width: )\\d+?(?=%)") |> 
+    star_ratings() |> 
+    check_len()
+  
+  helpful <- r |> 
+    html_elements(".action [data-vote-rating-type=\"up\"] .action__value") |> 
+    html_text2() |> 
+    as.integer() |> 
+    check_len()
+  
+  unhelpful <- r |> 
+    html_elements(".action [data-vote-rating-type=\"down\"] .action__value") |> 
+    html_text2() |> 
+    as.integer() |> 
+    check_len()
+  
+  title <- r |> 
+    html_elements(".review-intro__headline.js-headline-original") |> 
+    html_text2() |> 
+    check_len()
+  
+  text <- r |> 
+    html_elements(".review-text .fx-text-collapsible__fallback") |> 
+    html_text2() |> 
+    check_len()
+  
+  ratings <- r |> 
+    html_elements(".features-widget .fx-feature-bars__item--stretch") |> 
+    html_attr("style") |> 
+    str_extract("(?<=width: )\\d+?(?=%)") |> 
+    star_ratings() |> 
+    check_len(len = 3L)
+  
+  rating_labels <- r |> 
+    html_elements(".features-widget__description .features-widget__label") |> 
+    html_text2() |> 
+    check_len(len = 3L)
+  
+  ratings_table <- tibble(rating_labels, ratings) |> 
+    pivot_wider(names_from = "rating_labels", values_from = "ratings")
+  
+  tibble(date, rating, helpful, unhelpful, title, text) |> 
+    cbind(ratings_table)
+}
+```
+
+4. Create `all_reviews` again, but with the feature ratings this time
+
+```{r}
+map(reviews, parse_review) |> 
+  bind_rows()
+```
+
+
+## Exercises 4
+
+1. Get the author, publication datetime, headline and text from this site: <https://www.cnet.com/tech/services-and-software/facebook-hopes-to-normalize-idea-of-data-scraping-leaks-says-leaked-internal-memo/> (hint: it works in a very similar way, but you have to apply one extra data wrangling step)
+
+```{r}
+# 1. Request & collect raw html
+html <- read_html("https://www.cnet.com/tech/services-and-software/facebook-hopes-to-normalize-idea-of-data-scraping-leaks-says-leaked-internal-memo/")
+
+# 2. Parse
+json_string <- html |> 
+  rvest::html_element("[type=\"application/ld+json\"]") |>
+  rvest::html_text() 
+
+# 3. wrangling (part 1)
+data <- jsonlite::fromJSON(json_string, simplifyVector = FALSE)
+
+data_article <- pluck(data, "@graph", 1)
+
+headline <- data_article$headline
+author <- data_article[["author"]][[1]][["name"]]
+date <- data_article$datePublished |> 
+  lubridate::as_datetime()
+
+text <- html %>%
+  rvest::html_elements(".c-pageArticle_content p") %>%
+  rvest::html_text2() %>%
+  paste(collapse = "\n")
+
+article_df <- tibble(date, author, headline, text)
+```
+
+
+## Exercises 5
+
+1. In the folder /data (relative to this document) there is a PDF with some text. Read it into R
+
+```{r}
+library(pdftools)
+scrp_dat <- pdf_data("data/example.pdf", font_info = TRUE)
+```
+
+2. The PDF has two columns, parse the left column of the first page into one object and the right into another
+
+```{r}
+page <- scrp_dat[[1]]
+
+left_column <- page |> 
+  filter(x < 300) |> 
+  group_by(y) |> 
+  summarise(text = paste(text, collapse = " "),
+            font_name = unique(font_name),
+            font_size = unique(font_size))
+
+right_column <- page |> 
+  filter(x > 300) |> 
+  group_by(y) |> 
+  summarise(text = paste(text, collapse = " "),
+            font_name = unique(font_name),
+            font_size = unique(font_size))
+```
+
+
+3. Now combine them in the correct order bring the text in the right order as a human would read it
+
+```{r}
+columns <- bind_rows(left_column, right_column)
+```
+
+
+4. Let's assume you wanted to have this text in a table with one column indicating the section and one having the text of the section
+
+```{r}
+page1_df <- page |> 
+  mutate(
+    section_title = font_size == 20,
+    section_text = font_size == 11,
+    section = cumsum(section_title)
+  ) |> 
+  group_by(section, section_title) |> 
+  summarise(
+    section_title = paste(text[section_title], collapse = " "),
+    text = paste(text, collapse = "\n"),
+  ) |> 
+  mutate(section_title = ifelse(section_title == "", NA_character_, section_title)) |> 
+  fill(section_title, .direction = "up") |> 
+  filter(section_title != text)
+```
+
+
+5. Now let's assume you wanted to parse this on the paragraph level instead (hint: remember `str_split`)
+
+```{r}
+page1_df |> 
+  mutate(paragraph = str_split(text, "\n")) |> 
+  unnest_longer(paragraph)
+```
+
+
+3. Let's assume you wanted to have this text in a table with one column indicating the section and one having the text of the section
+
+```{r}
+scrp_dat_ordered |> 
+  mutate(
+    section_title = font_size == 20,
+    section_text = font_size == 11,
+    section = cumsum(section_title)
+  ) |> 
+  group_by(section, section_title) |> 
+  summarise(
+    section_title = paste(text[section_title], collapse = " "),
+    text = paste(text, collapse = " "),
+  ) |> 
+  mutate(section_title = ifelse(section_title == "", NA_character_, section_title)) |> 
+  fill(section_title, .direction = "up") |> 
+  filter(section_title != text)
+```
+
+4. Now let's assume you wanted to parse this on the paragraph level instead
+
+```{r}
+scrp_dat_ordered |> 
+  mutate(
+    section_title = font_size == 20,
+    section_text = font_size == 11,
+    section = cumsum(section_title),
+    par_start = y == lag(y) + 24
+  ) |> 
+  group_by(section) |> 
+  mutate(paragraph = cumsum(ifelse(is.na(par_start), FALSE, par_start))) |> 
+  group_by(section, section_title, paragraph) |> 
+  summarise(
+    section_title = paste(text[section_title], collapse = " "),
+    text = paste(text, collapse = " "),
+  ) |> 
+  mutate(section_title = ifelse(section_title == "", NA_character_, section_title)) |> 
+  ungroup() |> 
+  fill(section_title, .direction = "up") |> 
+  filter(section_title != text)
+```
