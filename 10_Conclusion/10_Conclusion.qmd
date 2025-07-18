@@ -87,7 +87,7 @@ tibble::tribble(
 :::: {.columns}
 
 ::: {.column width="60%"}
-In this session, you learn:
+
 
 - how to use files efficiently and how to solve problems using files
 - good practices for transparent and efficient file usage
@@ -108,7 +108,7 @@ In this session, you learn:
 :::: {.columns}
 
 ::: {.column width="60%"}
-In this session, you learn:
+
 
 - why and how to work with relational data
 - how to join data from different tables in `R`
@@ -126,7 +126,7 @@ Via DALL-E
 
 :::: {.columns}
 ::: {.column width="60%"}
-In this session, you learn:
+
 
 - Repetition: DBMS
 - Working with PostgreSQL
@@ -145,7 +145,7 @@ In this session, you learn:
 
 :::: {.columns}
 ::: {.column width="60%"}
-In this session, we learn how to **scout** data in the wild.
+In this session, we learned how to **scout** data in the wild.
 We will:
 
 - discuss web scraping from a theoretical point of view:
@@ -167,7 +167,7 @@ We will:
 
 :::: {.columns}
 ::: {.column width="60%"}
-In this session, we trap some **docile data** that wants to be found.
+In this session, we trapped some **docile data** that wants to be found.
 We will:
 
 - Go over some parsing examples:
@@ -188,7 +188,7 @@ We will:
 
 :::: {.columns}
 ::: {.column width="60%"}
-In this session, we learn how to adopt data from someone else.
+In this session, we learned how to adopt data from someone else.
 We will:
 
 - Learn what an API is and what parts it consists of
@@ -212,7 +212,7 @@ We will:
 
 :::: {.columns}
 ::: {.column width="60%"}
-In this session, we learn how to hunt down **wild** data.
+In this session, we learned how to hunt down **wild** data.
 We will:
 
 - Learn how to find secret APIs
@@ -227,8 +227,146 @@ We will:
 :::
 ::::
 
-# Now it's your turn!
+# Some more things...
+## Using 'AI' web scrapers
+
+Essentially two kinds of 'AI' web scrapers:
+
+:::: {.columns }
+::: {.column width="60%" .incremental}
+### 'AI' parsers
+
+- download html of a website
+- prompt 'AI' to extract certain information and return in a good structure 
+
+[advantages :heavy_plus_sign::]{.fragment}
+
++ no scraping skills needed whatsoever
++ can deal with complicated structures
+
+[disadvantages :heavy_minus_sign::]{.fragment}
+
+- expensive (computational, time, but also :money_with_wings:)
+- does not scale well
+- limit on the length of html content (depends on model context)
+- potential for hallucination
+
+:::{.fragment}
+verdict:
+
+:point_right: don't believe the hype, skip this one
+:::
+:::
+::: {.column width="40%" }
+![](media/ai_scraper.gif)
+:::
+::::
 
 
+## Using 'AI' web scrapers  {visibility="uncounted"}
+
+Essentially two kinds of 'AI' web scrapers:
+
+:::: {.columns}
+::: {.column width="40%"}
+![](media/chatgpt.jpeg)
+
+:::
+::: {.column width="60%" .incremental}
+### 'AI' **written** parsers
+
+- download html of a website
+- prompt 'AI' to extract appropriate CSS selectors / write R code
+
+[advantages :heavy_plus_sign::]{.fragment}
+
++ only **some** scraping skills needed
++ can deal with complicated structures
++ scales well
+
+[disadvantages :heavy_minus_sign::]{.fragment}
+
+- potential for hallucination (and inaccuracies)
+- limit on the length of html content (depends on model context)
+
+:::{.fragment}
+verdict:
+
+:point_right: try to use them (but with tests and caution!)
+:::
+:::
+::::
+
+## Using 'AI' web scrapers  {visibility="uncounted"}
+
+Essentially two kinds of 'AI' web scrapers:
+
+:::: {.columns}
+::: {.column width="55%"}
+### 'AI' parsers
+
+- download html of a website
+- prompt 'AI' to extract certain information and return in a good structure 
+
+advantages :heavy_plus_sign::
+
++ no scraping skills needed whatsoever
++ can deal with complicated structures
+
+disadvantages :heavy_minus_sign::
+
+- expensive (computational, time, but also :money_with_wings:)
+- does not scale well
+- limit on the length of html content (depends on model context)
+- potential for hallucination
+
+verdict:
+
+:point_right: don't believe the hype, skip this one
+:::
+::: {.column width="45%"}
+### 'AI' **written** parsers
+
+- download html of a website
+- prompt 'AI' to extract appropriate CSS selectors / write R code
+
+advantages :heavy_plus_sign::
+
++ only **some** scraping skills needed
++ can deal with complicated structures
++ scales well
+
+disadvantages :heavy_minus_sign::
+
+- potential for hallucination (and inaccuracies)
+- limit on the length of html content (depends on model context)
+
+verdict:
+
+:point_right: try to use them (but with tests and caution!)
+:::
+::::
+
+## Creating literate programming reports from R
+
+- instead of creating code in one file and documentation/description in another: combine into literate programming
+- some popular systems: Jupyter Notebook, Quarto/R Markdown
+- when rendered, code is executed from top to bottom, making sure the data collection/analysis/communication is reproducible
+- by keeping text and code together, you can make sure both are on the newest version
+
+My personal template:
+
+```{r}
+# eval: false
+remotes::install_github("JBGruber/jbgtemplates")
+jbgtemplates::report_template("ESS_exam")
+```
 
 
+## paperboy: my webscraping framework (for news)
+
+- A recent presentation on paperboy: <https://github.com/JBGruber/ica25_tool-demos>
+- Package: <https://github.com/JBGruber/paperboy>
+- Paper: <http://dx.doi.org/10.31235/osf.io/hu6qw_v1>
+
+![](https://jbgruber.github.io/paperboy/logo.svg){.absolute top=100 right=100 width="400px"}
