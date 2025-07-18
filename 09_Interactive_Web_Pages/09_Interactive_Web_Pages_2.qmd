@@ -285,8 +285,6 @@ comments
 ```
 
 
-
-
 # Automate the scrolling
 
 ```{r}
@@ -335,6 +333,7 @@ So we need 3 pieces for this:
 All three steps are done when you run the code below:
 
 ```{r}
+#| eval: false
 if (!rlang::is_installed("playwrightr")) remotes::install_github("JBGruber/playwrightr")
 if (!reticulate::virtualenv_exists("r-playwright")) {
   reticulate::virtualenv_install("r-playwright", packages = "playwright")
@@ -353,6 +352,7 @@ I did not write the package, but made some changes to make it easier to use.
 To get started, we first initialize the underlying Python package and then launch Chromium:
 
 ```{r}
+#| eval: false
 library(reticulate)
 library(playwrightr)
 pw_init()
@@ -367,6 +367,7 @@ chrome <- browser_launch(
 Now we can navigate to a page:
 
 ```{r}
+#| eval: false
 page <- new_page(chrome)
 goto(page, "https://www.facebook.com/groups/911542605899621")
 ```
@@ -389,6 +390,7 @@ This page loads new content when you scroll down.
 We can do this using the `scroll` function:
 
 ```{r}
+#| eval: false
 scroll(page)
 ```
 
@@ -402,6 +404,7 @@ We can use several different `get_*` functions to identify specfic elements.
 But wen can also simply get the entire HTML content:
 
 ```{r}
+#| eval: false
 html <- get_content(page)
 html
 ```
@@ -411,6 +414,7 @@ So we can use our familiar tools to get to the links of the visible posts.
 The page uses a role attribute which Iemploy here and I know that links to posts contain `posts`:
 
 ```{r}
+#| eval: false
 post_links <- html |> 
   html_elements("[role=\"link\"]") |> 
   html_attr("href") |> 
@@ -449,18 +453,25 @@ The site uses a lot of weird classes, Making it almost impossible to get content
 ```{r}
 #| eval: false
 author <- post1_html |> 
-  html_elements("#_r_ml_ [attributionsrc]") |> 
+  html_elements("#_R_laimqaqdfiqapapd5aqH1_ .x193iq5w") |> 
   html_text2() |> 
   head(1)
 
 text <- post1_html |> 
-  html_element("[id=\":r1j:\"]") |> 
+  html_elements("[data-ad-rendering-role=\"story_message\"] #_R_laimqaqdfiqapapd5aqH2_") |> 
   html_text2()
 
-tibble(author, post_time, text)
+tibble(author, text)
 ```
 
+Nevertheless, some success...
+
+## Scraping the content: Another attempt
+
+Getting json data
+
 ```{r}
+#| eval: false
 json_data <- post1_html |> 
   html_elements("[type=\"application/json\"][data-processed]") |> 
   map(function(x) x |> 
@@ -469,14 +480,49 @@ json_data <- post1_html |>
         jsonlite::fromJSON())
 
 which.max(map_int(json_data, object.size))
+```
 
-purrr::pluck(json_data[[77]], "require", 1L, 4L, "__bbox", "require", 1L, 117L, 4L, 2L, "__bbox", "result", "data", "node", "attached_story", "comet_sections", "content", "story", "message", "text")
+```{r}
+parse_path <- function(ix) {
+  out <- as.list(ix$p)
+  out[which(ix$p == as.character(ix$pos))] <- ix$pos[ix$p == as.character(ix$pos)]
+  gsub("list(", "purrr::pluck(DATA, ", deparse1(out), fixed = TRUE)
+}
+
+#' Search a list
+#'
+#' @param l a list
+#' @param f a function to identify the element you are searching
+#'
+#' @return an object containing the searched element with the function to extract it as a name
+#' @export
+list_search <- function(l, f) {
+  
+  paths <- rrapply::rrapply(
+    object = l,
+    condition = f,
+    f = function(x, .xparents, .xname, .xpos) list(p = .xparents, n = .xname, pos = .xpos),
+    how = "flatten"
+  )
+  
+  out <- purrr::map(paths, function(p) purrr::pluck(l, !!!p$pos))
+  names(out) <- purrr::map_chr(paths, parse_path)
+  return(out)
+}
+```
+
+```{r}
+#| eval: false
+list_search(json_data, function(x) str_detect(x, "Nabídka spolehlivé flotily pro řidiče s vlastním"))
+purrr::pluck(json_data, 71L, "require", 1L, 4L, 1L, "__bbox", "require", 111L, 4L, 2L, "__bbox", "result", "data", "node", "comet_sections", "content") |> 
+  View()
 ```
 
 
-Nevertheless, some success...
+## Mission: success (?)
 
-So now that we have the content, we can close the page:
+Not sure how scalable this is or how stable. But it seems like we got the data for one post, at least.
+After getting the content you want (or not), we can close the page:
 
 ```{r}
 #| eval: false
