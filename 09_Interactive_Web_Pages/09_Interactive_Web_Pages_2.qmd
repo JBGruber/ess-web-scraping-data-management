@@ -119,6 +119,7 @@ sess <- read_html_live("https://www.google.de/maps/dir/Armadale+St,+Glasgow,+UK/
 
 ```{r loadcookies}
 #| echo: false
+# just for rendering, see below for how to save cookies
 cookies <- readRDS("data/chromote_cookies.rds")
 sess <- sess$session$Network$setCookies(cookies = cookies$cookies)
 sess <- read_html_live("https://www.google.de/maps/dir/Armadale+St,+Glasgow,+UK/Lilybank+House,+Glasgow,+UK/@55.8626667,-4.2712892,14z/data=!3m1!4b1!4m14!4m13!1m5!1m1!1s0x48884155c8eadf03:0x8f0f8905398fcf2!2m2!1d-4.2163615!2d55.8616765!1m5!1m1!1s0x488845cddf3cffdb:0x7648f9416130bcd5!2m2!1d-4.2904601!2d55.8740368!3e0?entry=ttu")
@@ -139,7 +140,6 @@ trip |>
   html_element(".fontHeadlineSmall") |> 
   html_text2()
 
-
 trip |> 
   html_element(".fontBodyMedium") |> 
   html_text2()
@@ -151,7 +151,6 @@ trip |>
 - Now that we have accepted the cookie banner, a small set of cookies was stored in the browser
 - These are destroyed when we close R, however
 - We can extract them and save the session for the next run, so no manual intervention is neccesary
-
 
 ```{r}
 #| eval: false
@@ -200,7 +199,7 @@ This does not look too bad!
 :::
 
 :::{.fragment}
-Although we only get 3 posts :thinking:
+Although we only get 5 posts :thinking:
 :::
 
 ## Can we use `rvest` to get posts?
@@ -271,6 +270,12 @@ Scrolling down as far as possible:
 html_post_live$scroll_to(top = 10 ^ 5)
 ```
 
+Then clicking the "load_more_comments"-button
+
+```{r}
+html_post_live$click("[noun=\"load_more_comments\"]")
+```
+
 This triggers new content to be loaded:
 
 ```{r}
@@ -278,6 +283,9 @@ comments <- html_post_live |>
   html_elements("shreddit-comment")
 comments
 ```
+
+
+
 
 # Automate the scrolling
 
@@ -295,7 +303,10 @@ while (html_post_live$get_scroll_position()$y > last_y) {
     html_post_live$click("[noun=\"load_more_comments\"]")
     html_post_live$scroll_to(top = 10 ^ 5)
   }
-  Sys.sleep(1 * runif(1, 1, 3))
+  # wati random number of seconds
+  sec_random <- runif(1, 1, 3) * 5
+  message("Scrolled down, waiting: ", round(sec_random, 1), " s")
+  Sys.sleep(sec_random)
 }
 ```
 
@@ -438,7 +449,7 @@ The site uses a lot of weird classes, Making it almost impossible to get content
 ```{r}
 #| eval: false
 author <- post1_html |> 
-  html_elements("h2") |> 
+  html_elements("#_r_ml_ [attributionsrc]") |> 
   html_text2() |> 
   head(1)
 
@@ -448,6 +459,20 @@ text <- post1_html |>
 
 tibble(author, post_time, text)
 ```
+
+```{r}
+json_data <- post1_html |> 
+  html_elements("[type=\"application/json\"][data-processed]") |> 
+  map(function(x) x |> 
+        as.character() |> 
+        str_extract("\\{.*\\}") |> 
+        jsonlite::fromJSON())
+
+which.max(map_int(json_data, object.size))
+
+purrr::pluck(json_data[[77]], "require", 1L, 4L, "__bbox", "require", 1L, 117L, 4L, 2L, "__bbox", "result", "data", "node", "attached_story", "comet_sections", "content", "story", "message", "text")
+```
+
 
 Nevertheless, some success...
 

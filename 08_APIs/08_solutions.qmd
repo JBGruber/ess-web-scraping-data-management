@@ -203,4 +203,163 @@ request("https://members-api.parliament.uk/api/Posts/GovernmentPosts") |>
 
 - Now what is not immediately clear about these two endpoints is how to obtain the department ID. However, there is another endpoint, "/api/Posts/Departments/{type}" which returns a list of departments, including their ID. I made a request and looked through the list to find the ID for the home office (51). This is what I used above. But you can of course use any other ID here.
 
+## Exercises 3
+
+1. Document the function we just created. This is mainly to let you think about the parameters and how you would describe their working to someone else
+
+```{r}
+#' Find a scholar on the Semantic Scholar API
+#'
+#' @param name name of a scholar
+#' @param fields fields to be included separated by comma in one string. By default all fields are included
+#' @param limit how many results to return
+#'
+#' @returns a data.frame
+#' @export
+#'
+#' @examples
+find_scholar <- function(name, 
+                         fields = "name,papers.title,papers.title,papers.year,papers.fieldsOfStudy,papers.authors",
+                         limit = 100) {
+  
+  # make initial request
+  res <- request("https://api.semanticscholar.org/graph/v1/author/search") |>
+    req_url_query(query = name) |>
+    req_url_query(fields = fields,
+                  limit = limit) |> 
+    req_headers(accept = "application/json") |> 
+    req_perform() |> 
+    resp_body_json()
+  
+  # note total
+  total <- pluck(res, "total")
+  # display user message
+  message("Found ", total, " authors")
+  # note offset
+  nxt <- pluck(res, "next")
+  
+  # wrangle initial data
+  data <- parse_response(res)
+  page <- 1
+  
+  # loop through pages until no new ones exist
+  while (!is.null(nxt)) {
+    page <- page + 1
+    message("\t...fetching page ", page)
+
+    res <- request("https://api.semanticscholar.org/graph/v1/author/search") |>
+      req_url_query(query = name,
+                    offset = nxt,
+                    fields = fields,
+                    limit = limit) |> 
+      req_throttle(rate = 30 / 60) |> # make only 30 requests per minute
+      req_headers(accept = "application/json") |> 
+      req_perform() |> 
+      resp_body_json()
+    
+    # get next offset; will be NULL on the last page
+    nxt <- pluck(res, "next")
+    
+    data_new <- pluck(res, "data") |> 
+      bind_rows()
+    data <- data |> 
+      bind_rows(data_new)
+  }
+  
+  return(data)
+}
+
+# we don't need to document this auxiliariy function
+parse_response <- function(resp) {
+  pluck(resp, "data") |>
+    # bind initial data into a tibble
+    bind_rows() |>
+    # unnest papers list into columns
+    unnest_wider(papers) |> 
+    # unnest authors into rows
+    unnest(authors) |> 
+    # unnest the new authors into columns
+    unnest_wider(authors, names_sep = "_") |> 
+    # fieldsOfStudy is a list within a list, so we call unnest twice
+    unnest(fieldsOfStudy, keep_empty = TRUE) |> 
+    unnest(fieldsOfStudy, keep_empty = TRUE)
+}
+```
+
+
+2. Use the function to search for a couple of scholars of your choice. Who has the most co-authors and unique papers?
+
+```{r}
+find_scholar("Johannes Gruber")
+```
+
+
+3. Say you found an authors ID with the search function. How could you use "/author/{author_id}" and "/author/{author_id}/papers" to request more information about them?
+
+- I'm using my own ID from the search above: 2060423302
+
+```{r}
+author_details <- request("https://api.semanticscholar.org") |> 
+  req_url_path("/graph/v1/author/") |> 
+  req_url_path_append("2060423302") |> 
+  req_url_query(
+    fields = "authorId,externalIds,url,name,affiliations,homepage,paperCount,citationCount,hIndex"
+  ) |> 
+  req_perform() |> 
+  resp_body_json()
+author_details
+```
+
+```{r}
+author_papers_details <- request("https://api.semanticscholar.org") |> 
+  req_url_path("/graph/v1/author/") |> 
+  req_url_path_append("2060423302") |> 
+  req_url_path_append("papers") |> 
+  req_url_query(
+    fields = "title,fieldsOfStudy,references"
+  ) |> 
+  req_perform() |> 
+  resp_body_json()
+author_papers_details |> 
+  lobstr::tree(max_length = 25)
+```
+
+Bonus:
+
+4. Write a function that wraps "/author/{author_id}"
+
+- since there is no paginations, things become quite easy
+
+```{r}
+author_details <- function(author_id, fields = "authorId,externalIds,url,name,affiliations,homepage,paperCount,citationCount,hIndex") {
+  author_details <- request("https://api.semanticscholar.org") |> 
+    req_url_path("/graph/v1/author/") |> 
+    req_url_path_append(author_id) |> 
+    req_url_query(
+      fields = fields
+    ) |> 
+    req_perform() |> 
+    resp_body_json()
+  
+  # very quick and dirty parsing
+  author_details |> 
+    map(function(x) {
+      # replace NULL with NA
+      if (is.null(x)) {
+        return(NA)
+      }
+      # nest lists, so they can go into tibble
+      if (is.list(x)) {
+        return(list(x))
+      }
+      return(x)
+    }) |> # <- removes NULL values
+    as_tibble()
+}
+```
+
+
+```{r}
+author_details("47731828")
+```
 
