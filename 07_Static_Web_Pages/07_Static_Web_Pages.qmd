@@ -267,7 +267,7 @@ links <- paste0(
   "https://www.thomann.co.uk/beyerdynamic_dt770_pro80_ohm_reviews.htm", 
   "?page=", 
   pages,
-  "&order=&page=2&rating=0"
+  "&order=&rating=0"
 )
 links
 ```
@@ -506,7 +506,7 @@ datetime <- pluck(data, "datePublished") |>
 headline <- pluck(data, "headline")
 
 # author
-author <- pluck(data, "name")
+author <- pluck(data, "author", "name")
 ```
 
 The only thing missing from this data is the article itself...

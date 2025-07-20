@@ -1060,7 +1060,7 @@ adam_search
 
 ```{r}
 find_scholar <- function(name, 
-                         fields = "name,papers.title,papers.title,papers.year,papers.fieldsOfStudy,papers.authors",
+                         fields = "name,papers.title,papers.year,papers.fieldsOfStudy,papers.authors",
                          limit = 100) {
   
   # make initial request
