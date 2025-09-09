@@ -44,11 +44,11 @@ But you can do this after the first day (when we discuss how you work with GitHu
 
 ``` r
 if (!requireNamespace("rlang", quietly = TRUE)) install.packages("rlang", dependencies = TRUE)
-rlang::check_installed("attachment")
 rlang::check_installed("remotes")
-# install some experimental packages
-if (!rlang::is_installed("paperboy")) remotes::install_github("JBGruber/paperboy")
-if (!rlang::is_installed("playwrightr")) remotes::install_github("JBGruber/playwrightr")
-if (!rlang::is_installed("amcat4r")) remotes::install_github("ccs-amsterdam/amcat4r")
-rlang::check_installed(attachment::att_from_qmds(path = ".", recursive = TRUE))
+if (!requireNamespace("jbgtemplates", quietly = TRUE)) remotes::install_github("JBGruber/jbgtemplates")
+jbgtemplates::install_deps(gh_packages = c(
+  "JBGruber/paperboy",
+  "JBGruber/playwrightr",
+  "ccs-amsterdam/amcat4r"
+))
 ```
