@@ -1,0 +1,30 @@
+project:
+  type: website
+  output-dir: docs
+  render:
+    - index.qmd
+    - "0*_*/*.qmd"
+    - 10_Conclusion/10_Conclusion.qmd
+
+website:
+  title: "Introduction to Web Scraping and Data Management for Social Scientists"
+  description: "Essex Summer School in Social Science Data Analysis 2026 - Dr Johannes B. Gruber"
+  navbar:
+    title: "ESS: Web Scraping & Data Management"
+    left:
+      - text: "Home"
+        file: index.qmd
+    right:
+      - icon: github
+        href: https://github.com/JBGruber/ess-web-scraping-data-management
+        aria-label: GitHub
+
+execute:
+  freeze: auto
+
+format:
+  html:
+    theme: cosmo
+    toc: true
+    code-copy: true
+    code-overflow: wrap

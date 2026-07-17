@@ -39,7 +39,8 @@ e5277ed915dac5918289e064ee7b9007.mp4
 10_Conclusion/media/ai_scraper.mkv
 10_Conclusion/ESS_exam.qmd
 
-# quarto website build artifacts
-computational-social-science-r/
+# GitHub Pages / quarto website
 /_freeze/
 /.quarto/
+
+**/*.quarto_ipynb
