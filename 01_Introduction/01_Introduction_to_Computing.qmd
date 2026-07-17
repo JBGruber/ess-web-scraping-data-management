@@ -2,7 +2,7 @@
 title: "Session 1: Introduction"
 subtitle: "ESS: Introduction to Web Scraping and Data Management for Social Scientists"
 author: "Johannes B. Gruber"
-date: 2025-07-07
+date: 2026-07-20
 from: markdown+emoji
 format:
   revealjs:
@@ -30,20 +30,20 @@ highlight-style: nord
 #| message: false
 library(tinytable)
 tibble::tribble(
-  ~Day, ~Session,
-  1,  "Introduction",
-  2,  "Data Structures and Wrangling",
-  3,  "Working with Files",
-  4,  "Linking and joining data & SQL",
-  5,  "Scaling, Reporting and Database Software",
-  6,  "Introduction to the Web",
-  7,  "Static Web Pages",
-  8,  "Application Programming Interface (APIs) ",
-  9,  "Interactive Web Pages",
-  10, "Building a Reproducible Research Project",
-) |> 
-  tt() |> 
-  style_tt(fontsize = 0.6) |> 
+  ~Day , ~Session                                    ,
+     1 , "Introduction"                              ,
+     2 , "Data Structures and Wrangling"             ,
+     3 , "Working with Files"                        ,
+     4 , "Linking and joining data & SQL"            ,
+     5 , "Scaling, Reporting and Database Software"  ,
+     6 , "Introduction to the Web"                   ,
+     7 , "Static Web Pages"                          ,
+     8 , "Application Programming Interface (APIs) " ,
+     9 , "Interactive Web Pages"                     ,
+    10 , "Building a Reproducible Research Project"  ,
+) |>
+  tt() |>
+  style_tt(fontsize = 0.6) |>
   style_tt(i = 1, background = "#FDE000")
 ```
 
@@ -205,6 +205,11 @@ See the qmd file in each session folder
 2. Open the file `readme.qmd` from the file explorer of your IDE
 3. Execute the final code Chunk to install all packages we will need for this course
 
+# Using AI in this course
+
+
+
+
 # `R` refresher
 ## Packages
 
@@ -230,7 +235,7 @@ Less often used, you can also do this with `library`:
 ```{r}
 #| eval: false
 library("dplyr", include.only = c("select", "mutate"))
-mutate(iris, sepal_length = Sepal.Length * 10) |> 
+mutate(iris, sepal_length = Sepal.Length * 10) |>
   select(sepal_length)
 ```
 
@@ -238,29 +243,15 @@ mutate(iris, sepal_length = Sepal.Length * 10) |>
 
 - Central repository for `R` packages
 - Rigorous policies and testing
-- Currently more than 22k packages (July 2025)
+- Currently more than 24k packages (July 2026)
 
 ```{r}
 #| echo: false
 #| cache: true
 library(rvest)
-# archive_links <- read_html("https://cran.r-project.org/src/contrib/Archive/") |>
-#   html_elements("a") |> 
-#   html_text2() |> 
-#   stringr::str_subset("/$")
-# 
-# get_first <- function(a) {
-#   x <- paste0("https://cran.r-project.org/src/contrib/Archive/", a) |> 
-#     read_html() |> 
-#     html_table() |> 
-#     purrr::pluck(1) |> 
-#     dplyr::select(Name, "Last modified")
-#   x |> 
-#     dplyr::mutate(mod = st("Last modified", ))
-# }  
-
-    
-current <- read_html("https://cran.r-project.org/web/packages/available_packages_by_date.html") |> 
+current <- read_html(
+  "https://cran.r-project.org/web/packages/available_packages_by_date.html"
+) |>
   html_table()
 
 current |>
@@ -270,10 +261,17 @@ current |>
   dplyr::mutate(n = cumsum(n)) |>
   ggplot2::ggplot(ggplot2::aes(x = date, y = n)) +
   ggplot2::geom_line(linewidth = 2) +
-  ggplot2::scale_x_date(date_breaks = "2 year", date_labels = "%Y", 
-                        limits = as.Date(c("1997-01-01", "2026-01-01"))) +
-  ggplot2::labs(x = NULL, y = NULL, title = "Number of R packages on CRAN*", 
-                caption = "*Archived packages were ignored") +
+  ggplot2::scale_x_date(
+    date_breaks = "2 year",
+    date_labels = "%Y",
+    limits = as.Date(c("2011-01-01", "2026-01-01"))
+  ) +
+  ggplot2::labs(
+    x = NULL,
+    y = NULL,
+    title = "Number of R packages on CRAN*",
+    caption = "*Archived packages were ignored"
+  ) +
   ggplot2::theme_minimal()
 ```
 
@@ -321,7 +319,7 @@ All help files in `R` follow the same structure and principle (although not all 
 ```{r}
 #| eval: false
 install_github("JBGruber/paperboy") # Same as
-install_github(repo = "JBGruber/paperboy",  ref = "HEAD") # Same as
+install_github(repo = "JBGruber/paperboy", ref = "HEAD") # Same as
 install_github(ref = "HEAD", repo = "JBGruber/paperboy") # Not(!) same as
 install_github("HEAD", "JBGruber/paperboy")
 ```
@@ -421,7 +419,7 @@ Apply function to each element of a vector/list:
 ```{r}
 foo <- function(i, silent = FALSE) {
   if (!silent) {
-    message(i) 
+    message(i)
   }
   return(i)
 }
@@ -436,7 +434,7 @@ Also apply function to each element of a vector/list, but coerce types:
 ```{r}
 foo <- function(i, silent = FALSE) {
   if (!silent) {
-    message(i) 
+    message(i)
   }
   return(i)
 }
@@ -503,7 +501,14 @@ summary(model)
 *base* also has a plotting system:
 
 ```{r}
-plot(df$mpg, df$hp, col = "blue", ylab = "horse power", xlab = "miles per gallon", main = "Simple linear regression")
+plot(
+  df$mpg,
+  df$hp,
+  col = "blue",
+  ylab = "horse power",
+  xlab = "miles per gallon",
+  main = "Simple linear regression"
+)
 abline(model, col = "red")
 text(30, 300, "We can add some text", col = "red")
 ```
@@ -523,7 +528,12 @@ text(30, 300, "We can add some text", col = "red")
 - Makes for much more readable code:
 
 ```{r}
-transform(aggregate(. ~ cyl, data = subset(mtcars, hp > 100), FUN = function(x) round(mean(x, 2))), kpl = mpg * 0.4251)
+transform(
+  aggregate(. ~ cyl, data = subset(mtcars, hp > 100), FUN = function(x) {
+    round(mean(x, 2))
+  }),
+  kpl = mpg * 0.4251
+)
 ```
 
 You Can make this more readable by createing intermediate objects:
@@ -537,8 +547,8 @@ transform(data2, kpl = mpg * 0.4251) # convert miles per gallon to kilometer per
 Or you use the pipe:
 
 ```{r}
-subset(mtcars, hp > 100) |> 
-  aggregate(. ~ cyl, data = _, FUN = function(x) round(mean(x, 2))) |> 
+subset(mtcars, hp > 100) |>
+  aggregate(. ~ cyl, data = _, FUN = function(x) round(mean(x, 2))) |>
   transform(kpl = mpg * 0.4251)
 ```
 
@@ -546,10 +556,12 @@ subset(mtcars, hp > 100) |>
 
 ```{r}
 library(tidyverse)
-mtcars |> 
-  filter(hp > 100) |> 
-  group_by(cyl) |> 
-  summarise(across(.cols = everything(), .fns = function(x) x |> mean() |> round(2))) |> 
+mtcars |>
+  filter(hp > 100) |>
+  group_by(cyl) |>
+  summarise(across(.cols = everything(), .fns = function(x) {
+    x |> mean() |> round(2)
+  })) |>
   mutate(kpl = mpg * 0.4251)
 ```
 
@@ -572,10 +584,14 @@ Note: You can interject the `View()` command at any line in a complicated pipeli
 ```{r}
 file_link <- "https://raw.githubusercontent.com/shawn-y-sun/Customer_Analytics_Retail/main/purchase%20data.csv"
 df <- read.csv(file_link)
-filtered_df <- df[df$Age >= 50,]
-aggregated_df <- aggregate(filtered_df$Quantity, by = list(filtered_df$Day), FUN = sum)
+filtered_df <- df[df$Age >= 50, ]
+aggregated_df <- aggregate(
+  filtered_df$Quantity,
+  by = list(filtered_df$Day),
+  FUN = sum
+)
 names(aggregated_df) <- c("day", "total_quantity")
-aggregated_df[order(aggregated_df$total_quantity, decreasing = TRUE)[1:5],]
+aggregated_df[order(aggregated_df$total_quantity, decreasing = TRUE)[1:5], ]
 ```
 
 5. How could the code above be improved if you only want the final result, the code should be readable and you care about memory usage?
@@ -605,7 +621,7 @@ This is where *literate programming* has a lot of advantages:
 Quarto (and its predecessor R Markdown) were designed to make it easy for you to make the most of these advantages.
 We have already been using these tools throughout the workshop and I hope this made you more familiar with them.
 
-## Exercises 4
+## Exercises 3
 
 1. Use the function `report_template()` from my package [jbgtemplates](https://github.com/JBGruber/jbgtemplates) to start a new report
 2. Add some simple analysis in it and render
@@ -624,7 +640,7 @@ This makes RStudio slow and can lead to unexpected behaviour, even when you dele
 
 ![](media/house.jpeg)
 
-## Exercises
+## Exercises 4
 
 1. Change that setting NOW and look for the `.Rdata` in your project and home directory.
 
@@ -663,27 +679,6 @@ The abstract should include:
 
 Deadline: Tuesday midnight
 
-# Reminder: Social Programme
-
-```{r}
-#| echo: false
-tibble::tribble(
-  ~DATE,               ~Event,                                  ~Time,           ~Venue,
-  "MONDAY 7 July",     "Meet and Greet - in person",            "19:00 start",   "SU Bar",
-  "TUESDAY 8 July",    "Staff briefing - hybrid",               "18:30 start",   "NTC",
-  "TUESDAY 8 July",    "Climbing (participants)",               "18:30 start",   "Sports Centre",
-  "WEDNESDAY 9 July",  "Harold Clarke Speaker Series - hybrid", "18:45 - 20.00", "EBS",
-  "THURSDAY 10 July",  "Sports Night",                          "18:30 - 20:30", "Sports Centre",
-  "FRIDAY 11 July",    "Wivenhoe Pub Run",                      "18:30 start",   "Wivenhoe pubs",
-  "MONDAY 14 JULY",    "SU bar Quiz",                           "19:00 start",   "SU Bar",
-  "TUESDAY 15 JULY",   "Sports Night",                          "18:30 - 20:30", "Sports Centre",
-  "WEDNESDAY 16 JULY", "Harold Clarke Speaker Series - hybrid", "18:30",         "EBS",
-  "THURSDAY 17 JULY",  "Farewell Party Karaoke",                "20:30 - 23:30", "SU Bar"
-) |> 
-  tt() |> 
-  style_tt(fontsize = 0.6) |> 
-  style_tt(i = 1, background = "#FDE000")
-```
 
 # Wrap Up
 

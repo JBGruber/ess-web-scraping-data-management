@@ -2,7 +2,7 @@
 title: "Session 5:	Scaling, Reporting and Database Software"
 subtitle: "Introduction to Web Scraping and Data Management for Social Scientists"
 author: "Johannes B. Gruber"
-date: 2025-07-11
+date: 2026-07-24
 format:
   revealjs:
     smaller: true
@@ -32,20 +32,20 @@ highlight-style: nord
 library(tinytable)
 library(tidyverse)
 tibble::tribble(
-  ~Day, ~Session,
-  1,  "Introduction",
-  2,  "Data Structures and Wrangling",
-  3,  "Working with Files",
-  4,  "Linking and joining data & SQL",
-  5,  "Scaling, Reporting and Database Software",
-  6,  "Introduction to the Web",
-  7,  "Static Web Pages",
-  8,  "Application Programming Interface (APIs) ",
-  9,  "Interactive Web Pages",
-  10, "Building a Reproducible Research Project",
-) |> 
-  tt() |> 
-  style_tt() |> 
+  ~Day , ~Session                                    ,
+     1 , "Introduction"                              ,
+     2 , "Data Structures and Wrangling"             ,
+     3 , "Working with Files"                        ,
+     4 , "Linking and joining data & SQL"            ,
+     5 , "Scaling, Reporting and Database Software"  ,
+     6 , "Introduction to the Web"                   ,
+     7 , "Static Web Pages"                          ,
+     8 , "Application Programming Interface (APIs) " ,
+     9 , "Interactive Web Pages"                     ,
+    10 , "Building a Reproducible Research Project"  ,
+) |>
+  tt() |>
+  style_tt() |>
   style_tt(i = 5, background = "#FDE000")
 ```
 </center>
@@ -179,7 +179,7 @@ library(RPostgres)
 db <- dbConnect(
   Postgres(),
   dbname = "dbintro",
-  host = "localhost",  # Make sure to specify the host
+  host = "localhost", # Make sure to specify the host
   port = 5432L,
   user = "postgres",
   password = "pgpasswd"
@@ -193,8 +193,8 @@ tables <- dbListTables(db)
 for (t in tables) {
   dbExecute(db, paste("DROP TABLE", t))
 }
-user <- dbGetQuery(db, "SELECT usename FROM pg_user") |> 
-  pull(usename) |> 
+user <- dbGetQuery(db, "SELECT usename FROM pg_user") |>
+  pull(usename) |>
   setdiff("postgres")
 for (u in user) {
   dbExecute(db, paste("DROP USER", u))
@@ -257,12 +257,14 @@ try(dbExecute(db, "DROP TABLE df2"))
 
 
 ```{r}
-dbExecute(db,
-          "CREATE TABLE df1 (
+dbExecute(
+  db,
+  "CREATE TABLE df1 (
               id SERIAL PRIMARY KEY,
               capital_letters VARCHAR(1) CHECK (capital_letters ~ '^[A-Z]$'), 
               my_date DATE CHECK (my_date > '2000-01-01')
-          )")
+          )"
+)
 ```
 
 ## Working with `PostgreSQL` and `dbplyr`: the same as `SQLite`
@@ -271,15 +273,14 @@ I copied this from the last session, and it works just as well:
 
 ```{r}
 #| output-location: column
-tbl(db, "flights") |> 
-  inner_join(tbl(db, "planes"), by = "tailnum", suffix = c("", "_plane")) |> 
-  mutate(plane_age = year - year_plane) |> 
-  select(arr_delay, plane_age) |> 
-  filter(!is.na(arr_delay),
-         !is.na(plane_age)) |> 
-  collect() |> 
-  group_by(plane_age) |> 
-  summarise(avg_delay = mean(arr_delay)) |> 
+tbl(db, "flights") |>
+  inner_join(tbl(db, "planes"), by = "tailnum", suffix = c("", "_plane")) |>
+  mutate(plane_age = year - year_plane) |>
+  select(arr_delay, plane_age) |>
+  filter(!is.na(arr_delay), !is.na(plane_age)) |>
+  collect() |>
+  group_by(plane_age) |>
+  summarise(avg_delay = mean(arr_delay)) |>
   ggplot(aes(x = plane_age, y = avg_delay)) +
   geom_point() +
   geom_smooth(method = "lm", formula = y ~ x)
@@ -329,7 +330,7 @@ Let's log in as analyser:
 db_analyser <- dbConnect(
   Postgres(),
   dbname = "dbintro",
-  host = "localhost",  # Make sure to specify the host
+  host = "localhost", # Make sure to specify the host
   port = 5432L,
   user = "analyser",
   password = "supersecret"
@@ -381,9 +382,11 @@ But we still can't make changes:
 
 ```{r}
 #| error: true
-dbExecute(db_analyser,
-          "INSERT INTO flights (year)
-            VALUES (2013)")
+dbExecute(
+  db_analyser,
+  "INSERT INTO flights (year)
+            VALUES (2013)"
+)
 ```
 
 :::{.fragment}
@@ -391,9 +394,11 @@ We can add data to the tables that we were granted access to though:
 
 ```{r}
 #| error: true
-dbExecute(db_analyser,
-          "INSERT INTO df1
-            VALUES (1, 'A', '2025-07-11')")
+dbExecute(
+  db_analyser,
+  "INSERT INTO df1
+            VALUES (1, 'A', '2025-07-11')"
+)
 ```
 :::
 
@@ -405,14 +410,16 @@ Logging in as the gatherer, we can add new cases:
 db_gatherer <- dbConnect(
   Postgres(),
   dbname = "dbintro",
-  host = "localhost",  # Make sure to specify the host
+  host = "localhost", # Make sure to specify the host
   port = 5432L,
   user = "gatherer",
   password = "supersecret"
 )
-dbExecute(db_gatherer,
-          "INSERT INTO flights (year)
-            VALUES (2013)")
+dbExecute(
+  db_gatherer,
+  "INSERT INTO flights (year)
+            VALUES (2013)"
+)
 ```
 
 ## User-based authentication: roles (reader)
@@ -423,7 +430,7 @@ Logging in as the reader, we can can't change anything, but can only read specif
 db_reader <- dbConnect(
   Postgres(),
   dbname = "dbintro",
-  host = "localhost",  # Make sure to specify the host
+  host = "localhost", # Make sure to specify the host
   port = 5432L,
   user = "reader",
   password = "supersecret"
@@ -474,7 +481,7 @@ Same as with `PostgreSQL`, we can use Docker.
 
 ```{r}
 curl::curl_download(
-  url = "https://raw.githubusercontent.com/ccs-amsterdam/amcat4docker/main/docker-compose.yml", 
+  url = "https://raw.githubusercontent.com/ccs-amsterdam/amcat4docker/main/docker-compose.yml",
   destfile = "data/docker-compose-amcat.yml"
 )
 ```
@@ -580,38 +587,47 @@ Load data from @ParlSpeech into AmCAT:
 
 ```{r}
 if (!"houseofcommons" %in% list_indexes()$id) {
-  corp_hoc_df <- readRDS("../03_Working_with_Files/data/Corp_HouseOfCommons_V2.rds") |> 
-    mutate(date = as.Date(date)) |> 
-    rename(title = agenda) |> 
-    filter(!is.na(date)) |> 
-    replace_na(list(title = "", text = "")) |> 
+  corp_hoc_df <- readRDS(
+    "../03_Working_with_Files/data/Corp_HouseOfCommons_V2.rds"
+  ) |>
+    mutate(date = as.Date(date)) |>
+    rename(title = agenda) |>
+    filter(!is.na(date)) |>
+    replace_na(list(title = "", text = "")) |>
     select(-party.facts.id)
-  
+
   # speed this up by only using a sample
-  # corp_hoc_df <- corp_hoc_df |> 
+  # corp_hoc_df <- corp_hoc_df |>
   #   sample_n(size = 500)
-  
+
   # define types of fields
-  fields = list(
+  fields <- list(
     date = "date",
     text = "text",
-    title = "text",        
-    speechnumber = "integer",   
-    speaker = "keyword",       
+    title = "text",
+    speechnumber = "integer",
+    speaker = "keyword",
     party = "keyword",
-    chair = "boolean",      
-    terms = "integer",          
-    parliament = "keyword", 
+    chair = "boolean",
+    terms = "integer",
+    parliament = "keyword",
     iso3country = "keyword"
   )
   # create the index
-  create_index(index = "houseofcommons", 
-               name = "House Of Commons", 
-               description = "HouseOfCommons", 
-               create_fields = fields)
-  
+  create_index(
+    index = "houseofcommons",
+    name = "House Of Commons",
+    description = "HouseOfCommons",
+    create_fields = fields
+  )
+
   # upload the data
-  upload_documents("houseofcommons", documents = corp_hoc_df, chunk_size = 1000, verbose = TRUE) 
+  upload_documents(
+    "houseofcommons",
+    documents = corp_hoc_df,
+    chunk_size = 1000,
+    verbose = TRUE
+  )
 }
 ```
 
@@ -657,9 +673,10 @@ https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-query-
 - Great for larger than memory data sets
 :::
 ::: {.column width="35%"}
-<iframe src="https://giphy.com/embed/o0vwzuFwCGAFO" width="480" height="480" frameBorder="0" class="giphy-embed" allowFullScreen></iframe><p><a href="https://giphy.com/gifs/cat-hacker-webs-o0vwzuFwCGAFO"></a></p>
+<iframe src="https://giphy.com/embed/P8ef3Dkynk0xLx1h1T" width="480" height="480" frameBorder="0" class="giphy-embed" allowFullScreen></iframe><p><a href="https://giphy.com/gifs/script-kiddie-kitty-P8ef3Dkynk0xLx1h1T"></a></p>
 :::
 :::: 
+
 
 ## AmCAT API
 
@@ -669,11 +686,12 @@ query_documents(index = "houseofcommons", queries = '"European Union" OR EU')
 ```
 
 ```{r}
-query_aggregate(index = "houseofcommons",
-                filters = list(party = c("Con", "Lab"),
-                               date = list(gte = "2000-01-01")),
-                axes = list(list(field="party"), list(field="date", interval="year")),
-                queries = '"European Union" OR EU')
+query_aggregate(
+  index = "houseofcommons",
+  filters = list(party = c("Con", "Lab"), date = list(gte = "2000-01-01")),
+  axes = list(list(field = "party"), list(field = "date", interval = "year")),
+  queries = '"European Union" OR EU'
+)
 ```
 
 
@@ -753,15 +771,15 @@ summary(res, relative = TRUE)
 
 ```{r}
 in_memory <- function() {
-  nycflights13::flights |> 
-    inner_join(nycflights13::weather, by = c("time_hour", "origin")) |> 
+  nycflights13::flights |>
+    inner_join(nycflights13::weather, by = c("time_hour", "origin")) |>
     filter(time_hour < "2013-03-01")
 }
 
 in_db <- function() {
-  tbl(db, "flights") |> 
-    inner_join(tbl(db, "weather"), by = c("time_hour", "origin")) |> 
-    filter(time_hour < "2013-03-01") |> 
+  tbl(db, "flights") |>
+    inner_join(tbl(db, "weather"), by = c("time_hour", "origin")) |>
+    filter(time_hour < "2013-03-01") |>
     collect()
 }
 ```
@@ -769,7 +787,12 @@ in_db <- function() {
 2. run `mark`
 
 ```{r}
-res <- mark(in_memory = in_memory, in_db = in_db, check = FALSE, iterations = 15)
+res <- mark(
+  in_memory = in_memory,
+  in_db = in_db,
+  check = FALSE,
+  iterations = 15
+)
 ```
 
 3. check summary
@@ -795,22 +818,22 @@ dbExecute(db, "CREATE INDEX ON weather_w_index (time_hour)")
 
 ```{r}
 in_memory <- function() {
-  nycflights13::flights |> 
-    inner_join(nycflights13::weather, by = c("time_hour", "origin")) |> 
+  nycflights13::flights |>
+    inner_join(nycflights13::weather, by = c("time_hour", "origin")) |>
     filter(time_hour < "2013-03-01")
 }
 
 in_db <- function() {
-  tbl(db, "flights") |> 
-    inner_join(tbl(db, "weather"), by = c("time_hour", "origin")) |> 
-    filter(time_hour < "2013-03-01") |> 
+  tbl(db, "flights") |>
+    inner_join(tbl(db, "weather"), by = c("time_hour", "origin")) |>
+    filter(time_hour < "2013-03-01") |>
     collect()
 }
 
 in_db_w_index <- function() {
-  tbl(db, "flights_w_index") |> 
-    inner_join(tbl(db, "weather_w_index"), by = c("time_hour", "origin")) |> 
-    filter(time_hour < "2013-03-01") |> 
+  tbl(db, "flights_w_index") |>
+    inner_join(tbl(db, "weather_w_index"), by = c("time_hour", "origin")) |>
+    filter(time_hour < "2013-03-01") |>
     collect()
 }
 ```
@@ -819,10 +842,10 @@ in_db_w_index <- function() {
 
 ```{r}
 res <- mark(
-  in_memory = in_memory, 
-  in_db = in_db, 
-  in_db_w_index = in_db_w_index, 
-  check = FALSE, 
+  in_memory = in_memory,
+  in_db = in_db,
+  in_db_w_index = in_db_w_index,
+  check = FALSE,
   iterations = 25
 )
 ```
@@ -862,27 +885,6 @@ dbDisconnect(db_reader)
 ```
 
 - This closes the connection, discards all pending work, and frees resources
-
-# Reminder: Social Programme
-
-```{r}
-#| echo: false
-tibble::tribble(
-  ~DATE,               ~Event,                                  ~Time,           ~Venue,
-  "MONDAY 7 July",     "Meet and Greet - in person",            "19:00 start",   "SU Bar",
-  "TUESDAY 8 July",    "Climbing",               "18:30 start",   "Sports Centre",
-  "WEDNESDAY 9 July",  "Harold Clarke Speaker Series - hybrid", "18:45 - 20.00", "EBS",
-  "THURSDAY 10 July",  "Sports Night",                          "18:30 - 20:30", "Sports Centre",
-  "FRIDAY 11 July",    "Wivenhoe Pub Run",                      "18:30 start",   "Wivenhoe pubs",
-  "MONDAY 14 JULY",    "SU bar Quiz",                           "19:00 start",   "SU Bar",
-  "TUESDAY 15 JULY",   "Sports Night",                          "18:30 - 20:30", "Sports Centre",
-  "WEDNESDAY 16 JULY", "Harold Clarke Speaker Series - hybrid", "18:30",         "EBS",
-  "THURSDAY 17 JULY",  "Farewell Party Karaoke",                "20:30 - 23:30", "SU Bar"
-) |> 
-  tt() |> 
-  style_tt(fontsize = 0.6) |> 
-  style_tt(i = 5, background = "#FDE000")
-```
 
 
 # Wrap Up

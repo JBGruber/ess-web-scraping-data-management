@@ -2,7 +2,7 @@
 title: "Session 2:	Data Structures and Wrangling"
 subtitle: "ESS: Introduction to Web Scraping and Data Management for Social Scientists"
 author: "Johannes B. Gruber"
-date: 2025-07-08
+date: 2026-07-21
 from: markdown+emoji
 format:
   revealjs:
@@ -31,20 +31,20 @@ highlight-style: nord
 #| message: false
 library(tinytable)
 tibble::tribble(
-  ~Day, ~Session,
-  1,  "Introduction",
-  2,  "Data Structures and Wrangling",
-  3,  "Working with Files",
-  4,  "Linking and joining data & SQL",
-  5,  "Scaling, Reporting and Database Software",
-  6,  "Introduction to the Web",
-  7,  "Static Web Pages",
-  8,  "Application Programming Interface (APIs) ",
-  9,  "Interactive Web Pages",
-  10, "Building a Reproducible Research Project",
-) |> 
-  tt() |> 
-  style_tt() |> 
+  ~Day , ~Session                                    ,
+     1 , "Introduction"                              ,
+     2 , "Data Structures and Wrangling"             ,
+     3 , "Working with Files"                        ,
+     4 , "Linking and joining data & SQL"            ,
+     5 , "Scaling, Reporting and Database Software"  ,
+     6 , "Introduction to the Web"                   ,
+     7 , "Static Web Pages"                          ,
+     8 , "Application Programming Interface (APIs) " ,
+     9 , "Interactive Web Pages"                     ,
+    10 , "Building a Reproducible Research Project"  ,
+) |>
+  tt() |>
+  style_tt() |>
   style_tt(i = 2, background = "#FDE000")
 ```
 </center>
@@ -212,11 +212,11 @@ ex1 <- "United Kingdom is a country with 67 million inhabitants, its capital is 
 :::{.fragment}
 ```{r}
 library(stringr)
-country     <- str_extract(ex1, "^.+?(?= is)")
+country <- str_extract(ex1, "^.+?(?= is)")
 inhabitants <- str_extract(ex1, "\\d+?(?= million)")
-capital     <- str_extract(ex1, "(?<=capital is ).+?(?=\\.)")
+capital <- str_extract(ex1, "(?<=capital is ).+?(?=\\.)")
 data.frame(
-  country,    
+  country,
   inhabitants,
   capital
 )
@@ -358,15 +358,15 @@ Vatican City is a country with 825 inhabitants, its capital is Vatican City, and
 :::{.fragment}
 ```{r}
 library(tidyverse)
-tibble(input = data_input) |> 
-  separate_longer_delim(input, "\n") |> 
-  filter(input != "") |> 
+tibble(input = data_input) |>
+  separate_longer_delim(input, "\n") |>
+  filter(input != "") |>
   mutate(
-    country     = str_extract(input, "^.+?(?= is)"),
+    country = str_extract(input, "^.+?(?= is)"),
     inhabitants = str_extract(input, "\\d+?(?= million)"),
-    capital     = str_extract(input, "(?<=capital is ).+?(?=\\,)"),
-    founded     = str_extract(input, "\\d{1,2} [A-z]+ \\d{3,4}")
-  ) |> 
+    capital = str_extract(input, "(?<=capital is ).+?(?=\\,)"),
+    founded = str_extract(input, "\\d{1,2} [A-z]+ \\d{3,4}")
+  ) |>
   glimpse()
 ```
 :::
@@ -379,22 +379,25 @@ What is wrong with this?
 ## Longer Example (fixed)
 
 ```{r}
-country_df <- tibble(input = data_input) |> 
-  separate_longer_delim(input, "\n") |> 
-  filter(input != "") |> 
+country_df <- tibble(input = data_input) |>
+  separate_longer_delim(input, "\n") |>
+  filter(input != "") |>
   mutate(
-    country     = str_extract(input, "^.+?(?= is)"),
-    inhabitants = str_extract(input, "\\d+? million|\\d+\\.\\d+? million|[0-9,]+?(?= inhabitants)"),
-    capital     = str_extract(input, "(?<=capital is ).+?(?=\\,)"),
-    founded     = str_extract(input, "\\d{1,2} [A-z]+ \\d{3,4}")
-  ) |> 
+    country = str_extract(input, "^.+?(?= is)"),
+    inhabitants = str_extract(
+      input,
+      "\\d+? million|\\d+\\.\\d+? million|[0-9,]+?(?= inhabitants)"
+    ),
+    capital = str_extract(input, "(?<=capital is ).+?(?=\\,)"),
+    founded = str_extract(input, "\\d{1,2} [A-z]+ \\d{3,4}")
+  ) |>
   mutate(
     inhabitants = str_replace(inhabitants, "\\.(\\d) million", "\\100000"),
     inhabitants = str_replace(inhabitants, " million", "000000"),
     inhabitants = str_remove(inhabitants, ","),
     inhabitants = as.integer(inhabitants),
-    founded     = lubridate::dmy(founded)
-  ) |> 
+    founded = lubridate::dmy(founded)
+  ) |>
   select(-input)
 glimpse(country_df)
 ```
@@ -457,25 +460,33 @@ country_df
 ::: {.column width="50%"}
 :::{.incremental}
 ```{r}
-country_df |> 
-  count(founded = year(founded)) |> 
-  arrange(founded) |> 
-  mutate(countries = cumsum(n)) |> 
+country_df |>
+  count(founded = year(founded)) |>
+  arrange(founded) |>
+  mutate(countries = cumsum(n)) |>
   ggplot(aes(x = founded, y = countries)) +
   geom_line() +
-  labs(x = NULL, y = NULL, title = "Number of countries in Europe over time*",
-       caption = "*Dissolved countries were ignored")
+  labs(
+    x = NULL,
+    y = NULL,
+    title = "Number of countries in Europe over time*",
+    caption = "*Dissolved countries were ignored"
+  )
 ```
 :::
 :::
 ::: {.column width="50%" }
 ```{r}
-country_df |> 
-  mutate(country = fct_reorder(country, inhabitants)) |> 
+country_df |>
+  mutate(country = fct_reorder(country, inhabitants)) |>
   ggplot(aes(x = inhabitants, y = country)) +
   geom_col() +
-  labs(x = NULL, y = NULL, title = "Largest countries in Europe*",
-       caption = "*By inhabitants")
+  labs(
+    x = NULL,
+    y = NULL,
+    title = "Largest countries in Europe*",
+    caption = "*By inhabitants"
+  )
 ```
 :::
 ::::
@@ -485,31 +496,31 @@ country_df |>
 Say you want the inhabitants for row 45 (United Kingdom)
 
 ```{r}
-country_df |> 
-  slice(45) |> 
+country_df |>
+  slice(45) |>
   pull(inhabitants)
 ```
 
 Or better:
 
 ```{r}
-country_df |> 
-  filter(country == "United Kingdom") |> 
+country_df |>
+  filter(country == "United Kingdom") |>
   pull(inhabitants)
 ```
 
 Or maybe you want the entire row:
 
 ```{r}
-country_df |> 
-  filter(country == "United Kingdom") 
+country_df |>
+  filter(country == "United Kingdom")
 ```
 
 Or all rows of countries older than 1300:
 
 ```{r}
-country_df |> 
-  filter(founded < "1300-01-01") 
+country_df |>
+  filter(founded < "1300-01-01")
 ```
 
 ## Updating Data
@@ -517,13 +528,15 @@ country_df |>
 Let's say you don't like that the founding of France is set to the founding of the French Republic (22 September 1792) and you want to use the date of the Treaty of Verdun (10 August 843) instead:
 
 ```{r}
-France <- tibble(country = "France", 
-                 inhabitants = 67000000L, 
-                 capital = "Paris", 
-                 founded = as.Date("843-08-10"))
-country_df |> 
-  rows_update(France, by = "country") |> 
-  filter(founded < "1300-01-01") 
+France <- tibble(
+  country = "France",
+  inhabitants = 67000000L,
+  capital = "Paris",
+  founded = as.Date("843-08-10")
+)
+country_df |>
+  rows_update(France, by = "country") |>
+  filter(founded < "1300-01-01")
 ```
 
 ## Adding Data
@@ -531,13 +544,15 @@ country_df |>
 What if a new country was founded in Europe today?
 
 ```{r}
-essland <- tibble(country = "Essex Summer School", 
-                  inhabitants = 38 * 15, 
-                  capital = "Colchester Campus", 
-                  founded = Sys.Date())
-country_df |> 
-  add_case(essland) |> 
-  arrange(desc(founded)) |> 
+essland <- tibble(
+  country = "Essex Summer School",
+  inhabitants = 38 * 15,
+  capital = "Colchester Campus",
+  founded = Sys.Date()
+)
+country_df |>
+  add_case(essland) |>
+  arrange(desc(founded)) |>
   head()
 ```
 
@@ -547,7 +562,7 @@ Now say you are only interested in countries with more than one million inhabita
 You can delete superfluos data with:
 
 ```{r}
-country_df_clean <- country_df |> 
+country_df_clean <- country_df |>
   filter(inhabitants >= 1000000)
 ```
 
@@ -591,7 +606,7 @@ bad_table
 Mean population across variables:
 
 ```{r}
-bad_table |> 
+bad_table |>
   summarise(
     pop_mean_1950 = mean(pop1950),
     pop_mean_1960 = mean(pop1960),
@@ -602,7 +617,7 @@ bad_table |>
 Mean population overall:
 
 ```{r}
-bad_table |> 
+bad_table |>
   summarise(
     pop_mean = mean(c(pop1950, pop1960, pop1970))
   )
@@ -655,8 +670,8 @@ Source: @weidmann_data_2023
 Mean population across variables:
 
 ```{r}
-good_table |> 
-  group_by(year) |> 
+good_table |>
+  group_by(year) |>
   summarise(
     pop_mean = mean(population)
   )
@@ -665,7 +680,7 @@ good_table |>
 Mean population overall:
 
 ```{r}
-good_table |> 
+good_table |>
   summarise(
     pop_mean = mean(population)
   )
@@ -714,7 +729,7 @@ Source: @weidmann_data_2023
 ### population-per-year information
 
 ```{r}
-good_table_population <- bad_table2 |> 
+good_table_population <- bad_table2 |>
   select(-capital)
 good_table_population
 ```
@@ -724,8 +739,8 @@ good_table_population
 ### country-level information
 
 ```{r}
-good_table_countires <- bad_table2 |> 
-  select(country, capital) |> 
+good_table_countires <- bad_table2 |>
+  select(country, capital) |>
   distinct()
 good_table_countires
 ```
@@ -746,7 +761,11 @@ good_table_countires
 ```{r}
 #| classes: fragment
 #| output-location: fragment
-analysis_datasets <- merge(good_table_population, good_table_countires, by = "country")
+analysis_datasets <- merge(
+  good_table_population,
+  good_table_countires,
+  by = "country"
+)
 analysis_datasets
 ```
 
@@ -807,12 +826,12 @@ table3
 From wide to long:
 
 ```{r}
-tidy_table <- bad_table |> 
+tidy_table <- bad_table |>
   pivot_longer(
     cols = starts_with("pop"), # define which columns this applies to
-    names_to = "year",         # name the new variable containing the column names
-    values_to = "population"   # name the new variable containing the cell values
-  ) |> 
+    names_to = "year", # name the new variable containing the column names
+    values_to = "population" # name the new variable containing the cell values
+  ) |>
   mutate(year = as.integer(str_extract(year, "\\d+")))
 ```
 
@@ -831,15 +850,15 @@ all.equal(tidy_table, good_table)
 
 ```{r}
 df <- tribble(
-  ~id,  ~bp1, ~bp2,
-   "A",  100,  120,
-   "B",  140,  115,
-   "C",  120,  125
+  ~id , ~bp1 , ~bp2 ,
+  "A" ,  100 ,  120 ,
+  "B" ,  140 ,  115 ,
+  "C" ,  120 ,  125
 )
 ```
 
 ```{r}
-df |> 
+df |>
   pivot_longer(
     cols = bp1:bp2,
     names_to = "measurement",
@@ -872,11 +891,11 @@ household
 ```
 
 ```{r}
-household |> 
+household |>
   pivot_longer(
-    cols = !family, 
-    names_to = c(".value", "child"), 
-    names_sep = "_", 
+    cols = !family,
+    names_to = c(".value", "child"),
+    names_sep = "_",
     values_drop_na = TRUE
   )
 ```
@@ -897,11 +916,11 @@ cms_patient_experience
 In this case, we need to do the opposite operations: widening data
 
 ```{r}
-good_table |> 
+good_table |>
   pivot_wider(
-    id_cols = country, 
-    names_from = year, 
-    values_from = population, 
+    id_cols = country,
+    names_from = year,
+    values_from = population,
     names_prefix = "pop"
   )
 ```
@@ -913,7 +932,7 @@ We have reconstructed bad table :sweat:
 ## `pivot_wider`: fix patient data
 
 ```{r}
-cms_patient_experience |> 
+cms_patient_experience |>
   pivot_wider(
     id_cols = starts_with("org"), # we use both columns as id just to not widen them
     names_from = measure_cd,
@@ -928,7 +947,7 @@ table3
 ```
 
 ```{r}
-table3 |> 
+table3 |>
   separate(col = rate, into = c("cases", "population"), sep = "/")
 ```
 
@@ -949,7 +968,7 @@ billboard
 
 ```{r}
 #| error: true
-table4a |>  
+table4a |>
   pivot_longer(c(1999, 2000), names_to = "year", values_to = "cases")
 ```
 
@@ -957,9 +976,9 @@ table4a |>
 
 ```{r}
 preg <- tribble(
-  ~pregnant, ~male, ~female,
-  "yes",     NA,    10,
-  "no",      20,    12
+  ~pregnant , ~male , ~female ,
+  "yes"     , NA    ,      10 ,
+  "no"      ,    20 ,      12
 )
 ```
 
@@ -1002,8 +1021,8 @@ lobstr::tree(sports_results)
 Unnesting:
 
 ```{r}
-sports_results_df <- as_tibble(sports_results) |> 
-  unnest_longer(scores) |> 
+sports_results_df <- as_tibble(sports_results) |>
+  unnest_longer(scores) |>
   unnest_longer(details)
 sports_results_df
 ```
@@ -1011,13 +1030,17 @@ sports_results_df
 We can now use our skills to tidy this up:
 
 ```{r}
-players <- sports_results_df |> 
-  pivot_wider(id_cols = c(name, age, scores_id, scores), names_from = details_id, values_from = details) |> 
+players <- sports_results_df |>
+  pivot_wider(
+    id_cols = c(name, age, scores_id, scores),
+    names_from = details_id,
+    values_from = details
+  ) |>
   select(-scores_id, -scores)
 players
 
-games <- sports_results_df |> 
-  mutate(game = str_extract(scores_id, "\\d+")) |> 
+games <- sports_results_df |>
+  mutate(game = str_extract(scores_id, "\\d+")) |>
   select(name, scores, game)
 games
 ```
@@ -1039,7 +1062,7 @@ Binding is useful when the list already has the format of a data frame:
 list(
   list(name = "Alice", age = 25),
   list(name = "John", age = 24)
-) |> 
+) |>
   bind_rows()
 ```
 
@@ -1049,7 +1072,7 @@ Or if the list is really a list of data frames:
 list(
   tibble(name = "Alice", age = 25),
   tibble(name = "John", age = 24)
-) |> 
+) |>
   bind_rows()
 ```
 
@@ -1064,14 +1087,14 @@ sports_results$details[[1]]$address
 The tidyverse has a function for this:
 
 ```{r}
-sports_results |> 
+sports_results |>
   pluck("details", 1, "address")
 ```
 
 It's main advantage is that you can define what happens if the object is not found:
 
 ```{r}
-sports_results |> 
+sports_results |>
   pluck("details", 1, "telephone", .default = NA_character_)
 ```
 
@@ -1086,7 +1109,7 @@ ess_tweets <- readRDS("data/nested_ess.rds")
 Let's try and have a look:
 
 ```{r}
-ess_tweets |> 
+ess_tweets |>
   lobstr::tree(max_length = 25)
 ```
 
@@ -1102,7 +1125,9 @@ Since we already know that the data contains the latest Tweets, we can use a fun
 ```{r}
 parse_path <- function(ix) {
   out <- as.list(ix$p)
-  out[which(ix$p == as.character(ix$pos))] <- ix$pos[ix$p == as.character(ix$pos)]
+  out[which(ix$p == as.character(ix$pos))] <- ix$pos[
+    ix$p == as.character(ix$pos)
+  ]
   gsub("list(", "purrr::pluck(DATA, ", deparse1(out), fixed = TRUE)
 }
 
@@ -1114,14 +1139,15 @@ parse_path <- function(ix) {
 #' @return an object containing the searched element with the function to extract it as a name
 #' @export
 list_search <- function(l, f) {
-  
   paths <- rrapply::rrapply(
     object = l,
     condition = f,
-    f = function(x, .xparents, .xname, .xpos) list(p = .xparents, n = .xname, pos = .xpos),
+    f = function(x, .xparents, .xname, .xpos) {
+      list(p = .xparents, n = .xname, pos = .xpos)
+    },
     how = "flatten"
   )
-  
+
   out <- purrr::map(paths, function(p) purrr::pluck(l, !!!p$pos))
   names(out) <- purrr::map_chr(paths, parse_path)
   return(out)
@@ -1130,7 +1156,12 @@ list_search <- function(l, f) {
 
 
 ```{r}
-list_search(ess_tweets, function(x) str_detect(x, "Only one week to go until all our session three courses close!"))
+list_search(ess_tweets, function(x) {
+  str_detect(
+    x,
+    "Only one week to go until all our session three courses close!"
+  )
+})
 ```
 
 ## Twitter data case study: getting the right doll
@@ -1138,7 +1169,23 @@ list_search(ess_tweets, function(x) str_detect(x, "Only one week to go until all
 Going one level up from this tweet might contain more useful information:
 
 ```{r}
-pluck(ess_tweets, "data", "user", "result", "timeline_v2", "timeline", "instructions", 3L, "entries", 3L, "content", "itemContent", "tweet_results", "result", "legacy") |> 
+pluck(
+  ess_tweets,
+  "data",
+  "user",
+  "result",
+  "timeline_v2",
+  "timeline",
+  "instructions",
+  3L,
+  "entries",
+  3L,
+  "content",
+  "itemContent",
+  "tweet_results",
+  "result",
+  "legacy"
+) |>
   lobstr::tree(max_length = 25)
 ```
 
@@ -1146,7 +1193,17 @@ Looks like this is the entire tweet.
 Additionally, the part of the path called "entries" might suggest we can just extract all tweets relatively easily:
 
 ```{r}
-entries <- pluck(ess_tweets, "data", "user", "result", "timeline_v2", "timeline", "instructions", 3L, "entries")
+entries <- pluck(
+  ess_tweets,
+  "data",
+  "user",
+  "result",
+  "timeline_v2",
+  "timeline",
+  "instructions",
+  3L,
+  "entries"
+)
 lobstr::tree(entries, max_depth = 3, max_length = 25)
 ```
 
@@ -1156,7 +1213,9 @@ It seems all of these entries are structured in the same way, which is a good si
 So hopefully we can just extract the content from the same position in all of them:
 
 ```{r}
-tweets <- map(entries, function(x) pluck(x, "content", "itemContent", "tweet_results", "result", "legacy"))
+tweets <- map(entries, function(x) {
+  pluck(x, "content", "itemContent", "tweet_results", "result", "legacy")
+})
 # alternatively, this produces the same outcome
 # tweets <- map(entries, c("content", "itemContent", "tweet_results", "result", "legacy"))
 lobstr::tree(tweets, max_depth = 2, max_length = 25)
@@ -1177,7 +1236,7 @@ tweets_df <- map(tweets, function(t) {
     retweet_count = t$retweet_count,
     bookmark_count = t$bookmark_count
   )
-}) |> 
+}) |>
   bind_rows()
 
 glimpse(tweets_df)
@@ -1198,7 +1257,12 @@ got_characters <- repurrrsive::got_chars
 ```{r}
 tibble(
   name = "Theon Greyjoy",
-  aliases = list(c("Prince of Fools", "Theon Turncloak", "Reek", "Theon Kinslaye"))
+  aliases = list(c(
+    "Prince of Fools",
+    "Theon Turncloak",
+    "Reek",
+    "Theon Kinslaye"
+  ))
 )
 ```
 
@@ -1209,27 +1273,6 @@ music_collection <- repurrrsive::discog
 ```
 
 5. Now add the title of the songs to the artists table
-
-# Reminder: Social Programme
-
-```{r}
-#| echo: false
-tibble::tribble(
-  ~DATE,               ~Event,                                  ~Time,           ~Venue,
-  "MONDAY 7 July",     "Meet and Greet - in person",            "19:00 start",   "SU Bar",
-  "TUESDAY 8 July",    "Climbing",               "18:30 start",   "Sports Centre",
-  "WEDNESDAY 9 July",  "Harold Clarke Speaker Series - hybrid", "18:45 - 20.00", "EBS",
-  "THURSDAY 10 July",  "Sports Night",                          "18:30 - 20:30", "Sports Centre",
-  "FRIDAY 11 July",    "Wivenhoe Pub Run",                      "18:30 start",   "Wivenhoe pubs",
-  "MONDAY 14 JULY",    "SU bar Quiz",                           "19:00 start",   "SU Bar",
-  "TUESDAY 15 JULY",   "Sports Night",                          "18:30 - 20:30", "Sports Centre",
-  "WEDNESDAY 16 JULY", "Harold Clarke Speaker Series - hybrid", "18:30",         "EBS",
-  "THURSDAY 17 JULY",  "Farewell Party Karaoke",                "20:30 - 23:30", "SU Bar"
-) |> 
-  tt() |> 
-  style_tt(fontsize = 0.6) |> 
-  style_tt(i = 2, background = "#FDE000")
-```
 
 # Wrap Up
 

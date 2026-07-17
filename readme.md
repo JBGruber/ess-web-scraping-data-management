@@ -1,10 +1,10 @@
-# 1C Introduction to Web Scraping and Data Management for Social Scientists
+# 2H Introduction to Web Scraping and Data Management for Social Scientists
 [Dr Johannes B. Gruber](https://www.johannesbgruber.eu/)
 
 - [Schedule](#schedule)
 - [Required software](#required-software)
 
-This is the course material for the Essex Summer School in Social Science Data Analysis course [2C Introduction to Web Scraping and Data Management for Social Scientists](https://essexsummerschool.com/summer-school-facts/courses/ess-2025-course-list/2v-introduction-to-web-scraping-and-data-management-for-social-scientists/), Monday 7 July-–Friday 18 July 2025.
+This is the course material for the Essex Summer School in Social Science Data Analysis course [2H Introduction to Web Scraping and Data Management for Social Scientists](https://essexsummerschool.com/course/ess-2026-course-list/2h/), Monday 20 July–Friday 31 July 2026.
 
 # Schedule
 
@@ -26,7 +26,7 @@ This is the course material for the Essex Summer School in Social Science Data A
 You should have several software applications installed before the start of the course:
 
 - [R](https://cran.r-project.org/)
-- An IDE, preferably [RStudio Desktop](https://posit.co/download/rstudio-desktop/), but you can also use [VSCodium](https://vscodium.com/) or [VSCodium](https://code.visualstudio.com/download) or [Positron](https://github.com/posit-dev/positron)
+- An IDE, preferably [RStudio Desktop](https://posit.co/download/rstudio-desktop/), but you can also use [VSCodium](https://vscodium.com/) or [VS Code](https://code.visualstudio.com/download) or [Positron](https://github.com/posit-dev/positron)
 - [Quarto](https://quarto.org/docs/get-started/)
 
 The course uses the base pipe character (`|>`) which is only available in `R` version 4.1.0+.
@@ -35,7 +35,9 @@ Since the newer version is not compatible with old installations of `R`, you wil
 You can use a small function for this, which guides you through retrieving your old packages, from this [Github gist](https://gist.github.com/JBGruber/28c79af6d5f9015370feef31da2cb1da):
 
 ``` r
-source("https://gist.githubusercontent.com/JBGruber/28c79af6d5f9015370feef31da2cb1da/raw/8165f560fc53647e3456ba661fc65d0244ac437c/get_old_packages.R")
+source(
+  "https://gist.githubusercontent.com/JBGruber/28c79af6d5f9015370feef31da2cb1da/raw/8165f560fc53647e3456ba661fc65d0244ac437c/get_old_packages.R"
+)
 get_old_packages()
 ```
 
@@ -43,9 +45,13 @@ After cloning this repository to your computer, you can install all required R p
 But you can do this after the first day (when we discuss how you work with GitHub):
 
 ``` r
-if (!requireNamespace("rlang", quietly = TRUE)) install.packages("rlang", dependencies = TRUE)
+if (!requireNamespace("rlang", quietly = TRUE)) {
+  install.packages("rlang", dependencies = TRUE)
+}
 rlang::check_installed("remotes")
-if (!requireNamespace("jbgtemplates", quietly = TRUE)) remotes::install_github("JBGruber/jbgtemplates")
+if (!requireNamespace("jbgtemplates", quietly = TRUE)) {
+  remotes::install_github("JBGruber/jbgtemplates")
+}
 jbgtemplates::install_deps(gh_packages = c(
   "JBGruber/paperboy",
   "JBGruber/playwrightr",

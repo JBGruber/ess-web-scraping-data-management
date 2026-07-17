@@ -2,7 +2,7 @@
 title: "Session 9: Scraping Interactive Web Pages (part 2)"
 subtitle: "Introduction to Web Scraping and Data Management for Social Scientists"
 author: "Johannes B. Gruber"
-date: 2025-07-17
+date: 2026-07-30
 from: markdown+emoji
 format:
   revealjs:
@@ -603,7 +603,7 @@ with sync_playwright() as playwright:
 :::
 
 ::: {.column width="60%"}
-![](https://hackernoon.com/hn-images/0*MPt2rectMhwklT63.jpg)
+![](media/0*MPt2rectMhwklT63.jpg)
 :::
 ::::
 

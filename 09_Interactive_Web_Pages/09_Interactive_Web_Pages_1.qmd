@@ -2,7 +2,7 @@
 title: "Session 9: Scraping Interactive Web Pages"
 subtitle: "Introduction to Web Scraping and Data Management for Social Scientists"
 author: "Johannes B. Gruber"
-date: 2025-07-17
+date: 2026-07-30
 from: markdown+emoji
 format:
   revealjs:
@@ -34,20 +34,20 @@ library(tinytable)
 library(tidyverse)
 library(httr2)
 tibble::tribble(
-  ~Day, ~Session,
-  1,  "Introduction",
-  2,  "Data Structures and Wrangling",
-  3,  "Working with Files",
-  4,  "Linking and joining data & SQL",
-  5,  "Scaling, Reporting and Database Software",
-  6,  "Introduction to the Web",
-  7,  "Static Web Pages",
-  8,  "Application Programming Interface (APIs) ",
-  9,  "Interactive Web Pages",
-  10, "Building a Reproducible Research Project",
-) |> 
-  tt() |> 
-  style_tt() |> 
+  ~Day , ~Session                                    ,
+     1 , "Introduction"                              ,
+     2 , "Data Structures and Wrangling"             ,
+     3 , "Working with Files"                        ,
+     4 , "Linking and joining data & SQL"            ,
+     5 , "Scaling, Reporting and Database Software"  ,
+     6 , "Introduction to the Web"                   ,
+     7 , "Static Web Pages"                          ,
+     8 , "Application Programming Interface (APIs) " ,
+     9 , "Interactive Web Pages"                     ,
+    10 , "Building a Reproducible Research Project"  ,
+) |>
+  tt() |>
+  style_tt() |>
   style_tt(i = 9, background = "#FDE000")
 ```
 </center>
@@ -183,7 +183,7 @@ curl 'https://www.researchgate.net/profile/Johannes-Gruber-2' \
 ```{r}
 library(httr2)
 httr2::curl_translate(
-"curl 'https://www.researchgate.net/profile/Johannes-Gruber-2' \
+  "curl 'https://www.researchgate.net/profile/Johannes-Gruber-2' \
   -H 'authority: www.researchgate.net' \
   -H 'accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7' \
   -H 'accept-language: en-GB,en;q=0.9' \
@@ -235,9 +235,9 @@ resp
 
 ```{r}
 #| error: true
-resp |> 
-  resp_body_html() |> 
-  html_elements("[data-testid=\"publicProfileStatsCitations\"]") |> 
+resp |>
+  resp_body_html() |>
+  html_elements("[data-testid=\"publicProfileStatsCitations\"]") |>
   html_text()
 ```
 
@@ -279,7 +279,7 @@ Can we get the actual file?
 dir.create("data/anyflip", showWarnings = FALSE)
 out_file <- paste0("data/anyflip/1_ae105d2ec767250c5e9a4e2b0a48efaf.webp")
 curl::curl_download(
-  url = "https://online.anyflip.com/ogboc/rozd/files/large/ae105d2ec767250c5e9a4e2b0a48efaf.webp?1740113612", 
+  url = "https://online.anyflip.com/ogboc/rozd/files/large/ae105d2ec767250c5e9a4e2b0a48efaf.webp?1740113612",
   destfile = out_file
 )
 file.size(out_file)
@@ -294,7 +294,7 @@ We can!
 ## Okay, so where are the rest of the links?
 
 ```{r}
-read_html("https://anyflip.com/ogboc/rozd/") |> 
+read_html("https://anyflip.com/ogboc/rozd/") |>
   html_elements(".side-image img")
 ```
 
@@ -326,7 +326,9 @@ How I got here:
 ## Get image links
 
 ```{r}
-book_config <- read_html("https://online.anyflip.com/ogboc/rozd/mobile/javascript/config.js") |>
+book_config <- read_html(
+  "https://online.anyflip.com/ogboc/rozd/mobile/javascript/config.js"
+) |>
   as.character() |>
   str_extract("\\{.*\\}") |>
   jsonlite::fromJSON()
@@ -335,7 +337,7 @@ lobstr::tree(book_config, max_depth = 1)
 
 
 ```{r}
-file_names <- book_config |> 
+file_names <- book_config |>
   pluck("fliphtml5_pages", "n") |>
   unlist()
 file_names
@@ -344,8 +346,16 @@ file_names
 ## get images
 
 ```{r}
-dl_urls <- paste0("https://online.anyflip.com/ogboc/rozd/files/large/", file_names)
-out_files <- paste0("data/anyflip/", sprintf("%03d", seq_along(file_names)), "_", file_names)
+dl_urls <- paste0(
+  "https://online.anyflip.com/ogboc/rozd/files/large/",
+  file_names
+)
+out_files <- paste0(
+  "data/anyflip/",
+  sprintf("%03d", seq_along(file_names)),
+  "_",
+  file_names
+)
 curl::multi_download(
   dl_urls,
   out_files
@@ -362,13 +372,13 @@ for (page in out_files) {
 }
 
 # combine into one pdf
-title <- read_html("https://anyflip.com/ogboc/rozd/") |> 
-  html_elements("title") |> 
-  html_text2() |> 
+title <- read_html("https://anyflip.com/ogboc/rozd/") |>
+  html_elements("title") |>
+  html_text2() |>
   janitor::make_clean_names()
 
 pdftools::pdf_combine(
-  input = paste0(out_files, ".pdf"), 
+  input = paste0(out_files, ".pdf"),
   output = paste0("data/anyflip/", title, ".pdf")
 )
 ```
@@ -399,7 +409,7 @@ To summarise the steps:
 ```{r}
 #| cache: true
 pdftools::pdf_ocr_text(
-  "anyflip/002_ca317b05c3eeca7309063ce966b4b933.webp.pdf", 
+  "anyflip/002_ca317b05c3eeca7309063ce966b4b933.webp.pdf",
   language = "tha"
 )
 ```
@@ -456,7 +466,8 @@ html <- read_html("https://www.icahdq.org/mpage/ICA23-Program")
 ## Translating the `cURL` call
 
 ```{r}
-curl_translate("curl 'https://whova.com/xems/apis/event_webpage/agenda/public/get_agendas/?event_id=JcQAdK91J0qLUtNxOYUVWFMTUuQgIg3Xj6VIeeyXVR4%3D' \
+curl_translate(
+  "curl 'https://whova.com/xems/apis/event_webpage/agenda/public/get_agendas/?event_id=JcQAdK91J0qLUtNxOYUVWFMTUuQgIg3Xj6VIeeyXVR4%3D' \
   -H 'Accept: application/json, text/plain, */*' \
   -H 'Accept-Language: en-GB,en-US;q=0.9,en;q=0.8' \
   -H 'Cache-Control: no-cache' \
@@ -470,13 +481,16 @@ curl_translate("curl 'https://whova.com/xems/apis/event_webpage/agenda/public/ge
   -H 'sec-ch-ua: \"Chromium\";v=\"115\", \"Not/A)Brand\";v=\"99\"' \
   -H 'sec-ch-ua-mobile: ?0' \
   -H 'sec-ch-ua-platform: \"Linux\"' \
-  --compressed")
+  --compressed"
+)
 ```
 
 ## Requesting the json (?)
 
 ```{r}
-ica_data <- request("https://whova.com/xems/apis/event_webpage/agenda/public/get_agendas/") |>
+ica_data <- request(
+  "https://whova.com/xems/apis/event_webpage/agenda/public/get_agendas/"
+) |>
   req_url_query(
     event_id = "JcQAdK91J0qLUtNxOYUVWFMTUuQgIg3Xj6VIeeyXVR4=",
   ) |>
@@ -486,13 +500,13 @@ ica_data <- request("https://whova.com/xems/apis/event_webpage/agenda/public/get
     `Cache-Control` = "no-cache",
     `User-Agent` = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36",
   ) |>
-  req_perform() |> 
+  req_perform() |>
   resp_body_json()
 ```
 
 :::{.fragment}
 ```{r}
-object.size(ica_data) |> 
+object.size(ica_data) |>
   format("MB")
 ```
 
@@ -511,7 +525,9 @@ It worked!
 - To get to a certain panel on the fourth day, for example, we have to enter this insane path:
 
 ```{r}
-ica_data[["data"]][["agenda"]][[4]][["time_ranges"]][[3]][[2]][[65]][[1]][["sessions"]][[1]] |> 
+ica_data[["data"]][["agenda"]][[4]][["time_ranges"]][[3]][[2]][[65]][[1]][[
+  "sessions"
+]][[1]] |>
   lobstr::tree(max_length = 30)
 ```
 
@@ -535,21 +551,18 @@ library(tidyverse, warn.conflicts = FALSE)
 sessions <- list()
 
 for (day in 1:5) {
-  
   times <- ica_data[["data"]][["agenda"]][[day]][["time_ranges"]]
-  
+
   for (l_one in seq_along(pluck(times))) {
     for (l_two in seq_along(pluck(times, l_one))) {
       for (l_three in seq_along(pluck(times, l_one, l_two))) {
         for (l_four in seq_along(pluck(times, l_one, l_two, l_three))) {
-          
           session <- pluck(times, l_one, l_two, l_three, l_four, "sessions", 1)
           id <- pluck(session, "id")
           if (!is.null(id)) {
             id <- as.character(id)
             sessions[[id]] <- session
           }
-          
         }
       }
     }
@@ -600,13 +613,12 @@ You can check some of the panels using the browser: `check_in_browser(ica_data_d
 ```{r}
 pull_papers <- function(desc) {
   # we extract the html code starting with the papers line
-  papers <- str_extract(desc, "<b>Papers: </b>.+$") |> 
-    str_remove("<b>Papers: </b><br />") |> 
+  papers <- str_extract(desc, "<b>Papers: </b>.+$") |>
+    str_remove("<b>Papers: </b><br />") |>
     # we split the html by double line breaks, since it is not properly formatted as paragraphs
-    strsplit("<br /><br />", fixed = TRUE) |> 
+    strsplit("<br /><br />", fixed = TRUE) |>
     pluck(1)
-  
-  
+
   # if there is no html code left, just return NAs
   if (all(is.na(papers))) {
     return(list(list(paper_title = NA, authors = NA)))
@@ -614,16 +626,16 @@ pull_papers <- function(desc) {
     # otherwise we loop through each paper
     map(papers, function(t) {
       html <- read_html(t)
-      
+
       # first line is the title
-      title <- html |> 
-        html_text2() |> 
+      title <- html |>
+        html_text2() |>
         str_extract("^.+\n")
-      
+
       # at least authors are formatted italice
-      authors <- html_elements(html, "i") |> 
+      authors <- html_elements(html, "i") |>
         html_text2()
-      
+
       list(paper_title = title, authors = authors)
     })
   }
@@ -633,19 +645,19 @@ pull_papers <- function(desc) {
 Now we have all the information we wanted:
 
 ```{r}
-ica_data_df_tidy <- ica_data_df |> 
-  slice(-613) |> 
-  mutate(papers = map(desc, pull_papers)) |> 
-  unnest(papers) |> 
-  unnest_wider(papers) |> 
-  unnest(authors) |> 
-  select(-desc) |> 
+ica_data_df_tidy <- ica_data_df |>
+  slice(-613) |>
+  mutate(papers = map(desc, pull_papers)) |>
+  unnest(papers) |>
+  unnest_wider(papers) |>
+  unnest(authors) |>
+  select(-desc) |>
   filter(!is.na(authors))
 ica_data_df_tidy
 ```
 
 ```{r}
-ica_data_df_tidy |> 
+ica_data_df_tidy |>
   filter(!duplicated(paper_title))
 ```
 
@@ -697,7 +709,8 @@ At least one of these elements should be here!
 :::: {.columns}
 ::: {.column width="50%"}
 ```{r}
-curl_translate("curl 'https://api.x.com/graphql/Le1DChzkS7ioJH_yEPMi3w/UserTweets?variables=%7B%22userId%22%3A%2244196397%22%2C%22count%22%3A20%2C%22includePromotedContent%22%3Atrue%2C%22withQuickPromoteEligibilityTweetFields%22%3Atrue%2C%22withVoice%22%3Atrue%7D^&features=%7B%22rweb_video_screen_enabled%22%3Afalse%2C%22payments_enabled%22%3Afalse%2C%22profile_label_improvements_pcf_label_in_post_enabled%22%3Atrue%2C%22rweb_tipjar_consumption_enabled%22%3Atrue%2C%22verified_phone_label_enabled%22%3Afalse%2C%22creator_subscriptions_tweet_preview_api_enabled%22%3Atrue%2C%22responsive_web_graphql_timeline_navigation_enabled%22%3Atrue%2C%22responsive_web_graphql_skip_user_profile_image_extensions_enabled%22%3Afalse%2C%22premium_content_api_read_enabled%22%3Afalse%2C%22communities_web_enable_tweet_community_results_fetch%22%3Atrue%2C%22c9s_tweet_anatomy_moderator_badge_enabled%22%3Atrue%2C%22responsive_web_grok_analyze_button_fetch_trends_enabled%22%3Afalse%2C%22responsive_web_grok_analyze_post_followups_enabled%22%3Afalse%2C%22responsive_web_jetfuel_frame%22%3Atrue%2C%22responsive_web_grok_share_attachment_enabled%22%3Atrue%2C%22articles_preview_enabled%22%3Atrue%2C%22responsive_web_edit_tweet_api_enabled%22%3Atrue%2C%22graphql_is_translatable_rweb_tweet_is_translatable_enabled%22%3Atrue%2C%22view_counts_everywhere_api_enabled%22%3Atrue%2C%22longform_notetweets_consumption_enabled%22%3Atrue%2C%22responsive_web_twitter_article_tweet_consumption_enabled%22%3Atrue%2C%22tweet_awards_web_tipping_enabled%22%3Afalse%2C%22responsive_web_grok_show_grok_translated_post%22%3Afalse%2C%22responsive_web_grok_analysis_button_from_backend%22%3Atrue%2C%22creator_subscriptions_quote_tweet_preview_enabled%22%3Afalse%2C%22freedom_of_speech_not_reach_fetch_enabled%22%3Atrue%2C%22standardized_nudges_misinfo%22%3Atrue%2C%22tweet_with_visibility_results_prefer_gql_limited_actions_policy_enabled%22%3Atrue%2C%22longform_notetweets_rich_text_read_enabled%22%3Atrue%2C%22longform_notetweets_inline_media_enabled%22%3Atrue%2C%22responsive_web_grok_image_annotation_enabled%22%3Atrue%2C%22responsive_web_grok_community_note_auto_translation_is_enabled%22%3Afalse%2C%22responsive_web_enhance_cards_enabled%22%3Afalse%7D^&fieldToggles=%7B%22withArticlePlainText%22%3Afalse%7D' \
+curl_translate(
+  "curl 'https://api.x.com/graphql/Le1DChzkS7ioJH_yEPMi3w/UserTweets?variables=%7B%22userId%22%3A%2244196397%22%2C%22count%22%3A20%2C%22includePromotedContent%22%3Atrue%2C%22withQuickPromoteEligibilityTweetFields%22%3Atrue%2C%22withVoice%22%3Atrue%7D^&features=%7B%22rweb_video_screen_enabled%22%3Afalse%2C%22payments_enabled%22%3Afalse%2C%22profile_label_improvements_pcf_label_in_post_enabled%22%3Atrue%2C%22rweb_tipjar_consumption_enabled%22%3Atrue%2C%22verified_phone_label_enabled%22%3Afalse%2C%22creator_subscriptions_tweet_preview_api_enabled%22%3Atrue%2C%22responsive_web_graphql_timeline_navigation_enabled%22%3Atrue%2C%22responsive_web_graphql_skip_user_profile_image_extensions_enabled%22%3Afalse%2C%22premium_content_api_read_enabled%22%3Afalse%2C%22communities_web_enable_tweet_community_results_fetch%22%3Atrue%2C%22c9s_tweet_anatomy_moderator_badge_enabled%22%3Atrue%2C%22responsive_web_grok_analyze_button_fetch_trends_enabled%22%3Afalse%2C%22responsive_web_grok_analyze_post_followups_enabled%22%3Afalse%2C%22responsive_web_jetfuel_frame%22%3Atrue%2C%22responsive_web_grok_share_attachment_enabled%22%3Atrue%2C%22articles_preview_enabled%22%3Atrue%2C%22responsive_web_edit_tweet_api_enabled%22%3Atrue%2C%22graphql_is_translatable_rweb_tweet_is_translatable_enabled%22%3Atrue%2C%22view_counts_everywhere_api_enabled%22%3Atrue%2C%22longform_notetweets_consumption_enabled%22%3Atrue%2C%22responsive_web_twitter_article_tweet_consumption_enabled%22%3Atrue%2C%22tweet_awards_web_tipping_enabled%22%3Afalse%2C%22responsive_web_grok_show_grok_translated_post%22%3Afalse%2C%22responsive_web_grok_analysis_button_from_backend%22%3Atrue%2C%22creator_subscriptions_quote_tweet_preview_enabled%22%3Afalse%2C%22freedom_of_speech_not_reach_fetch_enabled%22%3Atrue%2C%22standardized_nudges_misinfo%22%3Atrue%2C%22tweet_with_visibility_results_prefer_gql_limited_actions_policy_enabled%22%3Atrue%2C%22longform_notetweets_rich_text_read_enabled%22%3Atrue%2C%22longform_notetweets_inline_media_enabled%22%3Atrue%2C%22responsive_web_grok_image_annotation_enabled%22%3Atrue%2C%22responsive_web_grok_community_note_auto_translation_is_enabled%22%3Afalse%2C%22responsive_web_enhance_cards_enabled%22%3Afalse%7D^&fieldToggles=%7B%22withArticlePlainText%22%3Afalse%7D' \
   --compressed \
   -H 'User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:140.0) Gecko/20100101 Firefox/140.0' \
   -H 'Accept: */*' \
@@ -718,13 +731,16 @@ curl_translate("curl 'https://api.x.com/graphql/Le1DChzkS7ioJH_yEPMi3w/UserTweet
   -H 'Sec-Fetch-Dest: empty' \
   -H 'Sec-Fetch-Mode: cors' \
   -H 'Sec-Fetch-Site: same-site' \
-  -H 'TE: trailers'")
+  -H 'TE: trailers'"
+)
 ```
 :::
 ::: {.column width="50%" }
 ```{r twitter_req}
 #| error: true
-twitter_resp <- request("https://api.x.com/graphql/Le1DChzkS7ioJH_yEPMi3w/UserTweets") |>
+twitter_resp <- request(
+  "https://api.x.com/graphql/Le1DChzkS7ioJH_yEPMi3w/UserTweets"
+) |>
   req_url_query(
     variables = '{"userId":"44196397","count":20,"includePromotedContent":true,"withQuickPromoteEligibilityTweetFields":true,"withVoice":true}^',
     features = '{"rweb_video_screen_enabled":false,"payments_enabled":false,"profile_label_improvements_pcf_label_in_post_enabled":true,"rweb_tipjar_consumption_enabled":true,"verified_phone_label_enabled":false,"creator_subscriptions_tweet_preview_api_enabled":true,"responsive_web_graphql_timeline_navigation_enabled":true,"responsive_web_graphql_skip_user_profile_image_extensions_enabled":false,"premium_content_api_read_enabled":false,"communities_web_enable_tweet_community_results_fetch":true,"c9s_tweet_anatomy_moderator_badge_enabled":true,"responsive_web_grok_analyze_button_fetch_trends_enabled":false,"responsive_web_grok_analyze_post_followups_enabled":false,"responsive_web_jetfuel_frame":true,"responsive_web_grok_share_attachment_enabled":true,"articles_preview_enabled":true,"responsive_web_edit_tweet_api_enabled":true,"graphql_is_translatable_rweb_tweet_is_translatable_enabled":true,"view_counts_everywhere_api_enabled":true,"longform_notetweets_consumption_enabled":true,"responsive_web_twitter_article_tweet_consumption_enabled":true,"tweet_awards_web_tipping_enabled":false,"responsive_web_grok_show_grok_translated_post":false,"responsive_web_grok_analysis_button_from_backend":true,"creator_subscriptions_quote_tweet_preview_enabled":false,"freedom_of_speech_not_reach_fetch_enabled":true,"standardized_nudges_misinfo":true,"tweet_with_visibility_results_prefer_gql_limited_actions_policy_enabled":true,"longform_notetweets_rich_text_read_enabled":true,"longform_notetweets_inline_media_enabled":true,"responsive_web_grok_image_annotation_enabled":true,"responsive_web_grok_community_note_auto_translation_is_enabled":false,"responsive_web_enhance_cards_enabled":false}^',
@@ -763,12 +779,24 @@ This is the code we developed in session 2. We can use it again to get a clean t
 
 ```{r}
 #| eval: false
-ess_tweets <- twitter_resp |> 
+ess_tweets <- twitter_resp |>
   resp_body_json()
 
-entries <- pluck(ess_tweets, "data", "user", "result", "timeline", "timeline", "instructions", 3L, "entries")
+entries <- pluck(
+  ess_tweets,
+  "data",
+  "user",
+  "result",
+  "timeline",
+  "timeline",
+  "instructions",
+  3L,
+  "entries"
+)
 
-tweets <- map(entries, function(x) pluck(x, "content", "itemContent", "tweet_results", "result", "legacy"))
+tweets <- map(entries, function(x) {
+  pluck(x, "content", "itemContent", "tweet_results", "result", "legacy")
+})
 
 tweets_df <- map(tweets, function(t) {
   tibble(
@@ -780,7 +808,7 @@ tweets_df <- map(tweets, function(t) {
     retweet_count = t$retweet_count,
     bookmark_count = t$bookmark_count
   )
-}) |> 
+}) |>
   bind_rows()
 tweets_df
 ```
@@ -834,7 +862,7 @@ I stopped at this point since there are three issue that are unclear to resolve:
 :::
 
 ::: {.column width="60%"}
-![](https://hackernoon.com/hn-images/0*MPt2rectMhwklT63.jpg)
+![](media/0*MPt2rectMhwklT63.jpg)
 :::
 ::::
 

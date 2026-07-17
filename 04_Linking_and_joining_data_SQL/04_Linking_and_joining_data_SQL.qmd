@@ -2,7 +2,7 @@
 title: "Session 4:	Linking and joining data & SQL"
 subtitle: "ESS: Introduction to Web Scraping and Data Management for Social Scientists"
 author: "Johannes B. Gruber"
-date: 2025-07-10
+date: 2026-07-23
 format:
   revealjs:
     smaller: true
@@ -32,20 +32,20 @@ highlight-style: nord
 library(tinytable)
 library(tidyverse)
 tibble::tribble(
-  ~Day, ~Session,
-  1,  "Introduction",
-  2,  "Data Structures and Wrangling",
-  3,  "Working with Files",
-  4,  "Linking and joining data & SQL",
-  5,  "Scaling, Reporting and Database Software",
-  6,  "Introduction to the Web",
-  7,  "Static Web Pages",
-  8,  "Application Programming Interface (APIs) ",
-  9,  "Interactive Web Pages",
-  10, "Building a Reproducible Research Project",
-) |> 
-  tt() |> 
-  style_tt() |> 
+  ~Day , ~Session                                    ,
+     1 , "Introduction"                              ,
+     2 , "Data Structures and Wrangling"             ,
+     3 , "Working with Files"                        ,
+     4 , "Linking and joining data & SQL"            ,
+     5 , "Scaling, Reporting and Database Software"  ,
+     6 , "Introduction to the Web"                   ,
+     7 , "Static Web Pages"                          ,
+     8 , "Application Programming Interface (APIs) " ,
+     9 , "Interactive Web Pages"                     ,
+    10 , "Building a Reproducible Research Project"  ,
+) |>
+  tt() |>
+  style_tt() |>
   style_tt(i = 4, background = "#FDE000")
 ```
 </center>
@@ -276,7 +276,7 @@ semi_join(df1, df2, by = "id")
 Same as:
 
 ```{r}
-df1 |> 
+df1 |>
   filter(id %in% df2$id)
 ```
 :::
@@ -286,7 +286,7 @@ anti_join(df1, df2, by = "id")
 ```
 
 ```{r}
-df1 |> 
+df1 |>
   filter(!id %in% df2$id)
 ```
 :::
@@ -298,15 +298,15 @@ df1 |>
 ::: {.column width="50%"}
 ```{r}
 pets <- tribble(
-  ~animal, ~name,            ~breed,
-  #-----       
-  "cat",   "Leo",            "European Shorthair",
-  "dog",   "Bruno",          "Labrador",
-  "cat",   "Charlie",        "Ragdolls",
-  "mouse", "Julius Cheeser", "Agouti",
-  "cat",   "Felix",          "Persian",
-  "horse", "Tina",           "Mustang",
-  "rabbit","snowball",       "Persian",
+  ~animal  , ~name            , ~breed               ,
+  #-----
+  "cat"    , "Leo"            , "European Shorthair" ,
+  "dog"    , "Bruno"          , "Labrador"           ,
+  "cat"    , "Charlie"        , "Ragdolls"           ,
+  "mouse"  , "Julius Cheeser" , "Agouti"             ,
+  "cat"    , "Felix"          , "Persian"            ,
+  "horse"  , "Tina"           , "Mustang"            ,
+  "rabbit" , "snowball"       , "Persian"            ,
 )
 ```
 
@@ -314,15 +314,15 @@ pets <- tribble(
 ::: {.column width="50%"}
 ```{r}
 breeds <- tribble(
-  ~species,   ~breed,                ~life_expectancy,
+  ~species , ~breed               , ~life_expectancy ,
   #-----
-  "cat",     "European Shorthair",  14,
-  "dog",     "Labrador",            11,
-  "cat",     "Ragdolls",            15,
-  "cat",     "Persian",             15,
-  "mouse",   "Agouti",              1,
-  "snake",   "Python",              25,
-  "rabbit",  "Persian",             12,
+  "cat"    , "European Shorthair" ,               14 ,
+  "dog"    , "Labrador"           ,               11 ,
+  "cat"    , "Ragdolls"           ,               15 ,
+  "cat"    , "Persian"            ,               15 ,
+  "mouse"  , "Agouti"             ,                1 ,
+  "snake"  , "Python"             ,               25 ,
+  "rabbit" , "Persian"            ,               12 ,
 )
 ```
 :::
@@ -374,15 +374,13 @@ anti_join(pets, breeds, by = c("animal" = "species", "breed"))
 :::
 ::: {.column width="50%"}
 ```{r}
-pets |> 
-  filter(animal %in% breeds$species,
-         breed  %in% breeds$breed)
+pets |>
+  filter(animal %in% breeds$species, breed %in% breeds$breed)
 ```
 
 ```{r}
-pets |> 
-  filter(!animal %in% breeds$species,
-         !breed  %in% breeds$breed)
+pets |>
+  filter(!animal %in% breeds$species, !breed %in% breeds$breed)
 ```
 :::
 ::::
@@ -422,7 +420,8 @@ csv_folder_url <- "https://raw.githubusercontent.com/houstondatavis/data-jam-aug
 results <- import(paste(csv_folder_url, "primary_results.csv", sep = "/"))
 schedule <- import(paste(csv_folder_url, "primary_schedule.csv", sep = "/"))
 facts <- import(paste(csv_folder_url, "county_facts.csv", sep = "/")) |>
-  select(area_name,
+  select(
+    area_name,
     population = Pop_2014_count,
     pop_change = Pop_change_pct,
     over65 = Age_over_65_pct,
@@ -463,7 +462,7 @@ glimpse(facts, width = 50)
 Convert the date in the schedule to date class:
 
 ```{r}
-schedule <- schedule |> 
+schedule <- schedule |>
   mutate(date = lubridate::mdy(date))
 schedule
 ```
@@ -472,8 +471,8 @@ schedule
 Aggregate results on the state level instead of the county level:
 
 ```{r}
-results_state <- results |> 
-  group_by(state, party, candidate) |> 
+results_state <- results |>
+  group_by(state, party, candidate) |>
   summarize(votes = sum(votes))
 results_state
 ```
@@ -483,7 +482,7 @@ results_state
 ## 2016 US primaries: candidates performance over time
 
 ```{r}
-results_state_time <- results_state |> 
+results_state_time <- results_state |>
   inner_join(schedule, by = c("state", "party"))
 results_state_time
 ```
@@ -491,11 +490,11 @@ results_state_time
 
 ```{r}
 #| output-location: column
-results_state_time |> 
-  arrange(date) |> 
-  group_by(candidate) |> 
-  mutate(votes_agg = cumsum(votes)) |> 
-  ungroup() |> 
+results_state_time |>
+  arrange(date) |>
+  group_by(candidate) |>
+  mutate(votes_agg = cumsum(votes)) |>
+  ungroup() |>
   ggplot(mapping = aes(x = date, y = votes_agg, colour = candidate)) +
   geom_line()
 ```
@@ -503,11 +502,11 @@ results_state_time |>
 ```{r}
 #| classes: fragment
 #| output-location: column
-results_state_time |> 
-  arrange(date) |> 
-  group_by(candidate) |> 
-  mutate(votes_agg = cumsum(votes)) |> 
-  ungroup() |> 
+results_state_time |>
+  arrange(date) |>
+  group_by(candidate) |>
+  mutate(votes_agg = cumsum(votes)) |>
+  ungroup() |>
   ggplot(mapping = aes(x = date, y = votes_agg, colour = candidate)) +
   geom_line() +
   facet_wrap("party")
@@ -518,11 +517,10 @@ results_state_time |>
 ```{r}
 #| classes: fragment
 #| output-location: column
-results_state_facts <- results_state |> 
-  inner_join(facts, by = c("state" = "area_name")) |> 
-  group_by(state, party) |> 
-  mutate(total_votes = sum(votes), 
-         pct_votes = votes / total_votes) |> 
+results_state_facts <- results_state |>
+  inner_join(facts, by = c("state" = "area_name")) |>
+  group_by(state, party) |>
+  mutate(total_votes = sum(votes), pct_votes = votes / total_votes) |>
   ungroup()
 results_state_facts
 ```
@@ -531,9 +529,9 @@ results_state_facts
 #| classes: fragment
 #| output-location: column
 results_state_facts |>
-  filter(party == "Democrat",
-    candidate %in% c("Bernie Sanders",
-                     "Hillary Clinton")
+  filter(
+    party == "Democrat",
+    candidate %in% c("Bernie Sanders", "Hillary Clinton")
   ) |>
   ggplot(aes(x = over65, y = pct_votes, colour = candidate)) +
   geom_point() +
@@ -646,16 +644,18 @@ So far, the database is empty:
 
 ```{r}
 # this is a shorthand for "SELECT name FROM sqlite_master" above
-dbListTables(db) 
+dbListTables(db)
 ```
 
 Before we can add data, we have to create a table in the database:
 
 ```{r}
-dbExecute(db,
-          "CREATE TABLE df1 (
+dbExecute(
+  db,
+  "CREATE TABLE df1 (
             election_id integer,
-            capital_letters varchar)")
+            capital_letters varchar)"
+)
 dbListTables(db)
 ```
 
@@ -664,9 +664,11 @@ Besides integer and varchar (suitable for short strings), you can also use `real
 Now we can add cases:
 
 ```{r}
-dbExecute(db,
-          "INSERT INTO df1
-            VALUES (1, 'A')")
+dbExecute(
+  db,
+  "INSERT INTO df1
+            VALUES (1, 'A')"
+)
 ```
 
 And we can pull the data back out:
@@ -692,12 +694,14 @@ dbListTables(db)
 Let's define the table again, but add constraints to enforce certain data:
 
 ```{r}
-dbExecute(db,
-          "CREATE TABLE df1 (
+dbExecute(
+  db,
+  "CREATE TABLE df1 (
               id INTEGER PRIMARY KEY,
               capital_letters VARCHAR(1) CHECK (capital_letters GLOB '[A-Z]'), 
               my_date DATE CHECK (my_date > '2000-01-01')
-          )")
+          )"
+)
 dbListTables(db)
 ```
 
@@ -711,35 +715,43 @@ Let's try to add a case:
 
 ```{r}
 #| error: true
-dbExecute(db,
-          "INSERT INTO df1
-            VALUES (1, 'a', '1999-12-31')")
+dbExecute(
+  db,
+  "INSERT INTO df1
+            VALUES (1, 'a', '1999-12-31')"
+)
 ```
 
 Let's try again with a capital letter:
 
 ```{r}
 #| error: true
-dbExecute(db,
-          "INSERT INTO df1
-            VALUES (1, 'A', '1999-12-31')")
+dbExecute(
+  db,
+  "INSERT INTO df1
+            VALUES (1, 'A', '1999-12-31')"
+)
 ```
 
 OK, let's adhere to the constraints:
 
 ```{r}
-dbExecute(db,
-          "INSERT INTO df1
-            VALUES (1, 'A', '2000-12-31')")
+dbExecute(
+  db,
+  "INSERT INTO df1
+            VALUES (1, 'A', '2000-12-31')"
+)
 ```
 
 And let's test the last constraint:
 
 ```{r}
 #| error: true
-dbExecute(db,
-          "INSERT INTO df1
-            VALUES (1, 'A', '2000-12-31')")
+dbExecute(
+  db,
+  "INSERT INTO df1
+            VALUES (1, 'A', '2000-12-31')"
+)
 ```
 
 ## Adding Data
@@ -747,25 +759,31 @@ dbExecute(db,
 We already know how to add a complete case:
 
 ```{r}
-dbExecute(db,
-          "INSERT INTO df1
-            VALUES (2, 'B', '2000-12-31')")
+dbExecute(
+  db,
+  "INSERT INTO df1
+            VALUES (2, 'B', '2000-12-31')"
+)
 ```
 
 But you can also add a case with a missing value:
 
 ```{r}
-dbExecute(db,
-          "INSERT INTO df1 (id, capital_letters)
-            VALUES (3, 'C')")
+dbExecute(
+  db,
+  "INSERT INTO df1 (id, capital_letters)
+            VALUES (3, 'C')"
+)
 ```
 
 OR:
 
 ```{r}
-dbExecute(db,
-          "INSERT INTO df1 
-            VALUES (4, 'D', NULL)")
+dbExecute(
+  db,
+  "INSERT INTO df1 
+            VALUES (4, 'D', NULL)"
+)
 ```
 
 ```{r}
@@ -777,17 +795,23 @@ dbGetQuery(db, "SELECT * FROM df1")
 If we made a mistake or something changes, we can update a specific row:
 
 ```{r}
-dbExecute(db, "UPDATE df1
+dbExecute(
+  db,
+  "UPDATE df1
                SET my_date = '2023-07-22'
-               WHERE id = 3")
+               WHERE id = 3"
+)
 ```
 
 Or we can add a new variable and calculate it from existing values:
 
 ```{r}
 dbExecute(db, "ALTER TABLE df1 ADD year integer")
-dbExecute(db, "UPDATE df1
-               SET year = strftime('%Y', my_date)")
+dbExecute(
+  db,
+  "UPDATE df1
+               SET year = strftime('%Y', my_date)"
+)
 ```
 
 ```{r}
@@ -807,9 +831,12 @@ dbGetQuery(db, "SELECT id, year FROM df1")
 Access only certain rows:
 
 ```{r}
-dbGetQuery(db, "SELECT id, year 
+dbGetQuery(
+  db,
+  "SELECT id, year 
                 FROM df1
-                WHERE year > 2000")
+                WHERE year > 2000"
+)
 ```
 
 Computing new values on the fly:
@@ -827,8 +854,11 @@ Two ways to get rid of data:
 - `DROP`: used to remove entire database objects like tables, databases, indexes, or views
 
 ```{r}
-dbExecute(db, "DELETE FROM df1 
-               WHERE id = 1")
+dbExecute(
+  db,
+  "DELETE FROM df1 
+               WHERE id = 1"
+)
 dbGetQuery(db, "SELECT * FROM df1")
 ```
 
@@ -860,9 +890,12 @@ dbGetQuery(db, "SELECT * FROM df1")
 ::: {.column width="50%" }
 ```{r sql-filter}
 #| eval: false
-dbGetQuery(db, "SELECT * 
+dbGetQuery(
+  db,
+  "SELECT * 
                 FROM df1
-                WHERE id < 4")
+                WHERE id < 4"
+)
 ```
 
 ```{r}
@@ -969,9 +1002,12 @@ left_join(x = df1, y = df2, by = c("id" = "id"))
 ### `SQL`
 
 ```{r}
-dbGetQuery(db, "SELECT * FROM df1 
+dbGetQuery(
+  db,
+  "SELECT * FROM df1 
                 LEFT JOIN df2 
-                ON df1.id = df2.id")
+                ON df1.id = df2.id"
+)
 ```
 :::
 ::::
@@ -994,9 +1030,12 @@ right_join(x = df1, y = df2, by = c("id" = "id"))
 ### `SQL`
 
 ```{r}
-dbGetQuery(db, "SELECT * FROM df1
+dbGetQuery(
+  db,
+  "SELECT * FROM df1
                 RIGHT JOIN df2 
-                ON df1.id = df2.id")
+                ON df1.id = df2.id"
+)
 ```
 :::
 ::::
@@ -1018,9 +1057,12 @@ full_join(x = df1, y = df2, by = c("id" = "id"))
 ### `SQL`
 
 ```{r}
-dbGetQuery(db, "SELECT * FROM df1
+dbGetQuery(
+  db,
+  "SELECT * FROM df1
                 FULL JOIN df2
-                ON df1.id = df2.id")
+                ON df1.id = df2.id"
+)
 ```
 :::
 ::::
@@ -1042,9 +1084,12 @@ inner_join(x = df1, y = df2, by = c("id" = "id"))
 ### `SQL`
 
 ```{r}
-dbGetQuery(db, "SELECT * FROM df1 
+dbGetQuery(
+  db,
+  "SELECT * FROM df1 
                 INNER JOIN df2 
-                ON df1.id = df2.id")
+                ON df1.id = df2.id"
+)
 ```
 :::
 ::::
@@ -1064,7 +1109,7 @@ semi_join(x = df1, y = df2, by = c("id" = "id"))
 ```
 
 ```{r}
-df1 |> 
+df1 |>
   filter(id %in% df2$id)
 ```
 :::
@@ -1072,11 +1117,14 @@ df1 |>
 ### `SQL`
 
 ```{r}
-dbGetQuery(db, "SELECT * FROM df1 
+dbGetQuery(
+  db,
+  "SELECT * FROM df1 
                 WHERE EXISTS (
                   SELECT * FROM df2 
                   WHERE df1.id = df2.id
-                )")
+                )"
+)
 ```
 :::
 ::::
@@ -1097,7 +1145,7 @@ anti_join(x = df1, y = df2, by = c("id" = "id"))
 ```
 
 ```{r}
-df1 |> 
+df1 |>
   filter(!id %in% df2$id)
 ```
 :::
@@ -1105,11 +1153,14 @@ df1 |>
 ### `SQL`
 
 ```{r}
-dbGetQuery(db, "SELECT * FROM df1 
+dbGetQuery(
+  db,
+  "SELECT * FROM df1 
                 WHERE NOT EXISTS (
                   SELECT 1 FROM df2
                   WHERE df1.id = df2.id
-                )")
+                )"
+)
 ```
 :::
 ::::
@@ -1183,13 +1234,11 @@ View(diamonds_con)
 Filter, select, mutate and summarise:
 
 ```{r}
-diamonds_con |> 
-  filter(cut == "Premium", 
-         price < 400) |> 
-  select(price) |> 
-  mutate(price_gbp = price * 0.77) |> 
-  summarise(avg_price = mean(price),
-            avg_price_gbp = mean(price_gbp))
+diamonds_con |>
+  filter(cut == "Premium", price < 400) |>
+  select(price) |>
+  mutate(price_gbp = price * 0.77) |>
+  summarise(avg_price = mean(price), avg_price_gbp = mean(price_gbp))
 ```
 
 Joins also work:
@@ -1197,8 +1246,8 @@ Joins also work:
 ```{r}
 df1_con <- tbl(db, "df1")
 df2_con <- tbl(db, "df2")
-df1_con |> 
-  left_join(df2_con, by = "id") |> 
+df1_con |>
+  left_join(df2_con, by = "id") |>
   collect()
 ```
 
@@ -1207,8 +1256,8 @@ df1_con |>
 If you decide to implement this query somewhere else, you can show it after executing it:
 
 ```{r}
-df1_con |> 
-  left_join(df2_con, by = "id") |> 
+df1_con |>
+  left_join(df2_con, by = "id") |>
   show_query()
 ```
 
@@ -1220,20 +1269,18 @@ df1_con |>
 We join the two tables again, and also compute a new column:
 
 ```{r}
-df1_con |> 
-  left_join(df2_con, by = "id") |> 
-  mutate(all_letters = paste(capital_letters, 
-                             lowercase_letters)) |> 
+df1_con |>
+  left_join(df2_con, by = "id") |>
+  mutate(all_letters = paste(capital_letters, lowercase_letters)) |>
   collect()
 ```
 
 Instead of just bringing this new table to `R`, we can directly save it to the database
 
 ```{r}
-df1_con |> 
-  left_join(df2_con, by = "id") |> 
-  mutate(all_letters = paste(capital_letters, 
-                             lowercase_letters)) |> 
+df1_con |>
+  left_join(df2_con, by = "id") |>
+  mutate(all_letters = paste(capital_letters, lowercase_letters)) |>
   compute() # only this line is different!
 ```
 
@@ -1242,7 +1289,7 @@ df1_con |>
 However, if we look at the table, it still looks the same
 
 ```{r}
-df1_con |> 
+df1_con |>
   collect()
 ```
 
@@ -1261,10 +1308,9 @@ dbListTables(db)
 If we want to create a persistent version of the table, we can do:
 
 ```{r}
-df1_con |> 
-  left_join(df2_con, by = "id") |> 
-  mutate(all_letters = paste(capital_letters, 
-                             lowercase_letters)) |> 
+df1_con |>
+  left_join(df2_con, by = "id") |>
+  mutate(all_letters = paste(capital_letters, lowercase_letters)) |>
   compute(temporary = FALSE, name = "df1_updated")
 ```
 
@@ -1277,10 +1323,9 @@ tbl(db, "df1_updated")
 And finally, if we want to update the table in place, we can bring it into `R` and then copy it back to overwrite the old one:
 
 ```{r}
-temp <- df1_con |> 
-  left_join(df2_con, by = "id") |> 
-  mutate(all_letters = paste(capital_letters, 
-                             lowercase_letters)) |> 
+temp <- df1_con |>
+  left_join(df2_con, by = "id") |>
+  mutate(all_letters = paste(capital_letters, lowercase_letters)) |>
   collect()
 copy_to(db, temp, "df1", overwrite = TRUE)
 ```
@@ -1288,7 +1333,7 @@ copy_to(db, temp, "df1", overwrite = TRUE)
 Now, we replaced the original version:
 
 ```{r}
-df1_con |> 
+df1_con |>
   collect()
 ```
 
@@ -1315,20 +1360,19 @@ dbWriteTable(db_nyc, "airlines", airlines)
 ## NYC flights: age vs delays
 
 ```{r}
-plane_delays_age <- tbl(db_nyc, "flights") |> 
-  inner_join(tbl(db_nyc, "planes"), by = "tailnum", suffix = c("", "_plane")) |> 
-  mutate(plane_age = year - year_plane) |> 
-  select(arr_delay, plane_age) |> 
-  filter(!is.na(arr_delay),
-         !is.na(plane_age)) |> 
+plane_delays_age <- tbl(db_nyc, "flights") |>
+  inner_join(tbl(db_nyc, "planes"), by = "tailnum", suffix = c("", "_plane")) |>
+  mutate(plane_age = year - year_plane) |>
+  select(arr_delay, plane_age) |>
+  filter(!is.na(arr_delay), !is.na(plane_age)) |>
   collect()
 ```
 
 ```{r}
 #| output-location: column
-plane_delays_age |> 
-  group_by(plane_age) |> 
-  summarise(avg_delay = mean(arr_delay)) |> 
+plane_delays_age |>
+  group_by(plane_age) |>
+  summarise(avg_delay = mean(arr_delay)) |>
   ggplot(aes(x = plane_age, y = avg_delay)) +
   geom_point() +
   geom_smooth(method = "lm", formula = y ~ x)
@@ -1338,9 +1382,9 @@ plane_delays_age |>
 ## NYC flights: weather conditions vs delays
 
 ```{r}
-plane_delays_weather <- tbl(db_nyc, "flights") |> 
-  inner_join(tbl(db_nyc, "weather"), by = c("time_hour", "origin")) |> 
-  filter(!is.na(temp), !is.na(arr_delay), !is.na(wind_speed)) |> 
+plane_delays_weather <- tbl(db_nyc, "flights") |>
+  inner_join(tbl(db_nyc, "weather"), by = c("time_hour", "origin")) |>
+  filter(!is.na(temp), !is.na(arr_delay), !is.na(wind_speed)) |>
   collect()
 ```
 
@@ -1387,26 +1431,6 @@ Tomorrow, we will use the software Docker to simulate a database server. Install
 
 <https://youtu.be/iMyCdd5nP5U>
 
-# Reminder: Social Programme
-
-```{r}
-#| echo: false
-tibble::tribble(
-  ~DATE,               ~Event,                                  ~Time,           ~Venue,
-  "MONDAY 7 July",     "Meet and Greet - in person",            "19:00 start",   "SU Bar",
-  "TUESDAY 8 July",    "Climbing",               "18:30 start",   "Sports Centre",
-  "WEDNESDAY 9 July",  "Harold Clarke Speaker Series - hybrid", "18:45 - 20.00", "EBS",
-  "THURSDAY 10 July",  "Sports Night",                          "18:30 - 20:30", "Sports Centre",
-  "FRIDAY 11 July",    "Wivenhoe Pub Run",                      "18:30 start",   "Wivenhoe pubs",
-  "MONDAY 14 JULY",    "SU bar Quiz",                           "19:00 start",   "SU Bar",
-  "TUESDAY 15 JULY",   "Sports Night",                          "18:30 - 20:30", "Sports Centre",
-  "WEDNESDAY 16 JULY", "Harold Clarke Speaker Series - hybrid", "18:30",         "EBS",
-  "THURSDAY 17 JULY",  "Farewell Party Karaoke",                "20:30 - 23:30", "SU Bar"
-) |> 
-  tt() |> 
-  style_tt(fontsize = 0.6) |> 
-  style_tt(i = 4, background = "#FDE000")
-```
 
 # Wrap Up
 

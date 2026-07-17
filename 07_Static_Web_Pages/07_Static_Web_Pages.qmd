@@ -2,7 +2,7 @@
 title: "Session 7: Scraping Static Web Pages"
 subtitle: "Introduction to Web Scraping and Data Management for Social Scientists"
 author: "Johannes B. Gruber"
-date: 2025-07-15
+date: 2026-07-28
 from: markdown+emoji
 format:
   revealjs:
@@ -33,20 +33,20 @@ highlight-style: nord
 library(tinytable)
 library(tidyverse)
 tibble::tribble(
-  ~Day, ~Session,
-  1,  "Introduction",
-  2,  "Data Structures and Wrangling",
-  3,  "Working with Files",
-  4,  "Linking and joining data & SQL",
-  5,  "Scaling, Reporting and Database Software",
-  6,  "Introduction to the Web",
-  7,  "Static Web Pages",
-  8,  "Application Programming Interface (APIs) ",
-  9,  "Interactive Web Pages",
-  10, "Building a Reproducible Research Project",
-) |> 
-  tt() |> 
-  style_tt() |> 
+  ~Day , ~Session                                    ,
+     1 , "Introduction"                              ,
+     2 , "Data Structures and Wrangling"             ,
+     3 , "Working with Files"                        ,
+     4 , "Linking and joining data & SQL"            ,
+     5 , "Scaling, Reporting and Database Software"  ,
+     6 , "Introduction to the Web"                   ,
+     7 , "Static Web Pages"                          ,
+     8 , "Application Programming Interface (APIs) " ,
+     9 , "Interactive Web Pages"                     ,
+    10 , "Building a Reproducible Research Project"  ,
+) |>
+  tt() |>
+  style_tt() |>
   style_tt(i = 7, background = "#FDE000")
 ```
 </center>
@@ -118,13 +118,15 @@ library(rvest)
 library(tidyverse)
 
 # 1. Request & collect raw html
-html <- read_html("https://en.wikipedia.org/w/index.php?title=World_Happiness_Report&oldid=1165407285")
+html <- read_html(
+  "https://en.wikipedia.org/w/index.php?title=World_Happiness_Report&oldid=1165407285"
+)
 
 # 2. Parse
-happy_table <- html |> 
+happy_table <- html |>
   html_elements(".wikitable") |> # select the right element
-  html_table() |>                # special function for tables
-  pluck(3)                       # select the third table
+  html_table() |> # special function for tables
+  pluck(3) # select the third table
 
 # 3. No wrangling necessary
 happy_table
@@ -134,8 +136,8 @@ happy_table
 ::: {.column width="50%" }
 ```{r}
 ## Plot relationship wealth and life expectancy
-ggplot(happy_table, aes(x = `GDP per capita`, y = `Healthy life expectancy`)) + 
-  geom_point() + 
+ggplot(happy_table, aes(x = `GDP per capita`, y = `Healthy life expectancy`)) +
+  geom_point() +
   geom_smooth(method = 'lm')
 ```
 
@@ -161,13 +163,15 @@ ggplot(happy_table, aes(x = `GDP per capita`, y = `Healthy life expectancy`)) +
 ::: {.column width="45%"}
 ```{r}
 # 1. Request & collect raw html
-html <- read_html("https://en.wikipedia.org/w/index.php?title=List_of_prime_ministers_of_the_United_Kingdom&oldid=1166167337") # I'm using an older version of the site since some just changed it
+html <- read_html(
+  "https://en.wikipedia.org/w/index.php?title=List_of_prime_ministers_of_the_United_Kingdom&oldid=1166167337"
+) # I'm using an older version of the site since some just changed it
 
 # 2. Parse
-pm_table <- html |> 
+pm_table <- html |>
   html_element(".wikitable:contains('List of prime ministers')") |>
-  html_table() |> 
-  as_tibble(.name_repair = "unique") |> 
+  html_table() |>
+  as_tibble(.name_repair = "unique") |>
   filter(!duplicated(`Prime ministerOffice(Lifespan)`))
 
 # 3. No wrangling necessary
@@ -194,10 +198,10 @@ pm_table
 ```
 
 ```{r}
-links <- html |> 
+links <- html |>
   html_elements(".wikitable:contains('List of prime ministers') b a") |>
   html_attr("href")
-title <- html |> 
+title <- html |>
   html_elements(".wikitable:contains('List of prime ministers') b a") |>
   html_text()
 tibble(name = title, link = links)
@@ -219,7 +223,7 @@ html <- "<p>This is some text
 
          a) fun
          b) tedious
-         c) I'm not sure yet!</p>" |> 
+         c) I'm not sure yet!</p>" |>
   read_html()
 ```
 
@@ -235,7 +239,7 @@ html <- "<p>This is some text
 2. Identify and extract relevant variables for each review
 :::
 ::: {.column width="50%" }
-[![](media/thomann.png)](https://www.thomann.co.uk/Discovering-Statistics-Using-Andy-Field/dp/1446200469/){target="_blank"}
+[![](media/thomann.png)](https://www.thomann.co.uk/beyerdynamic_dt770_pro80_ohm.htm){target="_blank"}
 :::
 ::::
 
@@ -264,8 +268,8 @@ After clicking on reviews, then "Read all reviews", these are the links to the f
 ```{r}
 pages <- 1:45
 links <- paste0(
-  "https://www.thomann.co.uk/beyerdynamic_dt770_pro80_ohm_reviews.htm", 
-  "?page=", 
+  "https://www.thomann.co.uk/beyerdynamic_dt770_pro80_ohm_reviews.htm",
+  "?page=",
   pages,
   "&order=&rating=0"
 )
@@ -281,31 +285,31 @@ links
 html <- read_html(links[1])
 
 # we select review elements first
-reviews <- html |> 
+reviews <- html |>
   html_elements(".customer-review")
 
 # then extract the information from these reviews
 star_ratings <- function(pct) {
   as.integer(pct) / 100 * 5
 }
-rating <- reviews |> 
-  html_elements(".fx-rating-stars__filler") |> 
-  html_attr("style") |> 
-  str_extract("(?<=width: )\\d+?(?=%)") |> 
+rating <- reviews |>
+  html_elements(".fx-rating-stars__filler") |>
+  html_attr("style") |>
+  str_extract("(?<=width: )\\d+?(?=%)") |>
   star_ratings()
 
-title <- reviews |> 
-  html_elements(".review-intro__headline.js-headline-original") |> 
+title <- reviews |>
+  html_elements(".review-intro__headline.js-headline-original") |>
   html_text2()
 
-date <- reviews |> 
-  html_elements(".review-intro__author") |> 
-  html_text2() |> 
-  str_extract("\\d{2}.\\d{2}.\\d{4}") |> 
+date <- reviews |>
+  html_elements(".review-intro__author") |>
+  html_text2() |>
+  str_extract("\\d{2}.\\d{2}.\\d{4}") |>
   lubridate::dmy()
 
-text <- reviews |> 
-  html_elements(".review-text .fx-text-collapsible__fallback") |> 
+text <- reviews |>
+  html_elements(".review-text .fx-text-collapsible__fallback") |>
   html_text2()
 
 tibble(date, rating, title, text)
@@ -321,17 +325,17 @@ tibble(date, rating, title, text)
 :::: {.columns}
 ::: {.column width="50%"}
 ```{r}
-helpful <- reviews |> 
-  html_elements(".action [data-vote-rating-type=\"up\"] .action__value") |> 
-  html_text2() |> 
+helpful <- reviews |>
+  html_elements(".action [data-vote-rating-type=\"up\"] .action__value") |>
+  html_text2() |>
   as.integer()
 helpful
 ```
 
 ```{r}
-unhelpful <- reviews |> 
-  html_elements(".action [data-vote-rating-type=\"down\"] .action__value") |> 
-  html_text2() |> 
+unhelpful <- reviews |>
+  html_elements(".action [data-vote-rating-type=\"down\"] .action__value") |>
+  html_text2() |>
   as.integer()
 unhelpful
 ```
@@ -363,47 +367,46 @@ check_len <- function(x, len = 1, .default = NA) {
 }
 
 parse_review <- function(r) {
-  
-  date <- r |> 
-    html_elements(".review-intro__author") |> 
-    html_text2() |> 
-    str_extract("\\d{2}.\\d{2}.\\d{4}") |> 
-    lubridate::dmy() |> 
+  date <- r |>
+    html_elements(".review-intro__author") |>
+    html_text2() |>
+    str_extract("\\d{2}.\\d{2}.\\d{4}") |>
+    lubridate::dmy() |>
     check_len()
-  
-  rating <- r |> 
-    html_elements(".fx-rating-stars__filler") |> 
-    html_attr("style") |> 
-    str_extract("(?<=width: )\\d+?(?=%)") |> 
-    star_ratings() |> 
+
+  rating <- r |>
+    html_elements(".fx-rating-stars__filler") |>
+    html_attr("style") |>
+    str_extract("(?<=width: )\\d+?(?=%)") |>
+    star_ratings() |>
     check_len()
-  
-  helpful <- r |> 
-    html_elements(".action [data-vote-rating-type=\"up\"] .action__value") |> 
-    html_text2() |> 
-    as.integer() |> 
+
+  helpful <- r |>
+    html_elements(".action [data-vote-rating-type=\"up\"] .action__value") |>
+    html_text2() |>
+    as.integer() |>
     check_len()
-  
-  unhelpful <- r |> 
-    html_elements(".action [data-vote-rating-type=\"down\"] .action__value") |> 
-    html_text2() |> 
-    as.integer() |> 
+
+  unhelpful <- r |>
+    html_elements(".action [data-vote-rating-type=\"down\"] .action__value") |>
+    html_text2() |>
+    as.integer() |>
     check_len()
-  
-  title <- r |> 
-    html_elements(".review-intro__headline.js-headline-original") |> 
-    html_text2() |> 
+
+  title <- r |>
+    html_elements(".review-intro__headline.js-headline-original") |>
+    html_text2() |>
     check_len()
-  
-  text <- r |> 
-    html_elements(".review-text .fx-text-collapsible__fallback") |> 
-    html_text2() |> 
+
+  text <- r |>
+    html_elements(".review-text .fx-text-collapsible__fallback") |>
+    html_text2() |>
     check_len()
-  
+
   tibble(date, rating, helpful, unhelpful, title, text)
 }
 
-map(reviews, parse_review) |> 
+map(reviews, parse_review) |>
   bind_rows()
 ```
 
@@ -412,15 +415,15 @@ map(reviews, parse_review) |>
 ```{r thomann}
 get_reviews_from_page <- function(link) {
   html <- read_html(link)
-  
-  reviews <- html |> 
+
+  reviews <- html |>
     html_elements(".customer-review")
-  
-  map(reviews, parse_review) |> 
+
+  map(reviews, parse_review) |>
     bind_rows()
 }
 
-all_reviews <- map(links, get_reviews_from_page) |> 
+all_reviews <- map(links, get_reviews_from_page) |>
   bind_rows()
 glimpse(all_reviews)
 ```
@@ -467,7 +470,7 @@ Let's look for the date information in the page source
 
 ```{r}
 library(jsonlite)
-json_string <- list(x = 1:10, y = list(z = 1:10, a = LETTERS[1:10])) |> 
+json_string <- list(x = 1:10, y = list(z = 1:10, a = LETTERS[1:10])) |>
   toJSON()
 json_string
 ```
@@ -482,12 +485,14 @@ fromJSON(json_string)
 
 ```{r}
 # 1. Request & collect raw html
-html <- read_html("https://news.sky.com/story/crowdstrike-company-that-caused-global-techno-meltdown-offers-partners-10-vouchers-to-say-sorry-and-they-dont-work-13184488")
+html <- read_html(
+  "https://news.sky.com/story/crowdstrike-company-that-caused-global-techno-meltdown-offers-partners-10-vouchers-to-say-sorry-and-they-dont-work-13184488"
+)
 
 # 2. Parse
-json_string <- html |> 
+json_string <- html |>
   rvest::html_element("[type=\"application/ld+json\"]") |>
-  rvest::html_text() 
+  rvest::html_text()
 
 # 3. wrangling (part 1)
 data <- jsonlite::fromJSON(json_string)
@@ -536,9 +541,11 @@ glimpse(sky_article)
 Let's get this [cool data journalism article](https://www.zeit.de/mobilitaet/2024-04/deutschlandticket-klimaschutz-oeffentliche-verkehrsmittel-autos-verkehrswende).
 
 ```{r}
-html <- read_html("https://www.zeit.de/mobilitaet/2024-04/deutschlandticket-klimaschutz-oeffentliche-verkehrsmittel-autos-verkehrswende")
-html |> 
-  html_elements(".article-body p") |> 
+html <- read_html(
+  "https://www.zeit.de/mobilitaet/2024-04/deutschlandticket-klimaschutz-oeffentliche-verkehrsmittel-autos-verkehrswende"
+)
+html |>
+  html_elements(".article-body p") |>
   html_text2()
 ```
 
@@ -579,13 +586,15 @@ add_cookies("cookies.txt")
 ```{r}
 #| eval: false
 library(httr2)
-html <- request("https://www.zeit.de/mobilitaet/2024-04/deutschlandticket-klimaschutz-oeffentliche-verkehrsmittel-autos-verkehrswende") |> # start a request
+html <- request(
+  "https://www.zeit.de/mobilitaet/2024-04/deutschlandticket-klimaschutz-oeffentliche-verkehrsmittel-autos-verkehrswende"
+) |> # start a request
   req_options(cookie = get_cookies("zeit.de", as = "string")) |> # add cookies to be sent with it
-  req_perform() |> 
+  req_perform() |>
   resp_body_html() # extract html from response
 
-text <- html |> 
-  html_elements(".article-body p") |> 
+text <- html |>
+  html_elements(".article-body p") |>
   html_text2()
 length(text)
 ```
@@ -609,24 +618,27 @@ length(text)
 ```{r}
 library(httr2)
 # I use the internet archive here as the real website is incredibly slow
-html <- request("https://web.archive.org/web/20240519142346/https://www.parliament.gov.za/register-members-Interests") |> 
-  req_timeout(100) |> 
-  req_perform() |> 
+html <- request(
+  "https://web.archive.org/web/20240519142346/https://www.parliament.gov.za/register-members-Interests"
+) |>
+  req_timeout(100) |>
+  req_perform() |>
   resp_body_html()
 
-links <- html |> 
-  html_elements(".parly-h2+ul a") |> 
-  html_attr("href") |> 
+links <- html |>
+  html_elements(".parly-h2+ul a") |>
+  html_attr("href") |>
   # some links are malformed
   str_remove("^/web/20240519142346/")
 
-years <- html |> 
-  html_elements(".parly-h2+ul a") |> 
+years <- html |>
+  html_elements(".parly-h2+ul a") |>
   html_text()
 
 interest_pdfs <- tibble(
-  link = links, year = years
-) |> 
+  link = links,
+  year = years
+) |>
   mutate(file_name = paste0("data/za/", year, ".pdf"))
 interest_pdfs
 ```
@@ -638,7 +650,7 @@ dir.create("data/za", showWarnings = FALSE)
 if (!file.exists("data/za/2018.pdf")) {
   # multi_download is a neat little function that parallesises file download
   curl::multi_download(
-    urls = interest_pdfs$link, 
+    urls = interest_pdfs$link,
     destfiles = interest_pdfs$file_name
   )
 }
@@ -686,23 +698,23 @@ Let's investigate a few words we saw above:
 
 ```{r}
 # a politician name
-interests_pdf[[2]] |> 
+interests_pdf[[2]] |>
   filter(str_detect(text, "Abrahams,"))
 
 # an item header
-interests_pdf[[2]] |> 
+interests_pdf[[2]] |>
   filter(str_detect(text, "1"))
 
 # a disclose
-interests_pdf[[2]] |> 
+interests_pdf[[2]] |>
   filter(str_detect(text, "disclose"))
 
 # a word inside table
-interests_pdf[[2]] |> 
+interests_pdf[[2]] |>
   filter(str_detect(text, "Pringle"))
 
 # a table header
-interests_pdf[[2]] |> 
+interests_pdf[[2]] |>
   filter(str_detect(text, "Description"))
 ```
 
@@ -724,20 +736,24 @@ p1 <- interests_pdf[[2]]
 
 ```{r}
 # add whether politician name
-p1 |> 
-  mutate(is_name = font_name == "Arial-BoldMT" & 
-           round(font_size, 3) == 8.775) |> 
+p1 |>
+  mutate(
+    is_name = font_name == "Arial-BoldMT" &
+      round(font_size, 3) == 8.775
+  ) |>
   # add whether header
-  mutate(is_header = font_name == "Arial-BoldMT" & 
-           round(font_size, 1) == 7.5)
+  mutate(
+    is_header = font_name == "Arial-BoldMT" &
+      round(font_size, 1) == 7.5
+  )
 ```
 
 ## Wrangle into shape
 
 ```{r}
-p1_df <- p1 |> 
+p1_df <- p1 |>
   # one line in the PDF is all on the same y position
-  group_by(y) |> 
+  group_by(y) |>
   # so we can summarise, ie. make one row out of one line
   summarise(
     # we retain only the first value from font_name, font_size and x
@@ -747,41 +763,45 @@ p1_df <- p1 |>
     x = head(x, 1),
     # we use paste with collapse to get several character values into
     # one string per line
-    text = paste(text, collapse = " "), 
+    text = paste(text, collapse = " "),
     # dropping groups as we don't need them
     .groups = "drop"
-  ) |> 
+  ) |>
   # we check whether a line is a name
-  mutate(is_name = font_name == "Arial-BoldMT" & 
-           round(font_size, 3) == 8.775) |> 
+  mutate(
+    is_name = font_name == "Arial-BoldMT" &
+      round(font_size, 3) == 8.775
+  ) |>
   # and add a unique ID per person
-  mutate(id = cumsum(is_name)) |> 
+  mutate(id = cumsum(is_name)) |>
   # now we do the same per disclosure item
-  mutate(is_header = font_name == "Arial-BoldMT" & 
-           round(font_size, 1) == 7.5 &
-           x < 50) |> 
+  mutate(
+    is_header = font_name == "Arial-BoldMT" &
+      round(font_size, 1) == 7.5 &
+      x < 50
+  ) |>
   mutate(item_id = cumsum(is_header))
 ```
 
 ## Wrangle into shape
 
 ```{r}
-p1_df_tidy <- p1_df |> 
+p1_df_tidy <- p1_df |>
   # we group by person
-  group_by(id) |> 
+  group_by(id) |>
   # and add a new variable with their name
   mutate(
     name = text[is_name],
-  ) |> 
-  ungroup() |> 
+  ) |>
+  ungroup() |>
   # now we can remove the rows that contain the name in the text
-  filter(!is_name) |> 
+  filter(!is_name) |>
   # we do the same per item
-  group_by(item_id) |> 
+  group_by(item_id) |>
   mutate(
     item = text[is_header],
     content = paste(text[!is_header], collapse = "\n")
-  ) |> 
+  ) |>
   # this produces a lot of duplicates, which we can get rid of with distinct
   distinct(name, item, content)
 glimpse(p1_df_tidy)
@@ -802,9 +822,9 @@ for (p in seq_along(interests_pdf)) {
 I'm sorry for this long code :sweat_smile:
 
 ```{r}
-interests_df <- bind_rows(interests_pdf) |> 
+interests_df <- bind_rows(interests_pdf) |>
   # one line in the PDF is all on the same y position
-  group_by(page, y) |> 
+  group_by(page, y) |>
   # so we can summarise, ie. make one row out of one line
   summarise(
     # we retain only the first value from font_name, font_size and x
@@ -814,39 +834,43 @@ interests_df <- bind_rows(interests_pdf) |>
     x = head(x, 1),
     # we use paste with collapse to get several character values into
     # one string per line
-    text = paste(text, collapse = " "), 
+    text = paste(text, collapse = " "),
     # dropping groups as we don't need them
     .groups = "drop"
-  ) |> 
+  ) |>
   # we check whether a line is a name
-  mutate(is_name = font_name == "Arial-BoldMT" & 
-           round(font_size, 3) == 8.775) |> 
+  mutate(
+    is_name = font_name == "Arial-BoldMT" &
+      round(font_size, 3) == 8.775
+  ) |>
   # and add a unique ID per person
-  mutate(id = cumsum(is_name)) |> 
+  mutate(id = cumsum(is_name)) |>
   # everything before the first name can be removed
-  filter(id != 0) |> 
+  filter(id != 0) |>
   # now we do the same per disclosure item
-  mutate(is_header = font_name == "Arial-BoldMT" & 
-           round(font_size, 1) == 7.5 &
-           x < 50) |> 
-  mutate(item_id = cumsum(is_header))  |> 
+  mutate(
+    is_header = font_name == "Arial-BoldMT" &
+      round(font_size, 1) == 7.5 &
+      x < 50
+  ) |>
+  mutate(item_id = cumsum(is_header)) |>
   # we group by person
-  group_by(id) |> 
+  group_by(id) |>
   # and add a new variable with their name
   mutate(
     name = text[is_name],
-  ) |> 
-  ungroup() |> 
+  ) |>
+  ungroup() |>
   # now we can remove the rows that contain the name in the text
-  filter(!is_name) |> 
+  filter(!is_name) |>
   # we do the same per item
-  group_by(item_id) |> 
+  group_by(item_id) |>
   mutate(
     item = text[is_header],
     content = paste(text[!is_header], collapse = "\n")
-  ) |> 
+  ) |>
   # this produces a lot of duplicates, which we can get rid of with distinct
-  ungroup() |> 
+  ungroup() |>
   distinct(id, name, item, content)
 ```
 
@@ -884,27 +908,6 @@ Note that down and try another website.
 
 Deadline: **Friday before class**
 
-
-# Reminder: Social Programme
-
-```{r}
-#| echo: false
-tibble::tribble(
-  ~DATE,               ~Event,                                  ~Time,           ~Venue,
-  "MONDAY 7 July",     "Meet and Greet - in person",            "19:00 start",   "SU Bar",
-  "TUESDAY 8 July",    "Climbing",               "18:30 start",   "Sports Centre",
-  "WEDNESDAY 9 July",  "Harold Clarke Speaker Series - hybrid", "18:45 - 20.00", "EBS",
-  "THURSDAY 10 July",  "Sports Night",                          "18:30 - 20:30", "Sports Centre",
-  "FRIDAY 11 July",    "Wivenhoe Pub Run",                      "18:30 start",   "Wivenhoe pubs",
-  "MONDAY 14 JULY",    "SU bar Quiz",                           "19:00 start",   "SU Bar",
-  "TUESDAY 15 JULY",   "Sports Night",                          "18:30 - 20:30", "Sports Centre",
-  "WEDNESDAY 16 JULY", "Harold Clarke Speaker Series - hybrid", "18:30",         "EBS",
-  "THURSDAY 17 JULY",  "Farewell Party Karaoke",                "20:30 - 23:30", "SU Bar"
-) |> 
-  tt() |> 
-  style_tt(fontsize = 0.9) |> 
-  style_tt(i = 7, background = "#FDE000")
-```
 
 # Wrap Up
 

@@ -2,7 +2,7 @@
 title: "Session 6: Introduction to the Web"
 subtitle: "Introduction to Web Scraping and Data Management for Social Scientists"
 author: "Johannes B. Gruber"
-date: 2025-07-14
+date: 2026-07-27
 from: markdown+emoji
 format:
   revealjs:
@@ -32,20 +32,20 @@ highlight-style: nord
 library(tinytable)
 library(tidyverse)
 tibble::tribble(
-  ~Day, ~Session,
-  1,  "Introduction",
-  2,  "Data Structures and Wrangling",
-  3,  "Working with Files",
-  4,  "Linking and joining data & SQL",
-  5,  "Scaling, Reporting and Database Software",
-  6,  "Introduction to the Web",
-  7,  "Static Web Pages",
-  8,  "Application Programming Interface (APIs) ",
-  9,  "Interactive Web Pages",
-  10, "Building a Reproducible Research Project",
-) |> 
-  tt() |> 
-  style_tt() |> 
+  ~Day , ~Session                                    ,
+     1 , "Introduction"                              ,
+     2 , "Data Structures and Wrangling"             ,
+     3 , "Working with Files"                        ,
+     4 , "Linking and joining data & SQL"            ,
+     5 , "Scaling, Reporting and Database Software"  ,
+     6 , "Introduction to the Web"                   ,
+     7 , "Static Web Pages"                          ,
+     8 , "Application Programming Interface (APIs) " ,
+     9 , "Interactive Web Pages"                     ,
+    10 , "Building a Reproducible Research Project"  ,
+) |>
+  tt() |>
+  style_tt() |>
   style_tt(i = 6, background = "#FDE000")
 ```
 </center>
@@ -92,7 +92,7 @@ We will:
 
 ::: {.column width="50%"}
 ![](media/dataset.png)
-![Image Source: daveberesford.co.uk](https://daveberesford.co.uk/wp-content/uploads/2019/02/data-scraping-960x594.png)
+![Image Source: daveberesford.co.uk](media/data-scraping-960x594.png)
 :::
 ::::
 
@@ -164,7 +164,7 @@ We will:
 :::
 
 ::: {.column width="60%"}
-![](https://hackernoon.com/hn-images/0*MPt2rectMhwklT63.jpg){width=100%}
+![](media/0*MPt2rectMhwklT63.jpg){width=100%}
 :::
 ::::
 
@@ -408,7 +408,7 @@ Code:
     <p class="author">Me</p>
     <p>This is the body of the text.</p>
     <p>Consider this image:</p>
-    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/About_The_Dog.jpg/640px-About_The_Dog.jpg" alt="About The Dog.">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/11/3_month_old_Corgi_puppy.jpg/960px-3_month_old_Corgi_puppy.jpg" alt="About The Dog.">
 </body>
 </html>
 ```
@@ -475,7 +475,7 @@ HTML:
   <p class="author">Me</p>
   <div class="content">
     <p>This is the body of the text.</p>
-    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/About_The_Dog.jpg/640px-About_The_Dog.jpg" alt="About The Dog.">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/11/3_month_old_Corgi_puppy.jpg/960px-3_month_old_Corgi_puppy.jpg" alt="About The Dog.">
     <p>Consider this data:</p>
     <table>
       <tr class="top-row">
@@ -548,8 +548,8 @@ You can select HTML elements by their tags
 
 ```{r}
 library(rvest)
-read_html("data/example.html") |> 
-  html_elements("p") |> 
+read_html("data/example.html") |>
+  html_elements("p") |>
   html_text2()
 ```
 
@@ -561,29 +561,28 @@ read_html("data/example.html") |>
 You can select elements by an attribute, including the class:
 
 ```{r}
-read_html("data/example.html") |> 
-  html_element("[class=\"headline\"]") |> 
+read_html("data/example.html") |>
+  html_element("[class=\"headline\"]") |>
   html_text()
 ```
 
 For `class`, there is also a shorthand:
 
 ```{r}
-read_html("data/example.html") |> 
-  html_element(".headline") |> 
+read_html("data/example.html") |>
+  html_element(".headline") |>
   html_text()
 ```
 
 Another important shorthand is `#`, which selects the `id` attribute:
 
 ```{r}
-read_html("data/example.html") |> 
-  html_element("#table-1") |> 
+read_html("data/example.html") |>
+  html_element("#table-1") |>
   html_table()
 
-read_html("data/example.html") |> 
+read_html("data/example.html") |>
   html_element("#table-1 > tr")
-
 ```
 
 ## Extracting attributes
@@ -591,14 +590,14 @@ read_html("data/example.html") |>
 Instead of selecting by attribute, you can also extract one or all attributes:
 
 ```{r}
-read_html("data/example.html") |> 
-  html_elements("a") |> 
+read_html("data/example.html") |>
+  html_elements("a") |>
   html_attr("href")
 ```
 
 ```{r}
-read_html("data/example.html") |> 
-  html_elements("a") |> 
+read_html("data/example.html") |>
+  html_elements("a") |>
   html_attrs()
 ```
 
@@ -607,23 +606,23 @@ read_html("data/example.html") |>
 If there is more than one element that fits your selector, but you only want one of them, see if you can make your selection more specific by chaining selectors with `>` (for the immediate children) or an empty space (for any children and descendants of an element):
 
 ```{r}
-read_html("data/example.html") |> 
-  html_elements(".author>a") |> 
+read_html("data/example.html") |>
+  html_elements(".author>a") |>
   html_attr("href")
 ```
 
 ```{r}
-read_html("data/example.html") |> 
-  html_elements(".author a") |> 
+read_html("data/example.html") |>
+  html_elements(".author a") |>
   html_attr("href")
 ```
 
 Tip: there is also no rule against doing this instead:
 
 ```{r}
-read_html("data/example.html") |> 
-  html_elements(".author") |> 
-  html_elements("a") |> 
+read_html("data/example.html") |>
+  html_elements(".author") |>
+  html_elements("a") |>
   html_attr("href")
 ```
 
@@ -719,7 +718,7 @@ webpage <- "<html>
   </ol>
 
 </body>
-</html>" |> 
+</html>" |>
   read_html()
 ```
 
@@ -748,26 +747,6 @@ bullet_point_three_ordered <- html_elements(webpage, "")
 bullet_point_three_ordered
 ```
 
-# Reminder: Social Programme
-
-```{r}
-#| echo: false
-tibble::tribble(
-  ~DATE,               ~Event,                                  ~Time,           ~Venue,
-  "MONDAY 7 July",     "Meet and Greet - in person",            "19:00 start",   "SU Bar",
-  "TUESDAY 8 July",    "Climbing",               "18:30 start",   "Sports Centre",
-  "WEDNESDAY 9 July",  "Harold Clarke Speaker Series - hybrid", "18:45 - 20.00", "EBS",
-  "THURSDAY 10 July",  "Sports Night",                          "18:30 - 20:30", "Sports Centre",
-  "FRIDAY 11 July",    "Wivenhoe Pub Run",                      "18:30 start",   "Wivenhoe pubs",
-  "MONDAY 14 JULY",    "SU bar Quiz",                           "19:00 start",   "SU Bar",
-  "TUESDAY 15 JULY",   "Sports Night",                          "18:30 - 20:30", "Sports Centre",
-  "WEDNESDAY 16 JULY", "Harold Clarke Speaker Series - hybrid", "18:30",         "EBS",
-  "THURSDAY 17 JULY",  "Farewell Party Karaoke",                "20:30 - 23:30", "SU Bar"
-) |> 
-  tt() |> 
-  style_tt(fontsize = 0.6) |> 
-  style_tt(i = 6, background = "#FDE000")
-```
 
 # Wrap Up
 

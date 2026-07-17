@@ -2,7 +2,7 @@
 title: "Session 3:	Working with Files"
 subtitle: "ESS: Introduction to Web Scraping and Data Management for Social Scientists"
 author: "Johannes B. Gruber"
-date: 2025-07-09
+date: 2026-07-22
 from: markdown+emoji
 format:
   revealjs:
@@ -32,20 +32,20 @@ highlight-style: nord
 library(tinytable)
 library(tidyverse)
 tibble::tribble(
-  ~Day, ~Session,
-  1,  "Introduction",
-  2,  "Data Structures and Wrangling",
-  3,  "Working with Files",
-  4,  "Linking and joining data & SQL",
-  5,  "Scaling, Reporting and Database Software",
-  6,  "Introduction to the Web",
-  7,  "Static Web Pages",
-  8,  "Application Programming Interface (APIs) ",
-  9,  "Interactive Web Pages",
-  10, "Building a Reproducible Research Project",
-) |> 
-  tt() |> 
-  style_tt() |> 
+  ~Day , ~Session                                    ,
+     1 , "Introduction"                              ,
+     2 , "Data Structures and Wrangling"             ,
+     3 , "Working with Files"                        ,
+     4 , "Linking and joining data & SQL"            ,
+     5 , "Scaling, Reporting and Database Software"  ,
+     6 , "Introduction to the Web"                   ,
+     7 , "Static Web Pages"                          ,
+     8 , "Application Programming Interface (APIs) " ,
+     9 , "Interactive Web Pages"                     ,
+    10 , "Building a Reproducible Research Project"  ,
+) |>
+  tt() |>
+  style_tt() |>
   style_tt(i = 3, background = "#FDE000")
 ```
 </center>
@@ -86,7 +86,7 @@ if (!dir.exists("data/files")) {
   # download the zip file containing the data from Weidmann (2023)
   if (!file.exists("data/main.zip")) {
     curl::curl_download(
-      url = "https://github.com/nilsbw/dmbook-setup/archive/refs/heads/main.zip", 
+      url = "https://github.com/nilsbw/dmbook-setup/archive/refs/heads/main.zip",
       destfile = "data/main.zip"
     )
   }
@@ -212,7 +212,10 @@ And can either convert the input or use a function that can work with different 
 readLines("data/files/un-secretaries_win.txt") |>
   stringi::stri_encode(from = "ISO-8859-1", to = "UTF-8")
 
-readr::read_csv(file = "data/files/un-secretaries_win.txt", locale = readr::locale(encoding = "ISO-8859-1"))
+readr::read_csv(
+  file = "data/files/un-secretaries_win.txt",
+  locale = readr::locale(encoding = "ISO-8859-1")
+)
 ```
 
 ## File formats for tabular data: CSV
@@ -228,7 +231,7 @@ readr::read_csv(file = "data/files/un-secretaries_win.txt", locale = readr::loca
 :::
 ::: {.column width="50%" }
 ```{r}
-readLines("data/files/csv-example.csv") |> 
+readLines("data/files/csv-example.csv") |>
   head(15)
 ```
 
@@ -259,12 +262,12 @@ rio::import("data/files/csv-example.csv")
 :::
 ::: {.column width="50%" }
 ```{r}
-readLines("data/files/csv-example-semicolon.csv") |> 
+readLines("data/files/csv-example-semicolon.csv") |>
   head(15)
 ```
 
 ```{r}
-readLines("data/files/csv-example-quotes.csv") |> 
+readLines("data/files/csv-example-quotes.csv") |>
   head(15)
 ```
 :::
@@ -380,14 +383,14 @@ elites_twitter <- readRDS("data/files/leaders-twitter.rds")
 ```{r}
 json_file <- repurrrsive::gh_repos_json()
 gh_repos <- jsonlite::fromJSON(json_file, simplifyDataFrame = FALSE)
-gh_repos |> 
+gh_repos |>
   lobstr::tree(max_length = 20)
 ```
 
 ```{r}
 jsonlite::stream_out(elites.data$UK, file("data/elites_data_UK.json"))
-readLines("data/elites_data_UK.json") |> 
-  head() |> 
+readLines("data/elites_data_UK.json") |>
+  head() |>
   cat()
 ```
 
@@ -395,7 +398,7 @@ readLines("data/elites_data_UK.json") |>
 ::::
 
 
-## Excercises 1
+## Exercises 1
 
 1. Download the file from this address into the "data" folder and name it "internet_usage.xlsx" using R: <https://api.worldbank.org/v2/en/indicator/IT.NET.USER.ZS?downloadformat=excel> (hint: there are several R functions to download files, we've even seen one above)
 2. Reproduce this plot (hint: you can get grey out cases with `gghighlight`):
@@ -490,7 +493,9 @@ This won't, even though it works on my machine :stuck_out_tongue::
 
 ```{r}
 #| eval: false
-plenary_speeches_raw <- rio::import("/home/johannes/Documents/GitHub/ess-web-scraping-data-management/03_Working_with_Files/data/files/csv-example.csv")
+plenary_speeches_raw <- rio::import(
+  "/home/johannes/Documents/GitHub/ess-web-scraping-data-management/03_Working_with_Files/data/files/csv-example.csv"
+)
 ```
 
 RStudio projects are not really necessary for this, especially given that Quarto sets the working directory of your documents to it's source location by default.
@@ -561,22 +566,20 @@ If you name your files in a sensible way and record the order of things, that sh
 You can use a little functions that implements make-like processing
 
 ```{r}
-make_quarto <- function(files, 
-                        destfiles = NULL, 
-                        output_ext = ".html", 
-                        ...) {
-  
-  if (is.null(destfiles)) destfiles <- paste0(tools::file_path_sans_ext(files), output_ext)
-  
+make_quarto <- function(files, destfiles = NULL, output_ext = ".html", ...) {
+  if (is.null(destfiles)) {
+    destfiles <- paste0(tools::file_path_sans_ext(files), output_ext)
+  }
+
   # the oldest file should be the first source file, I record the first destfile, since it should be newer
   t <- file.info(destfiles[1])$ctime
-  
+
   for (i in seq_along(files)) {
     if (
       # render file if source is newer than destination
-      isTRUE(file.info(files[i])$ctime >= file.info(destfiles[i])$ctime) || 
-      # or if output is NOT newer than previous destination file
-      !isTRUE(file.info(destfiles[i])$ctime >= t) 
+      isTRUE(file.info(files[i])$ctime >= file.info(destfiles[i])$ctime) ||
+        # or if output is NOT newer than previous destination file
+        !isTRUE(file.info(destfiles[i])$ctime >= t)
     ) {
       cli::cli_progress_step("Making {destfiles[i]}.")
       quarto::quarto_render(
@@ -589,7 +592,6 @@ make_quarto <- function(files,
     }
     t <- file.info(destfiles[i])$ctime
   }
-  
 }
 ```
 
@@ -597,7 +599,7 @@ This is very barebones compared to the `targets` package, but I never really nee
 Mostly I have been using the actual GNU make, but it's syntax is quite different from other programs and it is not installed by default on Windows.
 
 
-## Excercise 2
+## Exercises 2
 
 1. set up a directory for your research project and fill it with the mock data and analysis files you imagine you need
 2. write a readme file that contains documentation of your file structure 
@@ -657,13 +659,14 @@ bind_rows(dataset_list)
 ```{r}
 #| classes: fragment
 read_dat <- function(x) {
-  rio::import(x) |> 
-    mutate(kmdist = str_replace(kmdist, ",", "."),
-           midist = str_replace(midist, ",", ".")) |> 
-    mutate(kmdist = as.numeric(kmdist),
-           midist = as.numeric(midist))
+  rio::import(x) |>
+    mutate(
+      kmdist = str_replace(kmdist, ",", "."),
+      midist = str_replace(midist, ",", ".")
+    ) |>
+    mutate(kmdist = as.numeric(kmdist), midist = as.numeric(midist))
 }
-map(dataset_files, read_dat) |> 
+map(dataset_files, read_dat) |>
   bind_rows()
 ```
 
@@ -694,15 +697,16 @@ if (!file.exists(corp_hoc)) {
   ds <- get_dataset("doi:10.7910/DVN/L4OAKN")
   # you can inspect that object with
   # as_tibble(ds[["files"]][, c("label", "id")])
-  
-  url <- get_file(3758859L, 
-                  dataset = "doi:10.7910/DVN/ZY3RV7",
-                  return_url = TRUE)
-  
-  
+
+  url <- get_file(
+    3758859L,
+    dataset = "doi:10.7910/DVN/ZY3RV7",
+    return_url = TRUE
+  )
+
   curl::curl_download(url, destfile = corp_hoc, quiet = FALSE)
 }
-corp_hoc_df <- readRDS(corp_hoc) |> 
+corp_hoc_df <- readRDS(corp_hoc) |>
   mutate(date = as.Date(date))
 ```
 
@@ -715,7 +719,10 @@ if (!dir.exists("data/house_of_commons")) {
   corp_hoc_list <- split(corp_hoc_df, corp_hoc_df$party)
   dir.create("data/house_of_commons")
   for (party in names(corp_hoc_list)) {
-    rio::export(corp_hoc_list[[party]], paste0("data/house_of_commons/", party, ".csv"))
+    rio::export(
+      corp_hoc_list[[party]],
+      paste0("data/house_of_commons/", party, ".csv")
+    )
   }
 }
 list.files("data/house_of_commons")
@@ -729,8 +736,7 @@ Or we can use `arrow` to treat them as a database:
 ```{r open_dataset}
 #| cache-lazy: false
 library(arrow)
-corp_hoc_con <- open_dataset(sources = "data/house_of_commons",
-                             format = "csv")
+corp_hoc_con <- open_dataset(sources = "data/house_of_commons", format = "csv")
 ```
 
 The `corp_hoc_con` is way smaller than the actual data object:
@@ -738,7 +744,7 @@ The `corp_hoc_con` is way smaller than the actual data object:
 ```{r}
 #| cache-lazy: false
 object.size(corp_hoc_con)
-object.size(corp_hoc_df) |> 
+object.size(corp_hoc_df) |>
   format(units = "MB")
 ```
 
@@ -746,12 +752,11 @@ Yet we can still treat it like a normal data.frame:
 
 ```{r count_data}
 #| cache-lazy: false
-corp_hoc_con |> 
-  mutate(date = as.Date(date)) |> 
-  filter(date >= "2000-01-01",
-         date < "2001-01-01") |> 
-  select(party) |> 
-  collect() |>                 # special function when working with DBs
+corp_hoc_con |>
+  mutate(date = as.Date(date)) |>
+  filter(date >= "2000-01-01", date < "2001-01-01") |>
+  select(party) |>
+  collect() |> # special function when working with DBs
   count(party, sort = TRUE)
 ```
 
@@ -792,21 +797,27 @@ library(googlesheets4)
 # write
 write_sheet(gss_cat, "gs4-test")
 # read
-cats_df <- read_sheet("https://docs.google.com/spreadsheets/d/1XdqfPXrZCTim156m8SteKG_teOgj9AJLcAHOMrV_wfI/edit?usp=sharing")
+cats_df <- read_sheet(
+  "https://docs.google.com/spreadsheets/d/1XdqfPXrZCTim156m8SteKG_teOgj9AJLcAHOMrV_wfI/edit?usp=sharing"
+)
 # update
-cats_df_updated <- cats_df |> 
+cats_df_updated <- cats_df |>
   add_case(
     year = 2000,
-    marital = "Never married", 
-    age = 26, 
-    race = "White", 
-    rincome = "$8000 to 9999", 
-    partyid = "Ind,near rep", 
-    relig = "Protestant", 
-    denom = "Southern baptist", 
+    marital = "Never married",
+    age = 26,
+    race = "White",
+    rincome = "$8000 to 9999",
+    partyid = "Ind,near rep",
+    relig = "Protestant",
+    denom = "Southern baptist",
     tvhours = 12
   )
-write_sheet(cats_df_updated, ss = "https://docs.google.com/spreadsheets/d/1XdqfPXrZCTim156m8SteKG_teOgj9AJLcAHOMrV_wfI/edit?usp=sharing", sheet = "gss_cat_updated")
+write_sheet(
+  cats_df_updated,
+  ss = "https://docs.google.com/spreadsheets/d/1XdqfPXrZCTim156m8SteKG_teOgj9AJLcAHOMrV_wfI/edit?usp=sharing",
+  sheet = "gss_cat_updated"
+)
 ```
 
 ## Data storage alternatives
@@ -841,26 +852,6 @@ Save some information about the session for reproducibility.
 sessionInfo()
 ```
 
-# Reminder: Social Programme
-
-```{r}
-#| echo: false
-tibble::tribble(
-  ~DATE,               ~Event,                                  ~Time,           ~Venue,
-  "MONDAY 7 July",     "Meet and Greet - in person",            "19:00 start",   "SU Bar",
-  "TUESDAY 8 July",    "Climbing",               "18:30 start",   "Sports Centre",
-  "WEDNESDAY 9 July",  "Harold Clarke Speaker Series - hybrid", "18:45 - 20.00", "EBS",
-  "THURSDAY 10 July",  "Sports Night",                          "18:30 - 20:30", "Sports Centre",
-  "FRIDAY 11 July",    "Wivenhoe Pub Run",                      "18:30 start",   "Wivenhoe pubs",
-  "MONDAY 14 JULY",    "SU bar Quiz",                           "19:00 start",   "SU Bar",
-  "TUESDAY 15 JULY",   "Sports Night",                          "18:30 - 20:30", "Sports Centre",
-  "WEDNESDAY 16 JULY", "Harold Clarke Speaker Series - hybrid", "18:30",         "EBS",
-  "THURSDAY 17 JULY",  "Farewell Party Karaoke",                "20:30 - 23:30", "SU Bar"
-) |> 
-  tt() |> 
-  style_tt(fontsize = 0.6) |> 
-  style_tt(i = 3, background = "#FDE000")
-```
 
 <!-- This is just some extra CSS code to make presentation look pretty -->
 ```{css}

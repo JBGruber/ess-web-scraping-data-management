@@ -2,7 +2,7 @@
 title: "Session 8: Application Programming Interface (APIs)"
 subtitle: "Introduction to Web Scraping and Data Management for Social Scientists"
 author: "Johannes B. Gruber"
-date: 2025-07-16
+date: 2026-07-29
 from: markdown+emoji
 format:
   revealjs:
@@ -34,20 +34,20 @@ library(tinytable)
 library(tidyverse)
 library(httr2)
 tibble::tribble(
-  ~Day, ~Session,
-  1,  "Introduction",
-  2,  "Data Structures and Wrangling",
-  3,  "Working with Files",
-  4,  "Linking and joining data & SQL",
-  5,  "Scaling, Reporting and Database Software",
-  6,  "Introduction to the Web",
-  7,  "Static Web Pages",
-  8,  "Application Programming Interface (APIs) ",
-  9,  "Interactive Web Pages",
-  10, "Building a Reproducible Research Project",
-) |> 
-  tt() |> 
-  style_tt() |> 
+  ~Day , ~Session                                    ,
+     1 , "Introduction"                              ,
+     2 , "Data Structures and Wrangling"             ,
+     3 , "Working with Files"                        ,
+     4 , "Linking and joining data & SQL"            ,
+     5 , "Scaling, Reporting and Database Software"  ,
+     6 , "Introduction to the Web"                   ,
+     7 , "Static Web Pages"                          ,
+     8 , "Application Programming Interface (APIs) " ,
+     9 , "Interactive Web Pages"                     ,
+    10 , "Building a Reproducible Research Project"  ,
+) |>
+  tt() |>
+  style_tt() |>
   style_tt(i = 8, background = "#FDE000")
 ```
 </center>
@@ -151,19 +151,21 @@ Let's build our first `httr2` request!
 #| output: false
 library(httr2)
 library(tidyverse, warn.conflicts = FALSE)
-req <- request("https://content.guardianapis.com") |>  # start the request with the base URL
-  req_url_path("search") |>                            # navigate to the endpoint you want to access
-  req_method("GET") |>                                 # specify the method
-  req_timeout(seconds = 60) |>                         # how long to wait for a response
+req <- request("https://content.guardianapis.com") |> # start the request with the base URL
+  req_url_path("search") |> # navigate to the endpoint you want to access
+  req_method("GET") |> # specify the method
+  req_timeout(seconds = 60) |> # how long to wait for a response
   req_headers("User-Agent" = "httr2 guardian test") |> # specify request headers
   # req_body_json() |>                                 # since this is a GET request the body stays empty
-  req_url_query(                                       # instead the query is added to the URL
+  req_url_query(
+    # instead the query is added to the URL
     q = "parliament AND debate",
     "show-blocks" = "all"
   ) |>
-  req_url_query(                                       # in this case, the API key is also added to the query
-    "api-key" = Sys.getenv("GUARDIAN_KEY")             # but httr2 also has req_auth_* functions for other
-  )                                                    # authentication procedures
+  req_url_query(
+    # in this case, the API key is also added to the query
+    "api-key" = Sys.getenv("GUARDIAN_KEY") # but httr2 also has req_auth_* functions for other
+  ) # authentication procedures
 print(req)
 ```
 
@@ -277,8 +279,8 @@ Luckily, we know how to extract text from that :sunglasses:
 
 ```{r}
 library(rvest)
-text <- pluck(res, "blocks", "body", 1, "bodyHtml") |> 
-  read_html() |> 
+text <- pluck(res, "blocks", "body", 1, "bodyHtml") |>
+  read_html() |>
   html_text2()
 text
 ```
@@ -289,11 +291,10 @@ Let's put this all together:
 
 ```{r}
 parse_response <- function(res) {
-  
-  text <- pluck(res, "blocks", "body", 1, "bodyHtml") |> 
-    read_html() |> 
+  text <- pluck(res, "blocks", "body", 1, "bodyHtml") |>
+    read_html() |>
     html_text2()
-  
+
   tibble(
     id = res$id,
     type = res$type,
@@ -308,7 +309,7 @@ parse_response(res)
 We can loop over all articles returned by the API and apply this function to it:
 
 ```{r}
-map(search_res, parse_response) |> 
+map(search_res, parse_response) |>
   bind_rows() # combine the list into one data.frame
 ```
 
@@ -409,9 +410,11 @@ A more advanced curl call
 What's great about curl calls is that `httr2` has a way to translate them into `R` code:
 
 ```{r}
-curl_translate("curl -X 'GET' \
+curl_translate(
+  "curl -X 'GET' \
   'https://members-api.parliament.uk/api/Members/Search?Name=Major&skip=0&take=20' \
-  -H 'accept: text/plain'")
+  -H 'accept: text/plain'"
+)
 ```
 
 Some pointers:
@@ -426,23 +429,23 @@ We can copy the output from `curl_translate()` and run it in `R`.
 I also added the `resp_body_json()` since we already know the returned data will be json.
 
 ```{r}
-search <- request("https://members-api.parliament.uk/api/Members/Search") |> 
-  req_method("GET") |> 
+search <- request("https://members-api.parliament.uk/api/Members/Search") |>
+  req_method("GET") |>
   req_url_query(
     Name = "Major",
     skip = "0",
     take = "20",
-  ) |> 
+  ) |>
   req_headers(
     accept = "text/plain",
-  ) |> 
-  req_perform()|>
+  ) |>
+  req_perform() |>
   resp_body_json() # <- I added this line to process the response
 ```
 
 ```{r}
 pluck(search, "totalResults")
-pluck(search, "items", 1) |> 
+pluck(search, "items", 1) |>
   lobstr::tree(max_length = 25)
 ```
 
@@ -454,15 +457,23 @@ To make the `items` more useful, we can bring them into a tabular format.
 ```{r}
 items <- pluck(search, "items")
 tibble(
-  id                    = map_int(items, function(i) pluck(i, "value", "id")),
-  nameListAs            = map_chr(items, function(i) pluck(i, "value", "nameListAs")),
-  nameDisplayAs         = map_chr(items, function(i) pluck(i, "value", "nameDisplayAs")),
-  nameFullTitle         = map_chr(items, function(i) pluck(i, "value", "nameFullTitle")),
-  nameAddressAs         = map_chr(items, function(i) pluck(i, "value", "nameAddressAs")),
-  gender                = map_chr(items, function(i) pluck(i, "value", "gender")),
-  latestParty           = map(items, function(i) pluck(i, "value", "latestParty")),
-  latestHouseMembership = map(items, function(i) pluck(i, "value", "latestHouseMembership")),
-  test                  = map_chr(items, function(i) pluck(i, "value", "test", .default = NA))
+  id = map_int(items, function(i) pluck(i, "value", "id")),
+  nameListAs = map_chr(items, function(i) pluck(i, "value", "nameListAs")),
+  nameDisplayAs = map_chr(items, function(i) {
+    pluck(i, "value", "nameDisplayAs")
+  }),
+  nameFullTitle = map_chr(items, function(i) {
+    pluck(i, "value", "nameFullTitle")
+  }),
+  nameAddressAs = map_chr(items, function(i) {
+    pluck(i, "value", "nameAddressAs")
+  }),
+  gender = map_chr(items, function(i) pluck(i, "value", "gender")),
+  latestParty = map(items, function(i) pluck(i, "value", "latestParty")),
+  latestHouseMembership = map(items, function(i) {
+    pluck(i, "value", "latestHouseMembership")
+  }),
+  test = map_chr(items, function(i) pluck(i, "value", "test", .default = NA))
 )
 ```
 
@@ -481,15 +492,23 @@ To make the `items` more useful, we can bring them into a tabular format.
 ```{r}
 items <- pluck(search, "items")
 tibble(
-  id                    = map_int(items, function(i) pluck(i, "value", "id")),
-  nameListAs            = map_chr(items, function(i) pluck(i, "value", "nameListAs")),
-  nameDisplayAs         = map_chr(items, function(i) pluck(i, "value", "nameDisplayAs")),
-  nameFullTitle         = map_chr(items, function(i) pluck(i, "value", "nameFullTitle")),
-  nameAddressAs         = map_chr(items, function(i) pluck(i, "value", "nameAddressAs")),
-  gender                = map_chr(items, function(i) pluck(i, "value", "gender")),
-  latestParty           = map(items, function(i) pluck(i, "value", "latestParty")),
-  latestHouseMembership = map(items, function(i) pluck(i, "value", "latestHouseMembership")),
-  test                  = map_chr(items, function(i) pluck(i, "value", "test", .default = NA))
+  id = map_int(items, function(i) pluck(i, "value", "id")),
+  nameListAs = map_chr(items, function(i) pluck(i, "value", "nameListAs")),
+  nameDisplayAs = map_chr(items, function(i) {
+    pluck(i, "value", "nameDisplayAs")
+  }),
+  nameFullTitle = map_chr(items, function(i) {
+    pluck(i, "value", "nameFullTitle")
+  }),
+  nameAddressAs = map_chr(items, function(i) {
+    pluck(i, "value", "nameAddressAs")
+  }),
+  gender = map_chr(items, function(i) pluck(i, "value", "gender")),
+  latestParty = map(items, function(i) pluck(i, "value", "latestParty")),
+  latestHouseMembership = map(items, function(i) {
+    pluck(i, "value", "latestHouseMembership")
+  }),
+  test = map_chr(items, function(i) pluck(i, "value", "test", .default = NA))
 )
 ```
 
@@ -512,32 +531,40 @@ safe_pluck <- function(...) {
 }
 
 search_members <- function(name) {
-  
   # request
   resp <- request("https://members-api.parliament.uk/api/Members/Search") |>
     req_method("GET") |>
     req_url_query(
       Name = name
-    ) |> 
+    ) |>
     req_headers(
       accept = "text/plain",
     ) |>
-    req_perform() |> 
+    req_perform() |>
     resp_body_json()
-  
+
   # wrangle
   items <- pluck(resp, "items")
   return(tibble(
-    id                    = map_int(items, function(i) safe_pluck(i, "value", "id")),
-    nameListAs            = map_chr(items, function(i) safe_pluck(i, "value", "nameListAs")),
-    nameDisplayAs         = map_chr(items, function(i) safe_pluck(i, "value", "nameDisplayAs")),
-    nameFullTitle         = map_chr(items, function(i) safe_pluck(i, "value", "nameFullTitle")),
-    nameAddressAs         = map_chr(items, function(i) safe_pluck(i, "value", "nameAddressAs")),
-    gender                = map_chr(items, function(i) safe_pluck(i, "value", "gender")),
-    latestParty           = map(items, function(i) safe_pluck(i, "value", "latestParty")),
-    latestHouseMembership = map(items, function(i) safe_pluck(i, "value", "latestHouseMembership"))
+    id = map_int(items, function(i) safe_pluck(i, "value", "id")),
+    nameListAs = map_chr(items, function(i) {
+      safe_pluck(i, "value", "nameListAs")
+    }),
+    nameDisplayAs = map_chr(items, function(i) {
+      safe_pluck(i, "value", "nameDisplayAs")
+    }),
+    nameFullTitle = map_chr(items, function(i) {
+      safe_pluck(i, "value", "nameFullTitle")
+    }),
+    nameAddressAs = map_chr(items, function(i) {
+      safe_pluck(i, "value", "nameAddressAs")
+    }),
+    gender = map_chr(items, function(i) safe_pluck(i, "value", "gender")),
+    latestParty = map(items, function(i) safe_pluck(i, "value", "latestParty")),
+    latestHouseMembership = map(items, function(i) {
+      safe_pluck(i, "value", "latestHouseMembership")
+    })
   ))
-  
 }
 ```
 
@@ -571,24 +598,32 @@ resp <- request("https://members-api.parliament.uk/api/Members/Search") |>
     Name = "Smith",
     take = 20,
     skip = 20
-  ) |> 
+  ) |>
   req_headers(
     accept = "text/plain",
   ) |>
-  req_perform() |> 
+  req_perform() |>
   resp_body_json()
 
 # wrangle
 items <- pluck(resp, "items")
 tibble(
-  id                    = map_int(items, function(i) safe_pluck(i, "value", "id")),
-  nameListAs            = map_chr(items, function(i) safe_pluck(i, "value", "nameListAs")),
-  nameDisplayAs         = map_chr(items, function(i) safe_pluck(i, "value", "nameDisplayAs")),
-  nameFullTitle         = map_chr(items, function(i) safe_pluck(i, "value", "nameFullTitle")),
-  nameAddressAs         = map_chr(items, function(i) safe_pluck(i, "value", "nameAddressAs")),
-  gender                = map_chr(items, function(i) safe_pluck(i, "value", "gender")),
-  latestParty           = map(items, function(i) safe_pluck(i, "value", "latestParty")),
-  latestHouseMembership = map(items, function(i) safe_pluck(i, "value", "latestHouseMembership"))
+  id = map_int(items, function(i) safe_pluck(i, "value", "id")),
+  nameListAs = map_chr(items, function(i) safe_pluck(i, "value", "nameListAs")),
+  nameDisplayAs = map_chr(items, function(i) {
+    safe_pluck(i, "value", "nameDisplayAs")
+  }),
+  nameFullTitle = map_chr(items, function(i) {
+    safe_pluck(i, "value", "nameFullTitle")
+  }),
+  nameAddressAs = map_chr(items, function(i) {
+    safe_pluck(i, "value", "nameAddressAs")
+  }),
+  gender = map_chr(items, function(i) safe_pluck(i, "value", "gender")),
+  latestParty = map(items, function(i) safe_pluck(i, "value", "latestParty")),
+  latestHouseMembership = map(items, function(i) {
+    safe_pluck(i, "value", "latestHouseMembership")
+  })
 )
 ```
 
@@ -598,7 +633,6 @@ Based on this we can adapt the function
 
 ```{r}
 search_members <- function(name) {
-  
   # make the initial request
   resp <- request("https://members-api.parliament.uk/api/Members/Search") |>
     req_method("GET") |>
@@ -606,31 +640,30 @@ search_members <- function(name) {
       Name = name,
       take = 20,
       skip = 0
-    ) |> 
+    ) |>
     req_headers(
       accept = "text/plain",
     ) |>
-    req_perform() |> 
+    req_perform() |>
     resp_body_json()
-  
+
   # checking the total and setting things up for pagination
   total <- resp$totalResults
   message(total, " results found")
   skip <- 0
   page <- 1
-  
+
   # extract initial results
   items <- pluck(resp, "items")
-  
+
   # while loops are repeated until the condition inside is FALSE
-  while (total > skip) { 
-    
+  while (total > skip) {
     skip <- skip + 20
     page <- page + 1
-    
+
     # we print a little status message to let the user know work is ongoing
     message("\t...fetching page ", page)
-    
+
     # we retrieve the next page by adding an increasing skip
     resp <- request("https://members-api.parliament.uk/api/Members/Search") |>
       req_method("GET") |>
@@ -638,31 +671,39 @@ search_members <- function(name) {
         Name = name,
         skip = skip,
         take = 20
-      ) |> 
+      ) |>
       req_headers(
         accept = "text/plain",
       ) |>
       req_throttle(rate = 1) |> # do not make more than one request per second
-      req_perform() |> 
+      req_perform() |>
       resp_body_json()
-    
+
     # we append the original result with the new items
     items <- c(items, pluck(resp, "items"))
-    
   }
-  
+
   # wrangle
   return(tibble(
-    id                    = map_int(items, function(i) safe_pluck(i, "value", "id")),
-    nameListAs            = map_chr(items, function(i) safe_pluck(i, "value", "nameListAs")),
-    nameDisplayAs         = map_chr(items, function(i) safe_pluck(i, "value", "nameDisplayAs")),
-    nameFullTitle         = map_chr(items, function(i) safe_pluck(i, "value", "nameFullTitle")),
-    nameAddressAs         = map_chr(items, function(i) safe_pluck(i, "value", "nameAddressAs")),
-    gender                = map_chr(items, function(i) safe_pluck(i, "value", "gender")),
-    latestParty           = map(items, function(i) safe_pluck(i, "value", "latestParty")),
-    latestHouseMembership = map(items, function(i) safe_pluck(i, "value", "latestHouseMembership"))
+    id = map_int(items, function(i) safe_pluck(i, "value", "id")),
+    nameListAs = map_chr(items, function(i) {
+      safe_pluck(i, "value", "nameListAs")
+    }),
+    nameDisplayAs = map_chr(items, function(i) {
+      safe_pluck(i, "value", "nameDisplayAs")
+    }),
+    nameFullTitle = map_chr(items, function(i) {
+      safe_pluck(i, "value", "nameFullTitle")
+    }),
+    nameAddressAs = map_chr(items, function(i) {
+      safe_pluck(i, "value", "nameAddressAs")
+    }),
+    gender = map_chr(items, function(i) safe_pluck(i, "value", "gender")),
+    latestParty = map(items, function(i) safe_pluck(i, "value", "latestParty")),
+    latestHouseMembership = map(items, function(i) {
+      safe_pluck(i, "value", "latestHouseMembership")
+    })
   ))
-  
 }
 ```
 
@@ -678,25 +719,26 @@ search_members("Smith")
 - Documentations usually list the required parameters, for which you shouldn't set a default
 
 ```{r}
-search_members <- function(name = NULL,
-                           location = NULL,
-                           posttitle = NULL,
-                           partyid = NULL,
-                           house = NULL,
-                           constituencyid = NULL,
-                           namestartswith = NULL,
-                           gender = NULL,
-                           membershipstartedsince = NULL,
-                           membershipended_membershipendedsince = NULL,
-                           membershipended_membershipendreasonids = NULL,
-                           membershipindaterange_wasmemberonorafter = NULL,
-                           membershipindaterange_wasmemberonorbefore = NULL,
-                           membershipindaterange_wasmemberofhouse = NULL,
-                           iseligible = NULL,
-                           iscurrentmember = NULL,
-                           policyinterestid = NULL,
-                           experience = NULL) {
-  
+search_members <- function(
+  name = NULL,
+  location = NULL,
+  posttitle = NULL,
+  partyid = NULL,
+  house = NULL,
+  constituencyid = NULL,
+  namestartswith = NULL,
+  gender = NULL,
+  membershipstartedsince = NULL,
+  membershipended_membershipendedsince = NULL,
+  membershipended_membershipendreasonids = NULL,
+  membershipindaterange_wasmemberonorafter = NULL,
+  membershipindaterange_wasmemberonorbefore = NULL,
+  membershipindaterange_wasmemberofhouse = NULL,
+  iseligible = NULL,
+  iscurrentmember = NULL,
+  policyinterestid = NULL,
+  experience = NULL
+) {
   # 1. request
   resp <- request("https://members-api.parliament.uk/api/Members/Search") |>
     req_method("GET") |>
@@ -720,30 +762,30 @@ search_members <- function(name = NULL,
       PolicyInterestId = policyinterestid,
       Experience = experience,
       take = 20
-    ) |> 
+    ) |>
     req_headers(
       accept = "text/plain",
     ) |>
-    req_perform() |> 
+    req_perform() |>
     # 2. Parse
     resp_body_json()
-  
+
   # checking the total and setting things up for pagination
   total <- resp$totalResults
   message(total, " results found")
   skip <- 20
   page <- 1
-  
+
   # extract initial results
   items <- pluck(resp, "items")
-  
+
   # while loops are repeated until the condition inside is FALSE
-  while (total > skip) { 
+  while (total > skip) {
     page <- page + 1
-    
+
     # we print a little status message to let the user know work is ongoing
     message("\t...fetching page ", page)
-    
+
     # we retrieve the next page by adding an increasing skip
     resp <- request("https://members-api.parliament.uk/api/Members/Search") |>
       req_method("GET") |>
@@ -768,38 +810,53 @@ search_members <- function(name = NULL,
         Experience = experience,
         take = 20,
         skip = skip
-      ) |> 
+      ) |>
       req_headers(
         accept = "text/plain",
       ) |>
-      req_perform() |> 
+      req_perform() |>
       # 2. Parse
       resp_body_json()
-    
+
     # we append the original result with the new items
     items <- c(items, pluck(resp, "items"))
-    
+
     # increase the skip number
     skip <- skip + 20
   }
-  
+
   # wrangle
   return(tibble(
-    id                    = map_int(items, function(i) safe_pluck(i, "value", "id")),
-    nameListAs            = map_chr(items, function(i) safe_pluck(i, "value", "nameListAs")),
-    nameDisplayAs         = map_chr(items, function(i) safe_pluck(i, "value", "nameDisplayAs")),
-    nameFullTitle         = map_chr(items, function(i) safe_pluck(i, "value", "nameFullTitle")),
-    nameAddressAs         = map_chr(items, function(i) safe_pluck(i, "value", "nameAddressAs")),
-    gender                = map_chr(items, function(i) safe_pluck(i, "value", "gender")),
-    latestParty           = map(items, function(i) safe_pluck(i, "value", "latestParty")),
-    latestHouseMembership = map(items, function(i) safe_pluck(i, "value", "latestHouseMembership"))
+    id = map_int(items, function(i) safe_pluck(i, "value", "id")),
+    nameListAs = map_chr(items, function(i) {
+      safe_pluck(i, "value", "nameListAs")
+    }),
+    nameDisplayAs = map_chr(items, function(i) {
+      safe_pluck(i, "value", "nameDisplayAs")
+    }),
+    nameFullTitle = map_chr(items, function(i) {
+      safe_pluck(i, "value", "nameFullTitle")
+    }),
+    nameAddressAs = map_chr(items, function(i) {
+      safe_pluck(i, "value", "nameAddressAs")
+    }),
+    gender = map_chr(items, function(i) safe_pluck(i, "value", "gender")),
+    latestParty = map(items, function(i) safe_pluck(i, "value", "latestParty")),
+    latestHouseMembership = map(items, function(i) {
+      safe_pluck(i, "value", "latestHouseMembership")
+    })
   ))
-  
 }
 ```
 
 ```{r}
-search_members("Smith", partyid = 4, house = 1, gender = "M", iscurrentmember = TRUE)
+search_members(
+  "Smith",
+  partyid = 4,
+  house = 1,
+  gender = "M",
+  iscurrentmember = TRUE
+)
 ```
 
 ## Adding documentation
@@ -823,7 +880,7 @@ You can easily add roxygen code to a function using the Code menu in RStudio and
 #' @param gender Members with the gender specified
 #' @param membershipstartedsince Members who started on or after the date given
 #' @param membershipended_membershipendedsince Members who left the House on or after the date given
-#' @param membershipended_membershipendreasonids 
+#' @param membershipended_membershipendreasonids
 #' @param membershipindaterange_wasmemberonorafter Members who were active on or after the date specified
 #' @param membershipindaterange_wasmemberonorbefore Members who were active on or before the date specified
 #' @param membershipindaterange_wasmemberofhouse Members who were active in the house specified (1 for Commons, 2 for Lords)
@@ -834,30 +891,30 @@ You can easily add roxygen code to a function using the Code menu in RStudio and
 #'
 #' @return
 #' @export
-#' 
+#'
 #'
 #' @examples
-search_members <- function(name = NULL,
-                           location = NULL,
-                           posttitle = NULL,
-                           partyid = NULL,
-                           house = NULL,
-                           constituencyid = NULL,
-                           namestartswith = NULL,
-                           gender = NULL,
-                           membershipstartedsince = NULL,
-                           membershipended_membershipendedsince = NULL,
-                           membershipended_membershipendreasonids = NULL,
-                           membershipindaterange_wasmemberonorafter = NULL,
-                           membershipindaterange_wasmemberonorbefore = NULL,
-                           membershipindaterange_wasmemberofhouse = NULL,
-                           iseligible = NULL,
-                           iscurrentmember = NULL,
-                           policyinterestid = NULL,
-                           experience = NULL) {
-  
+search_members <- function(
+  name = NULL,
+  location = NULL,
+  posttitle = NULL,
+  partyid = NULL,
+  house = NULL,
+  constituencyid = NULL,
+  namestartswith = NULL,
+  gender = NULL,
+  membershipstartedsince = NULL,
+  membershipended_membershipendedsince = NULL,
+  membershipended_membershipendreasonids = NULL,
+  membershipindaterange_wasmemberonorafter = NULL,
+  membershipindaterange_wasmemberonorbefore = NULL,
+  membershipindaterange_wasmemberofhouse = NULL,
+  iseligible = NULL,
+  iscurrentmember = NULL,
+  policyinterestid = NULL,
+  experience = NULL
+) {
   # ...
-  
 }
 ```
 
@@ -919,8 +976,10 @@ browseURL(swagger_index())
 We can use one of the examples and convert it into `httr2`:
 
 ```{r}
-res <- request("https://api.semanticscholar.org/graph/v1/author/search?query=adam+smith") |> 
-  req_perform() |> 
+res <- request(
+  "https://api.semanticscholar.org/graph/v1/author/search?query=adam+smith"
+) |>
+  req_perform() |>
   resp_body_json()
 ```
 
@@ -941,7 +1000,7 @@ pluck(res, "next")
 The actual data sits in `data` and is a pretty well behaved list that we can just convert to a tibble:
 
 ```{r}
-res_data <- pluck(res, "data") |> 
+res_data <- pluck(res, "data") |>
   bind_rows()
 res_data
 ```
@@ -953,15 +1012,13 @@ However, the information seems a bit sparse... But we'll look at that later.
 First we wrap this in a function and add pagination to get all results:
 
 ```{r}
-find_scholar <- function(name,
-                         verbose = TRUE) {
-  
+find_scholar <- function(name, verbose = TRUE) {
   # make initial request
   res <- request("https://api.semanticscholar.org/graph/v1/author/search") |>
-    req_url_query(query = name) |> 
-    req_perform() |> 
+    req_url_query(query = name) |>
+    req_perform() |>
     resp_body_json()
-  
+
   # note total
   total <- pluck(res, "total")
   # display user message
@@ -971,32 +1028,32 @@ find_scholar <- function(name,
   # note offset
   nxt <- pluck(res, "next")
   # wrangle initial data
-  data <- pluck(res, "data") |> 
+  data <- pluck(res, "data") |>
     bind_rows()
   page <- 1
-  
+
   #----- New Stuff -----#
-  
+
   # loop through pages until no new ones exist
-  while (!is.null(nxt)) { # if there are not more results next is empty
+  while (!is.null(nxt)) {
+    # if there are not more results next is empty
     page <- page + 1
     message("\t...fetching page ", page)
     res <- request("https://api.semanticscholar.org/graph/v1/author/search") |>
-      req_url_query(query = name,
-                    offset = nxt) |> 
+      req_url_query(query = name, offset = nxt) |>
       req_throttle(rate = 30 / 60) |> # make only 30 requests per minute
-      req_perform() |> 
+      req_perform() |>
       resp_body_json()
-    
+
     # get next offset; will be NULL on the last page
     nxt <- pluck(res, "next")
-    
-    data_new <- pluck(res, "data") |> 
+
+    data_new <- pluck(res, "data") |>
       bind_rows()
-    data <- data |> 
+    data <- data |>
       bind_rows(data_new)
   }
-  
+
   return(data)
 }
 ```
@@ -1017,10 +1074,12 @@ We are only interested in some of the fields, so let's build a new request and s
 ```{r}
 resp <- request("https://api.semanticscholar.org/graph/v1/author/search") |>
   req_url_query(query = "Adam Smith") |>
-  req_url_query(fields = "name,papers.title,papers.year,papers.fieldsOfStudy,papers.authors",
-                limit = 10) |> 
-  req_headers(accept = "application/json") |> 
-  req_perform() |> 
+  req_url_query(
+    fields = "name,papers.title,papers.year,papers.fieldsOfStudy,papers.authors",
+    limit = 10
+  ) |>
+  req_headers(accept = "application/json") |>
+  req_perform() |>
   resp_body_json()
 ```
 
@@ -1040,13 +1099,13 @@ adam_search <- pluck(resp, "data") |>
   # bind initial data into a tibble
   bind_rows() |>
   # unnest papers list into columns
-  unnest_wider(papers) |> 
+  unnest_wider(papers) |>
   # unnest authors into rows
-  unnest(authors) |> 
+  unnest(authors) |>
   # unnest the new authors into columns
-  unnest_wider(authors, names_sep = "_") |> 
+  unnest_wider(authors, names_sep = "_") |>
   # fieldsOfStudy is a list within a list, so we call unnest twice
-  unnest(fieldsOfStudy, keep_empty = TRUE) |> 
+  unnest(fieldsOfStudy, keep_empty = TRUE) |>
   unnest(fieldsOfStudy, keep_empty = TRUE)
 ```
 
@@ -1059,54 +1118,56 @@ adam_search
 ## Let's put it all together in an extended function
 
 ```{r}
-find_scholar <- function(name, 
-                         fields = "name,papers.title,papers.year,papers.fieldsOfStudy,papers.authors",
-                         limit = 100) {
-  
+find_scholar <- function(
+  name,
+  fields = "name,papers.title,papers.year,papers.fieldsOfStudy,papers.authors",
+  limit = 100
+) {
   # make initial request
   res <- request("https://api.semanticscholar.org/graph/v1/author/search") |>
     req_url_query(query = name) |>
-    req_url_query(fields = fields,
-                  limit = limit) |> 
-    req_headers(accept = "application/json") |> 
-    req_perform() |> 
+    req_url_query(fields = fields, limit = limit) |>
+    req_headers(accept = "application/json") |>
+    req_perform() |>
     resp_body_json()
-  
+
   # note total
   total <- pluck(res, "total")
   # display user message
   message("Found ", total, " authors")
   # note offset
   nxt <- pluck(res, "next")
-  
+
   # wrangle initial data
   data <- parse_response(res)
   page <- 1
-  
+
   # loop through pages until no new ones exist
   while (!is.null(nxt)) {
     page <- page + 1
     message("\t...fetching page ", page)
 
     res <- request("https://api.semanticscholar.org/graph/v1/author/search") |>
-      req_url_query(query = name,
-                    offset = nxt,
-                    fields = fields,
-                    limit = limit) |> 
+      req_url_query(
+        query = name,
+        offset = nxt,
+        fields = fields,
+        limit = limit
+      ) |>
       req_throttle(rate = 30 / 60) |> # make only 30 requests per minute
-      req_headers(accept = "application/json") |> 
-      req_perform() |> 
+      req_headers(accept = "application/json") |>
+      req_perform() |>
       resp_body_json()
-    
+
     # get next offset; will be NULL on the last page
     nxt <- pluck(res, "next")
-    
-    data_new <- pluck(res, "data") |> 
+
+    data_new <- pluck(res, "data") |>
       bind_rows()
-    data <- data |> 
+    data <- data |>
       bind_rows(data_new)
   }
-  
+
   return(data)
 }
 ```
@@ -1121,13 +1182,13 @@ parse_response <- function(resp) {
     # bind initial data into a tibble
     bind_rows() |>
     # unnest papers list into columns
-    unnest_wider(papers) |> 
+    unnest_wider(papers) |>
     # unnest authors into rows
-    unnest(authors) |> 
+    unnest(authors) |>
     # unnest the new authors into columns
-    unnest_wider(authors, names_sep = "_") |> 
+    unnest_wider(authors, names_sep = "_") |>
     # fieldsOfStudy is a list within a list, so we call unnest twice
-    unnest(fieldsOfStudy, keep_empty = TRUE) |> 
+    unnest(fieldsOfStudy, keep_empty = TRUE) |>
     unnest(fieldsOfStudy, keep_empty = TRUE)
 }
 ```
@@ -1155,26 +1216,6 @@ Bonus:
 
 4. Write a function that wraps "/author/{author_id}"
 
-# Reminder: Social Programme
-
-```{r}
-#| echo: false
-tibble::tribble(
-  ~DATE,               ~Event,                                  ~Time,           ~Venue,
-  "MONDAY 7 July",     "Meet and Greet - in person",            "19:00 start",   "SU Bar",
-  "TUESDAY 8 July",    "Climbing",               "18:30 start",   "Sports Centre",
-  "WEDNESDAY 9 July",  "Harold Clarke Speaker Series - hybrid", "18:45 - 20.00", "EBS",
-  "THURSDAY 10 July",  "Sports Night",                          "18:30 - 20:30", "Sports Centre",
-  "FRIDAY 11 July",    "Wivenhoe Pub Run",                      "18:30 start",   "Wivenhoe pubs",
-  "MONDAY 14 JULY",    "SU bar Quiz",                           "19:00 start",   "SU Bar",
-  "TUESDAY 15 JULY",   "Sports Night",                          "18:30 - 20:30", "Sports Centre",
-  "WEDNESDAY 16 JULY", "Harold Clarke Speaker Series - hybrid", "18:30",         "EBS",
-  "THURSDAY 17 JULY",  "Farewell Party Karaoke",                "20:30 - 23:30", "SU Bar"
-) |> 
-  tt() |> 
-  style_tt(fontsize = 0.9) |> 
-  style_tt(i = 8, background = "#FDE000")
-```
 
 # Wrap Up
 
