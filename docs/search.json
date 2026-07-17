@@ -1,0 +1,268 @@
+[
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Introduction to Web Scraping and Data Management for Social Scientists",
+    "section": "",
+    "text": "This is the course material for the Essex Summer School in Social Science Data Analysis course 2H Introduction to Web Scraping and Data Management for Social Scientists, Monday 20 July–Friday 31 July 2026.\nThe course provides an introduction to the automated collection of data from the internet, as well as methods for efficient and safe data management. The first week covers different modes of storing data for individual researchers and research teams, and the theory and good practices behind them. The second week focuses on methods for collecting different kinds of data from the internet through various means."
+  },
+  {
+    "objectID": "index.html#welcome-to-the-course",
+    "href": "index.html#welcome-to-the-course",
+    "title": "Introduction to Web Scraping and Data Management for Social Scientists",
+    "section": "",
+    "text": "This is the course material for the Essex Summer School in Social Science Data Analysis course 2H Introduction to Web Scraping and Data Management for Social Scientists, Monday 20 July–Friday 31 July 2026.\nThe course provides an introduction to the automated collection of data from the internet, as well as methods for efficient and safe data management. The first week covers different modes of storing data for individual researchers and research teams, and the theory and good practices behind them. The second week focuses on methods for collecting different kinds of data from the internet through various means."
+  },
+  {
+    "objectID": "index.html#schedule",
+    "href": "index.html#schedule",
+    "title": "Introduction to Web Scraping and Data Management for Social Scientists",
+    "section": "Schedule",
+    "text": "Schedule\nSlides are uploaded here as the course progresses.\n\n\n\n\n\n\n\n\n\n\n\n\nDay\nDate\nSession\nMaterials\nExercises\n\n\n\n\n1\nMon, 20 July\nIntroduction\nnot yet available\nnot yet available\n\n\n2\nTue, 21 July\nData Structures and Wrangling\nnot yet available\nnot yet available\n\n\n3\nWed, 22 July\nWorking with Files\nnot yet available\nnot yet available\n\n\n4\nThu, 23 July\nLinking and Joining Data & SQL\nnot yet available\nnot yet available\n\n\n5\nFri, 24 July\nScaling, Reporting and Database Software\nnot yet available\nnot yet available\n\n\n6\nMon, 27 July\nIntroduction to the Web\nnot yet available\nnot yet available\n\n\n7\nTue, 28 July\nStatic Web Pages\nnot yet available\nnot yet available\n\n\n8\nWed, 29 July\nApplication Programming Interfaces (APIs)\nnot yet available\nnot yet available\n\n\n9\nThu, 30 July\nInteractive Web Pages\nnot yet available\n–\n\n\n10\nFri, 31 July\nBuilding a Reproducible Research Project\nnot yet available\n–"
+  },
+  {
+    "objectID": "index.html#required-software",
+    "href": "index.html#required-software",
+    "title": "Introduction to Web Scraping and Data Management for Social Scientists",
+    "section": "Required Software",
+    "text": "Required Software\nYou should have several software applications installed before the start of the course:\n\nR (version 4.1.0+)\nAn IDE, preferably RStudio Desktop, but you can also use VSCodium or VS Code or Positron\nQuarto"
+  },
+  {
+    "objectID": "index.html#download-course-materials",
+    "href": "index.html#download-course-materials",
+    "title": "Introduction to Web Scraping and Data Management for Social Scientists",
+    "section": "Download Course Materials",
+    "text": "Download Course Materials\nClone the repository using RStudio:\n\nCreate a new project (top left corner)\nSelect “Version Control” → “Git”\nUse URL: https://github.com/JBGruber/ess-web-scraping-data-management.git"
+  },
+  {
+    "objectID": "index.html#install-required-packages",
+    "href": "index.html#install-required-packages",
+    "title": "Introduction to Web Scraping and Data Management for Social Scientists",
+    "section": "Install Required Packages",
+    "text": "Install Required Packages\nAfter cloning, you can install all required R packages with:\n\nif (!requireNamespace(\"rlang\", quietly = TRUE)) {\n  install.packages(\"rlang\", dependencies = TRUE)\n}\nrlang::check_installed(\"remotes\")\nif (!requireNamespace(\"jbgtemplates\", quietly = TRUE)) {\n  remotes::install_github(\"JBGruber/jbgtemplates\")\n}\njbgtemplates::install_deps(gh_packages = c(\n  \"JBGruber/paperboy\",\n  \"JBGruber/playwrightr\",\n  \"ccs-amsterdam/amcat4r\"\n))\n\n\nCourse by Dr Johannes B. Gruber • GitHub Repository"
+  },
+  {
+    "objectID": "01_Introduction/01_Introduction_to_Computing.html#this-course",
+    "href": "01_Introduction/01_Introduction_to_Computing.html#this-course",
+    "title": "Session 1: Introduction",
+    "section": "This Course",
+    "text": "This Course\n\n\n\n\n\n    \n\n    \n\n    \n    \n    \n      \n        \n        \n              \n                Day\n                Session\n              \n        \n        \n        \n                \n                  1\n                  Introduction\n                \n                \n                  2\n                  Data Structures and Wrangling\n                \n                \n                  3\n                  Working with Files\n                \n                \n                  4\n                  Linking and joining data & SQL\n                \n                \n                  5\n                  Scaling, Reporting and Database Software\n                \n                \n                  6\n                  Introduction to the Web\n                \n                \n                  7\n                  Static Web Pages\n                \n                \n                  8\n                  Application Programming Interface (APIs)\n                \n                \n                  9\n                  Interactive Web Pages\n                \n                \n                  10\n                  Building a Reproducible Research Project\n                \n        \n      \n    \n\n\n\nGeneral Goals:\n\nI want to teach you web scraping and data management\nI also want to give you the tools for reproducible and transparent open science research"
+  },
+  {
+    "objectID": "01_Introduction/01_Introduction_to_Computing.html#the-plan-for-today",
+    "href": "01_Introduction/01_Introduction_to_Computing.html#the-plan-for-today",
+    "title": "Session 1: Introduction",
+    "section": "The Plan for Today",
+    "text": "The Plan for Today\n\n\nIn this session, you learn how to use the tools of the hunt. We will:\n\nlearn about:\n\neach other\nthe course material and structure\n\ngo over some principles of using the programming language R:\n\nR Refresher\nliterate programming\n\nwrap up with some useful tools, tips and tricks\n\n\n Woody Kelly via unsplash.com"
+  },
+  {
+    "objectID": "01_Introduction/01_Introduction_to_Computing.html#who-am-i",
+    "href": "01_Introduction/01_Introduction_to_Computing.html#who-am-i",
+    "title": "Session 1: Introduction",
+    "section": "Who am I?",
+    "text": "Who am I?\n\n\n\nSenior Researcher/Team Lead in Data Services for the Social Sciences @ GESIS\nPreviously PostDoc in Communication at VU Amsterdam, University of Amsterdam, and European New School of Digital Studies\n\nInterested in:\n\nComputational Social Science\nOpen and reproducible science\nAutomated Content Analysis\nHybrid Media Systems and Information Flows\nProtest and Democracy\n\nExperience:\n\nR user since 2015\nR package developer since 2017\nWorked on several packages for text analysis, API access and web scraping (spacyr, quanteda.textmodels, LexisNexisTools, paperboy, traktok, rollama, amcat4-r, atrrr, rwhatsapp and more)\n\n\n\n\nContact:\n\n(during the course) jg23824@essex.ac.uk\njohannes.gruber@gesis.org\n@jbgruber.bsky.social"
+  },
+  {
+    "objectID": "01_Introduction/01_Introduction_to_Computing.html#who-are-you",
+    "href": "01_Introduction/01_Introduction_to_Computing.html#who-are-you",
+    "title": "Session 1: Introduction",
+    "section": "Who are you?",
+    "text": "Who are you?\n\n\n\nWhat is your name?\nWhat are your research interests?\nWhat is your experience with:\n\nR\nHTML\nweb scraping\ndata management\n\nWhy are you taking this course?\nDo you have specific plans that include webscraping and data management?\nAdditional fact (optional)"
+  },
+  {
+    "objectID": "01_Introduction/01_Introduction_to_Computing.html#prerequisites",
+    "href": "01_Introduction/01_Introduction_to_Computing.html#prerequisites",
+    "title": "Session 1: Introduction",
+    "section": "Prerequisites",
+    "text": "Prerequisites\nYou should have this software installed:\n\nR\nAn IDE, preferably RStudio Desktop, but you can also use VSCodium or VSCodium or Positron\nQuarto"
+  },
+  {
+    "objectID": "01_Introduction/01_Introduction_to_Computing.html#r-version",
+    "href": "01_Introduction/01_Introduction_to_Computing.html#r-version",
+    "title": "Session 1: Introduction",
+    "section": "R version",
+    "text": "R version\nYou need a relatively recent version of R. This command should at least show R version 4.1.0 (2021-05-18):\n\nR.Version()$version.string\n\n[1] \"R version 4.5.1 (2025-06-13)\""
+  },
+  {
+    "objectID": "01_Introduction/01_Introduction_to_Computing.html#get-the-course-material",
+    "href": "01_Introduction/01_Introduction_to_Computing.html#get-the-course-material",
+    "title": "Session 1: Introduction",
+    "section": "Get the course material",
+    "text": "Get the course material\nNavigate here and clone the repository:\nhttps://github.com/JBGruber/ess-web-scraping-data-management\nIn RStudio go to “Create a project” (top left corner with this symbol ). (If you do not have this symbol, you need to install Git or GitHib Desktop first.) Then select “Version Control”:\n\nOr if you are using the command line, you can simply type:\ngit clone https://github.com/JBGruber/ess-web-scraping-data-management.git\n# OR\ngit clone git@github.com:JBGruber/ess-v2-web-scraping-data-management.git"
+  },
+  {
+    "objectID": "01_Introduction/01_Introduction_to_Computing.html#how-i-will-work",
+    "href": "01_Introduction/01_Introduction_to_Computing.html#how-i-will-work",
+    "title": "Session 1: Introduction",
+    "section": "How I will work",
+    "text": "How I will work\nI tend to jump back and forth between the slides and RStudio\n\n\nSlides\n\nSee the html file in each session folder\n\nSource\n\nSee the qmd file in each session folder"
+  },
+  {
+    "objectID": "01_Introduction/01_Introduction_to_Computing.html#use-the-course-marerial",
+    "href": "01_Introduction/01_Introduction_to_Computing.html#use-the-course-marerial",
+    "title": "Session 1: Introduction",
+    "section": "Use the course marerial",
+    "text": "Use the course marerial\n\nPull the latest version at the beginning of each session\nMake a copy of the qmd file and name it, e.g., “1_Introduction_to_Computing_notes.qmd”\nUse this file to make notes, for example by adding comments using this syntax &lt;!-- your comment --&gt; (RStudio shortcut Ctrl + Shift + C / Command + Shift + C on macOS)\n\n\nAlternatively, open the slides in a browser and press e to export them to PDF (and take notes with PDF reader)\n\nThis is to make sure you don’t get any git conflicts when you pull and I updated something in the material in the meantime."
+  },
+  {
+    "objectID": "01_Introduction/01_Introduction_to_Computing.html#your-turn-exercises-1",
+    "href": "01_Introduction/01_Introduction_to_Computing.html#your-turn-exercises-1",
+    "title": "Session 1: Introduction",
+    "section": "Your turn (Exercises 1)",
+    "text": "Your turn (Exercises 1)\n\nDownload the course material and open the RStudio project or folder in your IDE\nOpen the file readme.qmd from the file explorer of your IDE\nExecute the final code Chunk to install all packages we will need for this course"
+  },
+  {
+    "objectID": "01_Introduction/01_Introduction_to_Computing.html#packages",
+    "href": "01_Introduction/01_Introduction_to_Computing.html#packages",
+    "title": "Session 1: Introduction",
+    "section": "Packages",
+    "text": "Packages\n\nR organises its functions in packages (even base functions)\nMost packages must be installed (once) and attached (every new session)\n\n\ninstall.packages(\"tidyverse\")\nlibrary(tidyverse)"
+  },
+  {
+    "objectID": "01_Introduction/01_Introduction_to_Computing.html#accessing-functions",
+    "href": "01_Introduction/01_Introduction_to_Computing.html#accessing-functions",
+    "title": "Session 1: Introduction",
+    "section": "Accessing Functions",
+    "text": "Accessing Functions\nIf you do not want to attach an entire package, you can use the Double Colon to only use a specific function:\n\ndplyr::select(iris, Sepal.Length)\n\n    Sepal.Length\n1            5.1\n2            4.9\n3            4.7\n4            4.6\n5            5.0\n6            5.4\n7            4.6\n8            5.0\n9            4.4\n10           4.9\n11           5.4\n12           4.8\n13           4.8\n14           4.3\n15           5.8\n16           5.7\n17           5.4\n18           5.1\n19           5.7\n20           5.1\n21           5.4\n22           5.1\n23           4.6\n24           5.1\n25           4.8\n26           5.0\n27           5.0\n28           5.2\n29           5.2\n30           4.7\n31           4.8\n32           5.4\n33           5.2\n34           5.5\n35           4.9\n36           5.0\n37           5.5\n38           4.9\n39           4.4\n40           5.1\n41           5.0\n42           4.5\n43           4.4\n44           5.0\n45           5.1\n46           4.8\n47           5.1\n48           4.6\n49           5.3\n50           5.0\n51           7.0\n52           6.4\n53           6.9\n54           5.5\n55           6.5\n56           5.7\n57           6.3\n58           4.9\n59           6.6\n60           5.2\n61           5.0\n62           5.9\n63           6.0\n64           6.1\n65           5.6\n66           6.7\n67           5.6\n68           5.8\n69           6.2\n70           5.6\n71           5.9\n72           6.1\n73           6.3\n74           6.1\n75           6.4\n76           6.6\n77           6.8\n78           6.7\n79           6.0\n80           5.7\n81           5.5\n82           5.5\n83           5.8\n84           6.0\n85           5.4\n86           6.0\n87           6.7\n88           6.3\n89           5.6\n90           5.5\n91           5.5\n92           6.1\n93           5.8\n94           5.0\n95           5.6\n96           5.7\n97           5.7\n98           6.2\n99           5.1\n100          5.7\n101          6.3\n102          5.8\n103          7.1\n104          6.3\n105          6.5\n106          7.6\n107          4.9\n108          7.3\n109          6.7\n110          7.2\n111          6.5\n112          6.4\n113          6.8\n114          5.7\n115          5.8\n116          6.4\n117          6.5\n118          7.7\n119          7.7\n120          6.0\n121          6.9\n122          5.6\n123          7.7\n124          6.3\n125          6.7\n126          7.2\n127          6.2\n128          6.1\n129          6.4\n130          7.2\n131          7.4\n132          7.9\n133          6.4\n134          6.3\n135          6.1\n136          7.7\n137          6.3\n138          6.4\n139          6.0\n140          6.9\n141          6.7\n142          6.9\n143          5.8\n144          6.8\n145          6.7\n146          6.7\n147          6.3\n148          6.5\n149          6.2\n150          5.9\n\n\nLess often used, you can also do this with library:\n\nlibrary(\"dplyr\", include.only = c(\"select\", \"mutate\"))\nmutate(iris, sepal_length = Sepal.Length * 10) |&gt;\n  select(sepal_length)"
+  },
+  {
+    "objectID": "01_Introduction/01_Introduction_to_Computing.html#the-comprehensive-r-archive-network-cran",
+    "href": "01_Introduction/01_Introduction_to_Computing.html#the-comprehensive-r-archive-network-cran",
+    "title": "Session 1: Introduction",
+    "section": "The Comprehensive R Archive Network (CRAN)",
+    "text": "The Comprehensive R Archive Network (CRAN)\n\nCentral repository for R packages\nRigorous policies and testing\nCurrently more than 24k packages (July 2026)"
+  },
+  {
+    "objectID": "01_Introduction/01_Introduction_to_Computing.html#other-sources",
+    "href": "01_Introduction/01_Introduction_to_Computing.html#other-sources",
+    "title": "Session 1: Introduction",
+    "section": "Other sources?",
+    "text": "Other sources?\n\nRigorous policies and testing are also a downside\n\nDevelopers hesitate to submit packages\nUnmaintained (but functional) packages are removed from CRAN\n\nAlternative repositories are common:\n\nGitHub and Gitlab (and SVN)\nBioconductor, R-universe 🚀, R-Forge and Omegahat\n\n\n\nremotes::install_github(\"JBGruber/paperboy\")\n\n# Install package from Bioconductor\nBiocManager::install(c(\"GenomicRanges\", \"Organism.dplyr\"))\n\n# Install 'magick' from 'ropensci' universe\ninstall.packages(\"magick\", repos = \"https://ropensci.r-universe.dev\")"
+  },
+  {
+    "objectID": "01_Introduction/01_Introduction_to_Computing.html#help",
+    "href": "01_Introduction/01_Introduction_to_Computing.html#help",
+    "title": "Session 1: Introduction",
+    "section": "Help!",
+    "text": "Help!\nOne of the most important commands in R: ?/help:\n\n?install.packages # And\n?remotes::install_github # OR\nhelp(\"install_github\", package = \"remotes\")\n\n\n\nAll help files in R follow the same structure and principle (although not all help files contain all elements):\n\nTitle\nDescription\nUsage:very important: shows you the default values for all arguments (i.e., what is used if you do not set anything) and assumed order\n\n\ninstall_github(\"JBGruber/paperboy\") # Same as\ninstall_github(repo = \"JBGruber/paperboy\", ref = \"HEAD\") # Same as\ninstall_github(ref = \"HEAD\", repo = \"JBGruber/paperboy\") # Not(!) same as\ninstall_github(\"HEAD\", \"JBGruber/paperboy\")\n\n\nArguments: description of arguments in a function. One special argument is the ... (called ellipsis or dots) which is passed to underlying function.\n\n\ninstall_github(\"JBGruber/paperboy\", Ncpus = 6)\n\n\nDetails: Usually not that important but this is the first place to look when a function is not doing what you expect\nExamples: where I usually start to learn a new function by looking at cases that certainly work (and then rewriting them for my purposes)."
+  },
+  {
+    "objectID": "01_Introduction/01_Introduction_to_Computing.html#help-1",
+    "href": "01_Introduction/01_Introduction_to_Computing.html#help-1",
+    "title": "Session 1: Introduction",
+    "section": "Help!",
+    "text": "Help!\n\nGoogle (“ggplot2 r remove legends”)\nSome good resources for answers:\n\nstackoverflow.com (if you want to ask a question instead see how to ask a good question and use a reproducible example)\nR help list (stat.ethz.ch)\nhttps://www.r-bloggers.com/ (collection of personal blog posts related to R – so quality varies)\n\nChatGPT/Claude/Gemini/DeepSeek\n\n\nlibrary(askgpt)\nlog_init()\nmean[1:10]\naskgpt(\"What is wrong with my last command?\")\n\nVideo"
+  },
+  {
+    "objectID": "01_Introduction/01_Introduction_to_Computing.html#functions",
+    "href": "01_Introduction/01_Introduction_to_Computing.html#functions",
+    "title": "Session 1: Introduction",
+    "section": "Functions",
+    "text": "Functions\nFunctions are easy to define in R:\n\nnew_fun &lt;- function(x = 1) {\n  out &lt;- c(\n    sum(x),\n    mean(x),\n    median(x)\n  )\n  return(out)\n}\nnew_fun()\n\n[1] 1 1 1\n\nvec &lt;- c(1:10)\nnew_fun(x = vec)\n\n[1] 55.0  5.5  5.5\n\n\nGoing through this bit by bit:\n\nnew_fun: The name of the new function (convention: use something descriptive; don’t use . or CamelCase but _ if you have multiple words)\n&lt;-: The assignment operator.\nfunction(x): Define arguments and defaults here.\n{}: Everything inside the curly brackets is the body of the function (code you are running when calling the function).\nreturn(): All objects created inside the function are immediately destroyed when the function finished running. Except what is put in return() (can be implicit)."
+  },
+  {
+    "objectID": "01_Introduction/01_Introduction_to_Computing.html#data",
+    "href": "01_Introduction/01_Introduction_to_Computing.html#data",
+    "title": "Session 1: Introduction",
+    "section": "Data",
+    "text": "Data\nIn R, data is stored in objects. We will learn about different ways to do so tomorrow!"
+  },
+  {
+    "objectID": "01_Introduction/01_Introduction_to_Computing.html#loops",
+    "href": "01_Introduction/01_Introduction_to_Computing.html#loops",
+    "title": "Session 1: Introduction",
+    "section": "Loops",
+    "text": "Loops\nFor loops\nIterate over a vector:\n\nx &lt;- NULL\nfor (i in 1:10) {\n  message(i)\n  x &lt;- c(x, i)\n}\nx\n\n [1]  1  2  3  4  5  6  7  8  9 10\n\n\n\nfor: This is how you start the loop\ni: This is the variable which takes a different value in each iteration of the loop\nin: separates the variable from the vector\n1:10: The vector over which to iterate\n{}: The expression inside the round brackets is evaluated once for each value in the vector; i takes a different value each run\n\nApply loops\nApply function to each element of a vector/list:\n\nfoo &lt;- function(i, silent = FALSE) {\n  if (!silent) {\n    message(i)\n  }\n  return(i)\n}\nx &lt;- lapply(1:10, foo)\nunlist(x)\n\n [1]  1  2  3  4  5  6  7  8  9 10\n\n\npurrr::map loops\nAlso apply function to each element of a vector/list, but coerce types:\n\nfoo &lt;- function(i, silent = FALSE) {\n  if (!silent) {\n    message(i)\n  }\n  return(i)\n}\nx &lt;- purrr::map_int(1:10, foo)\nx\n\n [1]  1  2  3  4  5  6  7  8  9 10"
+  },
+  {
+    "objectID": "01_Introduction/01_Introduction_to_Computing.html#if",
+    "href": "01_Introduction/01_Introduction_to_Computing.html#if",
+    "title": "Session 1: Introduction",
+    "section": "if",
+    "text": "if\nif can be used to conditionally run code:\n\nif (TRUE) {\n  1 + 1\n}\n\n[1] 2\n\n\n\nif (FALSE) {\n  1 + 1\n}\n\nAny code that evaluates to a logical (TRUE/FALSE) can be used:\n\nif (1 + 1 == 2) {\n  \"Hello!\"\n}\n\n[1] \"Hello!\"\n\n\nYou can extend this with else, which is executed when the original condition is FALSE:\n\nif (1 + 2 == 2) {\n  \"Hello!\"\n} else {\n  \"Bye\"\n}\n\n[1] \"Bye\""
+  },
+  {
+    "objectID": "01_Introduction/01_Introduction_to_Computing.html#base-r",
+    "href": "01_Introduction/01_Introduction_to_Computing.html#base-r",
+    "title": "Session 1: Introduction",
+    "section": "base R",
+    "text": "base R\nCommonly people referring to base R mean all functions available when starting R but not loading any packages with library(package).\n\ndf &lt;- mtcars # using a built-in example data.frame\ntable(df$cyl)\n\n\n 4  6  8 \n11  7 14 \n\nsum(df$cyl)\n\n[1] 198\n\nmean(df$cyl)\n\n[1] 6.1875\n\ndist(head(df)) # calculates euclidian distance between cases\n\n                    Mazda RX4 Mazda RX4 Wag  Datsun 710 Hornet 4 Drive\nMazda RX4 Wag       0.6153251                                         \nDatsun 710         54.9086059    54.8915169                           \nHornet 4 Drive     98.1125212    98.0958939 150.9935191               \nHornet Sportabout 210.3374396   210.3358546 265.0831615    121.0297564\nValiant            65.4717710    65.4392224 117.7547018     33.5508692\n                  Hornet Sportabout\nMazda RX4 Wag                      \nDatsun 710                         \nHornet 4 Drive                     \nHornet Sportabout                  \nValiant                 152.1241352\n\ntolower(row.names(df))\n\n [1] \"mazda rx4\"           \"mazda rx4 wag\"       \"datsun 710\"         \n [4] \"hornet 4 drive\"      \"hornet sportabout\"   \"valiant\"            \n [7] \"duster 360\"          \"merc 240d\"           \"merc 230\"           \n[10] \"merc 280\"            \"merc 280c\"           \"merc 450se\"         \n[13] \"merc 450sl\"          \"merc 450slc\"         \"cadillac fleetwood\" \n[16] \"lincoln continental\" \"chrysler imperial\"   \"fiat 128\"           \n[19] \"honda civic\"         \"toyota corolla\"      \"toyota corona\"      \n[22] \"dodge challenger\"    \"amc javelin\"         \"camaro z28\"         \n[25] \"pontiac firebird\"    \"fiat x1-9\"           \"porsche 914-2\"      \n[28] \"lotus europa\"        \"ford pantera l\"      \"ferrari dino\"       \n[31] \"maserati bora\"       \"volvo 142e\"         \n\n\nEspecially for simple operations and statistics, base is still great.\n\nmodel &lt;- lm(hp ~ mpg, data = df) # simple linear regression\nsummary(model)\n\n\nCall:\nlm(formula = hp ~ mpg, data = df)\n\nResiduals:\n   Min     1Q Median     3Q    Max \n-59.26 -28.93 -13.45  25.65 143.36 \n\nCoefficients:\n            Estimate Std. Error t value Pr(&gt;|t|)    \n(Intercept)   324.08      27.43  11.813 8.25e-13 ***\nmpg            -8.83       1.31  -6.742 1.79e-07 ***\n---\nSignif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1\n\nResidual standard error: 43.95 on 30 degrees of freedom\nMultiple R-squared:  0.6024,    Adjusted R-squared:  0.5892 \nF-statistic: 45.46 on 1 and 30 DF,  p-value: 1.788e-07"
+  },
+  {
+    "objectID": "01_Introduction/01_Introduction_to_Computing.html#base-r-1",
+    "href": "01_Introduction/01_Introduction_to_Computing.html#base-r-1",
+    "title": "Session 1: Introduction",
+    "section": "base R",
+    "text": "base R\nbase also has a plotting system:\n\nplot(\n  df$mpg,\n  df$hp,\n  col = \"blue\",\n  ylab = \"horse power\",\n  xlab = \"miles per gallon\",\n  main = \"Simple linear regression\"\n)\nabline(model, col = \"red\")\ntext(30, 300, \"We can add some text\", col = \"red\")"
+  },
+  {
+    "objectID": "01_Introduction/01_Introduction_to_Computing.html#tidyverse",
+    "href": "01_Introduction/01_Introduction_to_Computing.html#tidyverse",
+    "title": "Session 1: Introduction",
+    "section": "Tidyverse",
+    "text": "Tidyverse\nWhat is it?\n\nThe official description: “The tidyverse is an opinionated collection of R packages designed for data science. All packages share an underlying design philosophy, grammar, and data structures”.\nThe principle that gives the tidyverse its name is that of tidy data: “Each variable forms a column. Each observation forms a row.” (see tidyr vignette for more info)\nSeems trivial at first but as a principle can be quite consequential (e.g., it means that most object types are ignored and data.frames are very dominant)\nSome coding principles attached to it (e.g., the pipe, functions as verbs that build on each other)\n\nThe pipe\n\nFormerly %&gt;%, now native in R as |&gt;\nForwards the result of one function to another\nMakes for much more readable code:\n\n\ntransform(\n  aggregate(. ~ cyl, data = subset(mtcars, hp &gt; 100), FUN = function(x) {\n    round(mean(x, 2))\n  }),\n  kpl = mpg * 0.4251\n)\n\n  cyl mpg disp  hp drat wt qsec vs am gear carb     kpl\n1   4  26  108 111    4  2   18  1  1    4    2 11.0526\n2   6  20  168 110    4  3   18  1  0    4    4  8.5020\n3   8  15  350 192    3  4   17  0  0    3    4  6.3765\n\n\nYou Can make this more readable by createing intermediate objects:\n\ndata1 &lt;- subset(mtcars, hp &gt; 100) # take subset of original data\ndata2 &lt;- aggregate(. ~ cyl, data = data1, FUN = function(x) round(mean(x, 2))) # aggregate by taking rounded mean\ntransform(data2, kpl = mpg * 0.4251) # convert miles per gallon to kilometer per liter\n\n  cyl mpg disp  hp drat wt qsec vs am gear carb     kpl\n1   4  26  108 111    4  2   18  1  1    4    2 11.0526\n2   6  20  168 110    4  3   18  1  0    4    4  8.5020\n3   8  15  350 192    3  4   17  0  0    3    4  6.3765\n\n\nOr you use the pipe:\n\nsubset(mtcars, hp &gt; 100) |&gt;\n  aggregate(. ~ cyl, data = _, FUN = function(x) round(mean(x, 2))) |&gt;\n  transform(kpl = mpg * 0.4251)\n\n  cyl mpg disp  hp drat wt qsec vs am gear carb     kpl\n1   4  26  108 111    4  2   18  1  1    4    2 11.0526\n2   6  20  168 110    4  3   18  1  0    4    4  8.5020\n3   8  15  350 192    3  4   17  0  0    3    4  6.3765\n\n\ntidyverse functions are written with pipes in mind and are named as verbs with the goal to tell you exactly what they do:\n\nlibrary(tidyverse)\nmtcars |&gt;\n  filter(hp &gt; 100) |&gt;\n  group_by(cyl) |&gt;\n  summarise(across(.cols = everything(), .fns = function(x) {\n    x |&gt; mean() |&gt; round(2)\n  })) |&gt;\n  mutate(kpl = mpg * 0.4251)\n\n# A tibble: 3 × 12\n    cyl   mpg  disp    hp  drat    wt  qsec    vs    am  gear  carb   kpl\n  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;\n1     4  25.9  108.  111   3.94  2.15  17.8  1     1     4.5   2    11.0 \n2     6  19.7  183.  122.  3.59  3.12  18.0  0.57  0.43  3.86  3.43  8.39\n3     8  15.1  353.  209.  3.23  4     16.8  0     0.14  3.29  3.5   6.42\n\n\nNote: You can interject the View() command at any line in a complicated pipeline to see the intermediate result in a spreadsheet-style data viewer.\nSpecial package ggplot2\n\nCompletely overhauls the plotting system in R\nIMO: the best plotting system in any programming/data science language\nImplements the “Grammar of Graphics”: a language for describing custom plots instead of relying on predefined plotting functions\nThe specific logic makes it harder to learn than other packages, but you can express essentially any plots in it (I highly recommend using “ggplot2: Elegant Graphics for Data Analysis” to learn the package instead of individual tutorials)"
+  },
+  {
+    "objectID": "01_Introduction/01_Introduction_to_Computing.html#exercises-2",
+    "href": "01_Introduction/01_Introduction_to_Computing.html#exercises-2",
+    "title": "Session 1: Introduction",
+    "section": "Exercises 2",
+    "text": "Exercises 2\n\nRun ggplot(data = mtcars). What do you see and why?\nIn the function pb_collect() from paperboy, what do the arguments ignore_fails and connections do?\nWrite a function that takes a numeric vector of miles per gallon consumption data and converts it to kilometer per liter. If anything other than a numeric vector is entered, the function should display an error (hint: see ?stop).\nIn the code below, check the sizes of the intermediate objects with object.size().\n\n\nfile_link &lt;- \"https://raw.githubusercontent.com/shawn-y-sun/Customer_Analytics_Retail/main/purchase%20data.csv\"\ndf &lt;- read.csv(file_link)\nfiltered_df &lt;- df[df$Age &gt;= 50, ]\naggregated_df &lt;- aggregate(\n  filtered_df$Quantity,\n  by = list(filtered_df$Day),\n  FUN = sum\n)\nnames(aggregated_df) &lt;- c(\"day\", \"total_quantity\")\naggregated_df[order(aggregated_df$total_quantity, decreasing = TRUE)[1:5], ]\n\n    day total_quantity\n162 162             73\n460 460             73\n123 123             61\n183 183             60\n340 340             57\n\n\n\nHow could the code above be improved if you only want the final result, the code should be readable and you care about memory usage?"
+  },
+  {
+    "objectID": "01_Introduction/01_Introduction_to_Computing.html#background",
+    "href": "01_Introduction/01_Introduction_to_Computing.html#background",
+    "title": "Session 1: Introduction",
+    "section": "Background",
+    "text": "Background\n\n“The language in which we express our ideas has a strong influence on our thought processes.”\n― Donald Ervin Knuth, Literate Programming\n\n\nWhen analysing data in R, a cornerstone of a good workflow is documenting what you are doing.\nThe whole point of doing data analysis in a programming language rather than a point and click tool is reproducibility.\nYet if your code does not run after a while and you don’t understand what you were doing when writing the code, it’s as if you had done your whole analysis in Excel!"
+  },
+  {
+    "objectID": "01_Introduction/01_Introduction_to_Computing.html#advantages",
+    "href": "01_Introduction/01_Introduction_to_Computing.html#advantages",
+    "title": "Session 1: Introduction",
+    "section": "Advantages",
+    "text": "Advantages\nThis is where literate programming has a lot of advantages:\n\nEnhanced Documentation: Literate programming combines code and documentation in a single, integrated document. This approach encourages researchers to write clear and comprehensive explanations of their code, making it easier for others (and even themselves) to understand the working of the code, (research) design choices, and logic.\nImproved Readability: By structuring code and documentation in a literate programming style, the resulting code becomes more readable and coherent. The narrative flow helps readers follow the thought process and intentions of the programmer, leading to improved comprehension and maintainability.\nModular and Reusable Code: Literate programming emphasizes the organization of code into coherent and reusable chunks as they writers come to think of them similar to paragraphs in a text, where each chunk develops one specific idea.\nCollaboration and Communication: Literate programming enhances collaboration among developers by providing a common platform to discuss, share, and review code. The narrative style fosters effective communication, allowing team members to understand the codebase more easily and collaborate more efficiently.\nExtensibility and Maintenance: Well-documented literate programs are typically easier to extend and maintain over time. The clear explanation of choices and functionality helps yourself and others in the future to make decisions about modifications, enhancements, and bug fixes.\nReproducibilty and accountability: when you save rendered output of an analysis, you know exactly how a table of plot was created. If there are several versions, you can always turn to the rendered document and check which data, code and package versions were used to do your analuysis (at least when documents were written in a specific way.\n\nQuarto (and its predecessor R Markdown) were designed to make it easy for you to make the most of these advantages. We have already been using these tools throughout the workshop and I hope this made you more familiar with them."
+  },
+  {
+    "objectID": "01_Introduction/01_Introduction_to_Computing.html#exercises-3",
+    "href": "01_Introduction/01_Introduction_to_Computing.html#exercises-3",
+    "title": "Session 1: Introduction",
+    "section": "Exercises 3",
+    "text": "Exercises 3\n\nUse the function report_template() from my package jbgtemplates to start a new report\nAdd some simple analysis in it and render\nPlay around with the formats and produce at least a PDF and Word output of your document\nThink about how the structure of the document enhances reproducibility"
+  },
+  {
+    "objectID": "01_Introduction/01_Introduction_to_Computing.html#the-worst-default-setting-in-rstudio",
+    "href": "01_Introduction/01_Introduction_to_Computing.html#the-worst-default-setting-in-rstudio",
+    "title": "Session 1: Introduction",
+    "section": "The worst default setting in RStudio",
+    "text": "The worst default setting in RStudio\n\nThe default setting to ask whether to save the current session is horrible. It eventually leads to you clicking yes, save the data and to the creation of a file called .Rdata. This file is loaded whenever you open RStudio! This makes RStudio slow and can lead to unexpected behaviour, even when you delete all objects in your environment with rm(list = ls())."
+  },
+  {
+    "objectID": "01_Introduction/01_Introduction_to_Computing.html#exercises-4",
+    "href": "01_Introduction/01_Introduction_to_Computing.html#exercises-4",
+    "title": "Session 1: Introduction",
+    "section": "Exercises 4",
+    "text": "Exercises 4\n\nChange that setting NOW and look for the .Rdata in your project and home directory."
+  },
+  {
+    "objectID": "01_Introduction/01_Introduction_to_Computing.html#git-some-version-control",
+    "href": "01_Introduction/01_Introduction_to_Computing.html#git-some-version-control",
+    "title": "Session 1: Introduction",
+    "section": "Git some Version Control",
+    "text": "Git some Version Control\nGit is an extensive application and too much to go through. But you do not need all the functionality to make efficient use of it’s main promise: keeping track of what is happening in your projects and giving you the ability to revert to an older state of your project.\n\nThis screenshot shows the last months of my PhD, when I was furiously working on integrating comments from different people. Not only helped git to show me my progress nicely, I also did not have to worry about accidentally deleting anything that might still prove valuable. Especially towards the end, I often removed sections or copied them to other chapters. Whenever I could not find a specific section, I went back to the last commit when I could still remember where it was.\nAdditionally, GitHub offers some nice features to organise and plan projects around issues.\n\nHere you can note down remaining problems and keep track of your progress. It keeps your head free for other things!\nLearn more, e.g., at: https://happygitwithr.com/"
+  },
+  {
+    "objectID": "01_Introduction/01_solutions.html",
+    "href": "01_Introduction/01_solutions.html",
+    "title": "solutions session 1",
+    "section": "",
+    "text": "Run ggplot(data = mtcars). What do you see and why?\nIn the function pb_collect() from paperboy, what do the arguments ignore_fails and connections do?\nWrite a function that takes a numeric vector of miles per gallon consumption data and converts it to kilometer per liter. If anything other than a numeric vector is entered, the function should display an error (hint: see ?stop).\nIn the code below, check the sizes of the intermediate objects with object.size().\n\n\nfile_link &lt;- \"https://raw.githubusercontent.com/shawn-y-sun/Customer_Analytics_Retail/main/purchase%20data.csv\"\ndf &lt;- read.csv(file_link)\nfiltered_df &lt;- df[df$Age &gt;= 50, ]\naggregated_df &lt;- aggregate(\n  filtered_df$Quantity,\n  by = list(filtered_df$Day),\n  FUN = sum\n)\nnames(aggregated_df) &lt;- c(\"day\", \"total_quantity\")\naggregated_df[order(aggregated_df$total_quantity, decreasing = TRUE)[1:5], ]\n\n    day total_quantity\n162 162             73\n460 460             73\n123 123             61\n183 183             60\n340 340             57\n\n\n\nHow could the code above be improved if you only want the final result, the code should be readable and you care about memory usage?"
+  },
+  {
+    "objectID": "01_Introduction/01_solutions.html#exercises-2",
+    "href": "01_Introduction/01_solutions.html#exercises-2",
+    "title": "solutions session 1",
+    "section": "",
+    "text": "Run ggplot(data = mtcars). What do you see and why?\nIn the function pb_collect() from paperboy, what do the arguments ignore_fails and connections do?\nWrite a function that takes a numeric vector of miles per gallon consumption data and converts it to kilometer per liter. If anything other than a numeric vector is entered, the function should display an error (hint: see ?stop).\nIn the code below, check the sizes of the intermediate objects with object.size().\n\n\nfile_link &lt;- \"https://raw.githubusercontent.com/shawn-y-sun/Customer_Analytics_Retail/main/purchase%20data.csv\"\ndf &lt;- read.csv(file_link)\nfiltered_df &lt;- df[df$Age &gt;= 50, ]\naggregated_df &lt;- aggregate(\n  filtered_df$Quantity,\n  by = list(filtered_df$Day),\n  FUN = sum\n)\nnames(aggregated_df) &lt;- c(\"day\", \"total_quantity\")\naggregated_df[order(aggregated_df$total_quantity, decreasing = TRUE)[1:5], ]\n\n    day total_quantity\n162 162             73\n460 460             73\n123 123             61\n183 183             60\n340 340             57\n\n\n\nHow could the code above be improved if you only want the final result, the code should be readable and you care about memory usage?"
+  }
+]

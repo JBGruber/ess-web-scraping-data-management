@@ -38,3 +38,9 @@ e5277ed915dac5918289e064ee7b9007.mp4
 09_Interactive_Web_Pages/data/anyflip/
 10_Conclusion/media/ai_scraper.mkv
 10_Conclusion/ESS_exam.qmd
+
+# GitHub Pages / quarto website
+/_freeze/
+/.quarto/
+
+**/*.quarto_ipynb
