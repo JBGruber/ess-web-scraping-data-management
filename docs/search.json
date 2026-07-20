@@ -18,7 +18,7 @@
     "href": "index.html#schedule",
     "title": "Introduction to Web Scraping and Data Management for Social Scientists",
     "section": "Schedule",
-    "text": "Schedule\nSlides are uploaded here as the course progresses.\n\n\n\n\n\n\n\n\n\n\n\n\nDay\nDate\nSession\nMaterials\nExercises\n\n\n\n\n1\nMon, 20 July\nIntroduction\nnot yet available\nnot yet available\n\n\n2\nTue, 21 July\nData Structures and Wrangling\nnot yet available\nnot yet available\n\n\n3\nWed, 22 July\nWorking with Files\nnot yet available\nnot yet available\n\n\n4\nThu, 23 July\nLinking and Joining Data & SQL\nnot yet available\nnot yet available\n\n\n5\nFri, 24 July\nScaling, Reporting and Database Software\nnot yet available\nnot yet available\n\n\n6\nMon, 27 July\nIntroduction to the Web\nnot yet available\nnot yet available\n\n\n7\nTue, 28 July\nStatic Web Pages\nnot yet available\nnot yet available\n\n\n8\nWed, 29 July\nApplication Programming Interfaces (APIs)\nnot yet available\nnot yet available\n\n\n9\nThu, 30 July\nInteractive Web Pages\nnot yet available\n–\n\n\n10\nFri, 31 July\nBuilding a Reproducible Research Project\nnot yet available\n–"
+    "text": "Schedule\nSlides are uploaded here as the course progresses.\n\n\n\n\n\nDay\nDate\nSession\nMaterials\nExercises\n\n\n\n\n1\nMon, 20 July\nIntroduction\nSlides\nnot yet available\n\n\n2\nTue, 21 July\nData Structures and Wrangling\nnot yet available\nnot yet available\n\n\n3\nWed, 22 July\nWorking with Files\nnot yet available\nnot yet available\n\n\n4\nThu, 23 July\nLinking and Joining Data & SQL\nnot yet available\nnot yet available\n\n\n5\nFri, 24 July\nScaling, Reporting and Database Software\nnot yet available\nnot yet available\n\n\n6\nMon, 27 July\nIntroduction to the Web\nnot yet available\nnot yet available\n\n\n7\nTue, 28 July\nStatic Web Pages\nnot yet available\nnot yet available\n\n\n8\nWed, 29 July\nApplication Programming Interfaces (APIs)\nnot yet available\nnot yet available\n\n\n9\nThu, 30 July\nInteractive Web Pages\nnot yet available\n–\n\n\n10\nFri, 31 July\nBuilding a Reproducible Research Project\nnot yet available\n–"
   },
   {
     "objectID": "index.html#required-software",
@@ -264,5 +264,663 @@
     "title": "solutions session 1",
     "section": "",
     "text": "Run ggplot(data = mtcars). What do you see and why?\nIn the function pb_collect() from paperboy, what do the arguments ignore_fails and connections do?\nWrite a function that takes a numeric vector of miles per gallon consumption data and converts it to kilometer per liter. If anything other than a numeric vector is entered, the function should display an error (hint: see ?stop).\nIn the code below, check the sizes of the intermediate objects with object.size().\n\n\nfile_link &lt;- \"https://raw.githubusercontent.com/shawn-y-sun/Customer_Analytics_Retail/main/purchase%20data.csv\"\ndf &lt;- read.csv(file_link)\nfiltered_df &lt;- df[df$Age &gt;= 50, ]\naggregated_df &lt;- aggregate(\n  filtered_df$Quantity,\n  by = list(filtered_df$Day),\n  FUN = sum\n)\nnames(aggregated_df) &lt;- c(\"day\", \"total_quantity\")\naggregated_df[order(aggregated_df$total_quantity, decreasing = TRUE)[1:5], ]\n\n    day total_quantity\n162 162             73\n460 460             73\n123 123             61\n183 183             60\n340 340             57\n\n\n\nHow could the code above be improved if you only want the final result, the code should be readable and you care about memory usage?"
+  },
+  {
+    "objectID": "01_Introduction/01_Introduction.html#this-course",
+    "href": "01_Introduction/01_Introduction.html#this-course",
+    "title": "Session 1: Introduction",
+    "section": "This Course",
+    "text": "This Course\n\n\n\n\n\n    \n\n    \n\n    \n    \n    \n      \n        \n        \n              \n                Day\n                Session\n              \n        \n        \n        \n                \n                  1\n                  Introduction\n                \n                \n                  2\n                  Data Structures and Wrangling\n                \n                \n                  3\n                  Working with Files\n                \n                \n                  4\n                  Linking and joining data & SQL\n                \n                \n                  5\n                  Scaling, Reporting and Database Software\n                \n                \n                  6\n                  Introduction to the Web\n                \n                \n                  7\n                  Static Web Pages\n                \n                \n                  8\n                  Application Programming Interface (APIs)\n                \n                \n                  9\n                  Interactive Web Pages\n                \n                \n                  10\n                  Building a Reproducible Research Project\n                \n        \n      \n    \n\n\n\nGeneral Goals:\n\nI want to teach you web scraping and data management\nI also want to give you the tools for reproducible and transparent open science research"
+  },
+  {
+    "objectID": "01_Introduction/01_Introduction.html#the-plan-for-today",
+    "href": "01_Introduction/01_Introduction.html#the-plan-for-today",
+    "title": "Session 1: Introduction",
+    "section": "The Plan for Today",
+    "text": "The Plan for Today\n\n\nIn this session, you learn how to use the tools of the hunt. We will:\n\nlearn about:\n\neach other\nthe course material and structure\n\ngo over some principles of using the programming language R:\n\nR Refresher\nliterate programming\n\nwrap up with some useful tools, tips and tricks\n\n\n Woody Kelly via unsplash.com"
+  },
+  {
+    "objectID": "01_Introduction/01_Introduction.html#who-am-i",
+    "href": "01_Introduction/01_Introduction.html#who-am-i",
+    "title": "Session 1: Introduction",
+    "section": "Who am I?",
+    "text": "Who am I?\n\n\n\nSenior Researcher/Team Lead in Data Services for the Social Sciences @ GESIS\nPreviously PostDoc in Communication at VU Amsterdam, University of Amsterdam, and European New School of Digital Studies\n\nInterested in:\n\nComputational Social Science\nOpen and reproducible science\nAutomated Content Analysis\nHybrid Media Systems and Information Flows\nProtest and Democracy\n\nExperience:\n\nR user since 2015\nR package developer since 2017\nWorked on several packages for text analysis, API access and web scraping (spacyr, quanteda.textmodels, LexisNexisTools, paperboy, traktok, rollama, amcat4-r, atrrr, rwhatsapp and more)\n\n\n\n\nContact:\n\n(during the course) jg23824@essex.ac.uk\njohannes.gruber@gesis.org\n@jbgruber.bsky.social"
+  },
+  {
+    "objectID": "01_Introduction/01_Introduction.html#who-are-you",
+    "href": "01_Introduction/01_Introduction.html#who-are-you",
+    "title": "Session 1: Introduction",
+    "section": "Who are you?",
+    "text": "Who are you?\n\n\n\nWhat is your name?\nWhat are your research interests?\nWhat is your experience with:\n\nR\nHTML\nweb scraping\ndata management\n\nWhy are you taking this course?\nDo you have specific plans that include webscraping and data management?\nAdditional fact (optional)"
+  },
+  {
+    "objectID": "01_Introduction/01_Introduction.html#prerequisites",
+    "href": "01_Introduction/01_Introduction.html#prerequisites",
+    "title": "Session 1: Introduction",
+    "section": "Prerequisites",
+    "text": "Prerequisites\nYou should have this software installed:\n\nR\nAn IDE, preferably RStudio Desktop, but you can also use VSCodium or VS Code or Positron\nQuarto"
+  },
+  {
+    "objectID": "01_Introduction/01_Introduction.html#r-version",
+    "href": "01_Introduction/01_Introduction.html#r-version",
+    "title": "Session 1: Introduction",
+    "section": "R version",
+    "text": "R version\nYou need a relatively recent version of R. This command should at least show R version 4.1.0 (2021-05-18):\n\nR.Version()$version.string\n\n[1] \"R version 4.6.1 (2026-06-24)\""
+  },
+  {
+    "objectID": "01_Introduction/01_Introduction.html#get-the-course-material",
+    "href": "01_Introduction/01_Introduction.html#get-the-course-material",
+    "title": "Session 1: Introduction",
+    "section": "Get the course material",
+    "text": "Get the course material\nNavigate here and clone the repository:\nhttps://github.com/JBGruber/ess-web-scraping-data-management\nIn RStudio go to “Create a project” (top left corner with this symbol ). (If you do not have this symbol, you need to install Git or GitHib Desktop first.) Then select “Version Control”:\n\nOr if you are using the command line, you can simply type:\ngit clone https://github.com/JBGruber/ess-web-scraping-data-management.git\n# OR\ngit clone git@github.com:JBGruber/ess-v2-web-scraping-data-management.git"
+  },
+  {
+    "objectID": "01_Introduction/01_Introduction.html#how-i-will-work",
+    "href": "01_Introduction/01_Introduction.html#how-i-will-work",
+    "title": "Session 1: Introduction",
+    "section": "How I will work",
+    "text": "How I will work\nI tend to jump back and forth between the slides and RStudio\n\n\nSlides\n\nSee the rendered slides on: https://jbgruber.github.io/ess-web-scraping-data-management/\n\nSource\n\nSee the qmd file in each session folder"
+  },
+  {
+    "objectID": "01_Introduction/01_Introduction.html#use-the-course-marerial",
+    "href": "01_Introduction/01_Introduction.html#use-the-course-marerial",
+    "title": "Session 1: Introduction",
+    "section": "Use the course marerial",
+    "text": "Use the course marerial\n\nPull the latest version at the beginning of each session\nMake a copy of the qmd file and name it, e.g., “1_Introduction_notes.qmd”\nUse this file to make notes, for example by adding comments using this syntax &lt;!-- your comment --&gt; (RStudio shortcut Ctrl + Shift + C / Command + Shift + C on macOS)\n\n\nAlternatively, you can annotate a PDF version of the slides by heading to the website, clicking on the slides you want, then press e to export them to PDF (and take notes with PDF reader)\n\n\n\n\n\n\n\nWarning\n\n\nThis is to make sure you don’t get any git conflicts when you pull and I updated something in the material in the meantime."
+  },
+  {
+    "objectID": "01_Introduction/01_Introduction.html#your-turn-exercises-1",
+    "href": "01_Introduction/01_Introduction.html#your-turn-exercises-1",
+    "title": "Session 1: Introduction",
+    "section": "Your turn (Exercises 1)",
+    "text": "Your turn (Exercises 1)\n\nDownload the course material and open the RStudio project or folder in your IDE\nOpen the file readme.qmd from the file explorer of your IDE\nExecute the final code Chunk to install all packages we will need for this course"
+  },
+  {
+    "objectID": "01_Introduction/01_Introduction.html#packages",
+    "href": "01_Introduction/01_Introduction.html#packages",
+    "title": "Session 1: Introduction",
+    "section": "Packages",
+    "text": "Packages\n\nR organises its functions in packages (even base functions)\nMost packages must be installed (once) and attached (every new session)\n\n\ninstall.packages(\"tidyverse\")\nlibrary(tidyverse)"
+  },
+  {
+    "objectID": "01_Introduction/01_Introduction.html#accessing-functions",
+    "href": "01_Introduction/01_Introduction.html#accessing-functions",
+    "title": "Session 1: Introduction",
+    "section": "Accessing Functions",
+    "text": "Accessing Functions\nIf you do not want to attach an entire package, you can use the Double Colon to only use a specific function:\n\ndplyr::select(iris, Sepal.Length)\n\n    Sepal.Length\n1            5.1\n2            4.9\n3            4.7\n4            4.6\n5            5.0\n6            5.4\n7            4.6\n8            5.0\n9            4.4\n10           4.9\n11           5.4\n12           4.8\n13           4.8\n14           4.3\n15           5.8\n16           5.7\n17           5.4\n18           5.1\n19           5.7\n20           5.1\n21           5.4\n22           5.1\n23           4.6\n24           5.1\n25           4.8\n26           5.0\n27           5.0\n28           5.2\n29           5.2\n30           4.7\n31           4.8\n32           5.4\n33           5.2\n34           5.5\n35           4.9\n36           5.0\n37           5.5\n38           4.9\n39           4.4\n40           5.1\n41           5.0\n42           4.5\n43           4.4\n44           5.0\n45           5.1\n46           4.8\n47           5.1\n48           4.6\n49           5.3\n50           5.0\n51           7.0\n52           6.4\n53           6.9\n54           5.5\n55           6.5\n56           5.7\n57           6.3\n58           4.9\n59           6.6\n60           5.2\n61           5.0\n62           5.9\n63           6.0\n64           6.1\n65           5.6\n66           6.7\n67           5.6\n68           5.8\n69           6.2\n70           5.6\n71           5.9\n72           6.1\n73           6.3\n74           6.1\n75           6.4\n76           6.6\n77           6.8\n78           6.7\n79           6.0\n80           5.7\n81           5.5\n82           5.5\n83           5.8\n84           6.0\n85           5.4\n86           6.0\n87           6.7\n88           6.3\n89           5.6\n90           5.5\n91           5.5\n92           6.1\n93           5.8\n94           5.0\n95           5.6\n96           5.7\n97           5.7\n98           6.2\n99           5.1\n100          5.7\n101          6.3\n102          5.8\n103          7.1\n104          6.3\n105          6.5\n106          7.6\n107          4.9\n108          7.3\n109          6.7\n110          7.2\n111          6.5\n112          6.4\n113          6.8\n114          5.7\n115          5.8\n116          6.4\n117          6.5\n118          7.7\n119          7.7\n120          6.0\n121          6.9\n122          5.6\n123          7.7\n124          6.3\n125          6.7\n126          7.2\n127          6.2\n128          6.1\n129          6.4\n130          7.2\n131          7.4\n132          7.9\n133          6.4\n134          6.3\n135          6.1\n136          7.7\n137          6.3\n138          6.4\n139          6.0\n140          6.9\n141          6.7\n142          6.9\n143          5.8\n144          6.8\n145          6.7\n146          6.7\n147          6.3\n148          6.5\n149          6.2\n150          5.9\n\n\nLess often used, you can also do this with library:\n\nlibrary(\"dplyr\", include.only = c(\"select\", \"mutate\"))\nmutate(iris, sepal_length = Sepal.Length * 10) |&gt;\n  select(sepal_length)"
+  },
+  {
+    "objectID": "01_Introduction/01_Introduction.html#the-comprehensive-r-archive-network-cran",
+    "href": "01_Introduction/01_Introduction.html#the-comprehensive-r-archive-network-cran",
+    "title": "Session 1: Introduction",
+    "section": "The Comprehensive R Archive Network (CRAN)",
+    "text": "The Comprehensive R Archive Network (CRAN)\n\nCentral repository for R packages\nRigorous policies and testing\nCurrently more than 24k packages (July 2026)"
+  },
+  {
+    "objectID": "01_Introduction/01_Introduction.html#other-sources",
+    "href": "01_Introduction/01_Introduction.html#other-sources",
+    "title": "Session 1: Introduction",
+    "section": "Other sources?",
+    "text": "Other sources?\n\nRigorous policies and testing are also a downside\n\nDevelopers hesitate to submit packages\nUnmaintained (but functional) packages are removed from CRAN\n\nAlternative repositories are common:\n\nGitHub and Gitlab (and SVN)\nBioconductor, R-universe 🚀, R-Forge and Omegahat\n\n\n\nremotes::install_github(\"JBGruber/paperboy\")\n\n# Install package from Bioconductor\nBiocManager::install(c(\"GenomicRanges\", \"Organism.dplyr\"))\n\n# Install 'magick' from 'ropensci' universe\ninstall.packages(\"magick\", repos = \"https://ropensci.r-universe.dev\")"
+  },
+  {
+    "objectID": "01_Introduction/01_Introduction.html#help",
+    "href": "01_Introduction/01_Introduction.html#help",
+    "title": "Session 1: Introduction",
+    "section": "Help!",
+    "text": "Help!\nOne of the most important commands in R: ?/help:\n\n?install.packages # And\n?remotes::install_github # OR\nhelp(\"install_github\", package = \"remotes\")\n\n\n\nAll help files in R follow the same structure and principle (although not all help files contain all elements):\n\nTitle\nDescription\nUsage:very important: shows you the default values for all arguments (i.e., what is used if you do not set anything) and assumed order\n\n\ninstall_github(\"JBGruber/paperboy\") # Same as\ninstall_github(repo = \"JBGruber/paperboy\", ref = \"HEAD\") # Same as\ninstall_github(ref = \"HEAD\", repo = \"JBGruber/paperboy\") # Not(!) same as\ninstall_github(\"HEAD\", \"JBGruber/paperboy\")\n\n\nArguments: description of arguments in a function. One special argument is the ... (called ellipsis or dots) which is passed to underlying function.\n\n\ninstall_github(\"JBGruber/paperboy\", Ncpus = 6)\n\n\nDetails: Usually not that important but this is the first place to look when a function is not doing what you expect\nExamples: where I usually start to learn a new function by looking at cases that certainly work (and then rewriting them for my purposes)."
+  },
+  {
+    "objectID": "01_Introduction/01_Introduction.html#help-1",
+    "href": "01_Introduction/01_Introduction.html#help-1",
+    "title": "Session 1: Introduction",
+    "section": "Help!",
+    "text": "Help!\n\nGoogle (“ggplot2 r remove legends”)\nSome good resources for answers:\n\nstackoverflow.com (if you want to ask a question instead see how to ask a good question and use a reproducible example)\nR help list (stat.ethz.ch)\nhttps://www.r-bloggers.com/ (collection of personal blog posts related to R – so quality varies)\n\nClaude/ChatGPT/Gemini/DeepSeek"
+  },
+  {
+    "objectID": "01_Introduction/01_Introduction.html#functions",
+    "href": "01_Introduction/01_Introduction.html#functions",
+    "title": "Session 1: Introduction",
+    "section": "Functions",
+    "text": "Functions\nFunctions are easy to define in R:\n\nnew_fun &lt;- function(x = 1) {\n  out &lt;- c(\n    sum(x),\n    mean(x),\n    median(x)\n  )\n  return(out)\n}\nnew_fun()\n\n[1] 1 1 1\n\nvec &lt;- c(1:10)\nnew_fun(x = vec)\n\n[1] 55.0  5.5  5.5\n\n\nGoing through this bit by bit:\n\nnew_fun: The name of the new function (convention: use something descriptive; don’t use . or CamelCase but _ if you have multiple words)\n&lt;-: The assignment operator.\nfunction(x): Define arguments and defaults here.\n{}: Everything inside the curly brackets is the body of the function (code you are running when calling the function).\nreturn(): All objects created inside the function are immediately destroyed when the function finished running. Except what is put in return() (can be implicit)."
+  },
+  {
+    "objectID": "01_Introduction/01_Introduction.html#data",
+    "href": "01_Introduction/01_Introduction.html#data",
+    "title": "Session 1: Introduction",
+    "section": "Data",
+    "text": "Data\nIn R, data is stored in objects. We will learn about different ways to do so tomorrow!"
+  },
+  {
+    "objectID": "01_Introduction/01_Introduction.html#loops",
+    "href": "01_Introduction/01_Introduction.html#loops",
+    "title": "Session 1: Introduction",
+    "section": "Loops",
+    "text": "Loops\nFor loops\nIterate over a vector:\n\nx &lt;- NULL\nfor (i in 1:10) {\n  message(i)\n  x &lt;- c(x, i)\n}\nx\n\n [1]  1  2  3  4  5  6  7  8  9 10\n\n\n\nfor: This is how you start the loop\ni: This is the variable which takes a different value in each iteration of the loop\nin: separates the variable from the vector\n1:10: The vector over which to iterate\n{}: The expression inside the round brackets is evaluated once for each value in the vector; i takes a different value each run\n\nApply loops\nApply function to each element of a vector/list:\n\nfoo &lt;- function(i, silent = FALSE) {\n  if (!silent) {\n    message(i)\n  }\n  return(i)\n}\nx &lt;- lapply(1:10, foo)\nunlist(x)\n\n [1]  1  2  3  4  5  6  7  8  9 10\n\n\npurrr::map loops\nAlso apply function to each element of a vector/list, but coerce types:\n\nfoo &lt;- function(i, silent = FALSE) {\n  if (!silent) {\n    message(i)\n  }\n  return(i)\n}\nx &lt;- purrr::map_int(1:10, foo)\nx\n\n [1]  1  2  3  4  5  6  7  8  9 10"
+  },
+  {
+    "objectID": "01_Introduction/01_Introduction.html#if",
+    "href": "01_Introduction/01_Introduction.html#if",
+    "title": "Session 1: Introduction",
+    "section": "if",
+    "text": "if\nif can be used to conditionally run code:\n\nif (TRUE) {\n  1 + 1\n}\n\n[1] 2\n\n\n\nif (FALSE) {\n  1 + 1\n}\n\nAny code that evaluates to a logical (TRUE/FALSE) can be used:\n\nif (1 + 1 == 2) {\n  \"Hello!\"\n}\n\n[1] \"Hello!\"\n\n\nYou can extend this with else, which is executed when the original condition is FALSE:\n\nif (1 + 2 == 2) {\n  \"Hello!\"\n} else {\n  \"Bye\"\n}\n\n[1] \"Bye\""
+  },
+  {
+    "objectID": "01_Introduction/01_Introduction.html#base-r",
+    "href": "01_Introduction/01_Introduction.html#base-r",
+    "title": "Session 1: Introduction",
+    "section": "base R",
+    "text": "base R\nCommonly people referring to base R mean all functions available when starting R but not loading any packages with library(package).\n\ndf &lt;- mtcars # using a built-in example data.frame\ntable(df$cyl)\n\n\n 4  6  8 \n11  7 14 \n\nsum(df$cyl)\n\n[1] 198\n\nmean(df$cyl)\n\n[1] 6.1875\n\ndist(head(df)) # calculates euclidian distance between cases\n\n                    Mazda RX4 Mazda RX4 Wag  Datsun 710 Hornet 4 Drive\nMazda RX4 Wag       0.6153251                                         \nDatsun 710         54.9086059    54.8915169                           \nHornet 4 Drive     98.1125212    98.0958939 150.9935191               \nHornet Sportabout 210.3374396   210.3358546 265.0831615    121.0297564\nValiant            65.4717710    65.4392224 117.7547018     33.5508692\n                  Hornet Sportabout\nMazda RX4 Wag                      \nDatsun 710                         \nHornet 4 Drive                     \nHornet Sportabout                  \nValiant                 152.1241352\n\ntolower(row.names(df))\n\n [1] \"mazda rx4\"           \"mazda rx4 wag\"       \"datsun 710\"         \n [4] \"hornet 4 drive\"      \"hornet sportabout\"   \"valiant\"            \n [7] \"duster 360\"          \"merc 240d\"           \"merc 230\"           \n[10] \"merc 280\"            \"merc 280c\"           \"merc 450se\"         \n[13] \"merc 450sl\"          \"merc 450slc\"         \"cadillac fleetwood\" \n[16] \"lincoln continental\" \"chrysler imperial\"   \"fiat 128\"           \n[19] \"honda civic\"         \"toyota corolla\"      \"toyota corona\"      \n[22] \"dodge challenger\"    \"amc javelin\"         \"camaro z28\"         \n[25] \"pontiac firebird\"    \"fiat x1-9\"           \"porsche 914-2\"      \n[28] \"lotus europa\"        \"ford pantera l\"      \"ferrari dino\"       \n[31] \"maserati bora\"       \"volvo 142e\"         \n\n\nEspecially for simple operations and statistics, base is still great.\n\nmodel &lt;- lm(hp ~ mpg, data = df) # simple linear regression\nsummary(model)\n\n\nCall:\nlm(formula = hp ~ mpg, data = df)\n\nResiduals:\n   Min     1Q Median     3Q    Max \n-59.26 -28.93 -13.45  25.65 143.36 \n\nCoefficients:\n            Estimate Std. Error t value Pr(&gt;|t|)    \n(Intercept)   324.08      27.43  11.813 8.25e-13 ***\nmpg            -8.83       1.31  -6.742 1.79e-07 ***\n---\nSignif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1\n\nResidual standard error: 43.95 on 30 degrees of freedom\nMultiple R-squared:  0.6024,    Adjusted R-squared:  0.5892 \nF-statistic: 45.46 on 1 and 30 DF,  p-value: 1.788e-07"
+  },
+  {
+    "objectID": "01_Introduction/01_Introduction.html#base-r-1",
+    "href": "01_Introduction/01_Introduction.html#base-r-1",
+    "title": "Session 1: Introduction",
+    "section": "base R",
+    "text": "base R\nbase also has a plotting system:\n\nplot(\n  df$mpg,\n  df$hp,\n  col = \"blue\",\n  ylab = \"horse power\",\n  xlab = \"miles per gallon\",\n  main = \"Simple linear regression\"\n)\nabline(model, col = \"red\")\ntext(30, 300, \"We can add some text\", col = \"red\")"
+  },
+  {
+    "objectID": "01_Introduction/01_Introduction.html#tidyverse",
+    "href": "01_Introduction/01_Introduction.html#tidyverse",
+    "title": "Session 1: Introduction",
+    "section": "Tidyverse",
+    "text": "Tidyverse\nWhat is it?\n\nThe official description: “The tidyverse is an opinionated collection of R packages designed for data science. All packages share an underlying design philosophy, grammar, and data structures”.\nThe principle that gives the tidyverse its name is that of tidy data: “Each variable forms a column. Each observation forms a row.” (see tidyr vignette for more info)\nSeems trivial at first but as a principle can be quite consequential (e.g., it means that most object types are ignored and data.frames are very dominant)\nSome coding principles attached to it (e.g., the pipe, functions as verbs that build on each other)\n\nThe pipe\n\nFormerly %&gt;%, now native in R as |&gt;\nForwards the result of one function to another\nMakes for much more readable code:\n\n\ntransform(\n  aggregate(. ~ cyl, data = subset(mtcars, hp &gt; 100), FUN = function(x) {\n    round(mean(x, 2))\n  }),\n  kpl = mpg * 0.4251\n)\n\n  cyl mpg disp  hp drat wt qsec vs am gear carb     kpl\n1   4  26  108 111    4  2   18  1  1    4    2 11.0526\n2   6  20  168 110    4  3   18  1  0    4    4  8.5020\n3   8  15  350 192    3  4   17  0  0    3    4  6.3765\n\n\nYou Can make this more readable by createing intermediate objects:\n\ndata1 &lt;- subset(mtcars, hp &gt; 100) # take subset of original data\ndata2 &lt;- aggregate(. ~ cyl, data = data1, FUN = function(x) round(mean(x, 2))) # aggregate by taking rounded mean\ntransform(data2, kpl = mpg * 0.4251) # convert miles per gallon to kilometer per liter\n\n  cyl mpg disp  hp drat wt qsec vs am gear carb     kpl\n1   4  26  108 111    4  2   18  1  1    4    2 11.0526\n2   6  20  168 110    4  3   18  1  0    4    4  8.5020\n3   8  15  350 192    3  4   17  0  0    3    4  6.3765\n\n\nOr you use the pipe:\n\nsubset(mtcars, hp &gt; 100) |&gt;\n  aggregate(. ~ cyl, data = _, FUN = function(x) round(mean(x, 2))) |&gt;\n  transform(kpl = mpg * 0.4251)\n\n  cyl mpg disp  hp drat wt qsec vs am gear carb     kpl\n1   4  26  108 111    4  2   18  1  1    4    2 11.0526\n2   6  20  168 110    4  3   18  1  0    4    4  8.5020\n3   8  15  350 192    3  4   17  0  0    3    4  6.3765\n\n\ntidyverse functions are written with pipes in mind and are named as verbs with the goal to tell you exactly what they do:\n\nlibrary(tidyverse)\nmtcars |&gt;\n  filter(hp &gt; 100) |&gt;\n  group_by(cyl) |&gt;\n  summarise(across(.cols = everything(), .fns = function(x) {\n    x |&gt; mean() |&gt; round(2)\n  })) |&gt;\n  mutate(kpl = mpg * 0.4251)\n\n# A tibble: 3 × 12\n    cyl   mpg  disp    hp  drat    wt  qsec    vs    am  gear  carb   kpl\n  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;\n1     4  25.9  108.  111   3.94  2.15  17.8  1     1     4.5   2    11.0 \n2     6  19.7  183.  122.  3.59  3.12  18.0  0.57  0.43  3.86  3.43  8.39\n3     8  15.1  353.  209.  3.23  4     16.8  0     0.14  3.29  3.5   6.42\n\n\nNote: You can interject the View() command at any line in a complicated pipeline to see the intermediate result in a spreadsheet-style data viewer.\nSpecial package ggplot2\n\nCompletely overhauls the plotting system in R\nIMO: the best plotting system in any programming/data science language\nImplements the “Grammar of Graphics”: a language for describing custom plots instead of relying on predefined plotting functions\nThe specific logic makes it harder to learn than other packages, but you can express essentially any plots in it (I highly recommend using “ggplot2: Elegant Graphics for Data Analysis” to learn the package instead of individual tutorials)"
+  },
+  {
+    "objectID": "01_Introduction/01_Introduction.html#exercises-2",
+    "href": "01_Introduction/01_Introduction.html#exercises-2",
+    "title": "Session 1: Introduction",
+    "section": "Exercises 2",
+    "text": "Exercises 2\n\nRun ggplot(data = mtcars). What do you see and why?\nIn the function pb_collect() from paperboy, what do the arguments ignore_fails and connections do?\nWrite a function that takes a numeric vector of miles per gallon consumption data and converts it to kilometer per liter. If anything other than a numeric vector is entered, the function should display an error (hint: see ?stop).\nIn the code below, check the sizes of the intermediate objects with object.size().\n\n\nfile_link &lt;- \"https://raw.githubusercontent.com/shawn-y-sun/Customer_Analytics_Retail/main/purchase%20data.csv\"\ndf &lt;- read.csv(file_link)\nfiltered_df &lt;- df[df$Age &gt;= 50, ]\naggregated_df &lt;- aggregate(\n  filtered_df$Quantity,\n  by = list(filtered_df$Day),\n  FUN = sum\n)\nnames(aggregated_df) &lt;- c(\"day\", \"total_quantity\")\naggregated_df[order(aggregated_df$total_quantity, decreasing = TRUE)[1:5], ]\n\n    day total_quantity\n162 162             73\n460 460             73\n123 123             61\n183 183             60\n340 340             57\n\n\n\nHow could the code above be improved if you only want the final result, the code should be readable and you care about memory usage?"
+  },
+  {
+    "objectID": "01_Introduction/01_Introduction.html#background",
+    "href": "01_Introduction/01_Introduction.html#background",
+    "title": "Session 1: Introduction",
+    "section": "Background",
+    "text": "Background\n\n“The language in which we express our ideas has a strong influence on our thought processes.”\n― Donald Ervin Knuth, Literate Programming\n\n\nWhen analysing data in R, a cornerstone of a good workflow is documenting what you are doing.\nThe whole point of doing data analysis in a programming language rather than a point and click tool is reproducibility.\nYet if your code does not run after a while and you don’t understand what you were doing when writing the code, it’s as if you had done your whole analysis in Excel!"
+  },
+  {
+    "objectID": "01_Introduction/01_Introduction.html#advantages",
+    "href": "01_Introduction/01_Introduction.html#advantages",
+    "title": "Session 1: Introduction",
+    "section": "Advantages",
+    "text": "Advantages\n\n\n\nEasier to understand for yourself: keep code and explanation together\nEasier to find the code you are looking for: already use the figure and table captions from the article\nEasier to write coherent code: organize code in the way your paper is organized too\nEasier for your co-authors or others to understand your scripts\nEasier to continue where you left off\nEasier for others to reproduce your analyses\n\n\n\n\n\nQuarto (and its predecessor R Markdown) was designe with literate programming in mind"
+  },
+  {
+    "objectID": "01_Introduction/01_Introduction.html#exercises-3",
+    "href": "01_Introduction/01_Introduction.html#exercises-3",
+    "title": "Session 1: Introduction",
+    "section": "Exercises 3",
+    "text": "Exercises 3\n\nUse the function report_template() from my package jbgtemplates to start a new report\nAdd some simple analysis in it and render\nPlay around with the formats and produce at least a PDF and Word output of your document\nThink about how the structure of the document enhances reproducibility"
+  },
+  {
+    "objectID": "01_Introduction/01_Introduction.html#the-worst-default-setting-in-rstudio",
+    "href": "01_Introduction/01_Introduction.html#the-worst-default-setting-in-rstudio",
+    "title": "Session 1: Introduction",
+    "section": "The worst default setting in RStudio",
+    "text": "The worst default setting in RStudio\n\nThe default setting to ask whether to save the current session is horrible. It eventually leads to you clicking yes, save the data and to the creation of a file called .Rdata. This file is loaded whenever you open RStudio! This makes RStudio slow and can lead to unexpected behaviour, even when you delete all objects in your environment with rm(list = ls())."
+  },
+  {
+    "objectID": "01_Introduction/01_Introduction.html#exercises-4",
+    "href": "01_Introduction/01_Introduction.html#exercises-4",
+    "title": "Session 1: Introduction",
+    "section": "Exercises 4",
+    "text": "Exercises 4\n\nChange that setting NOW and look for the .Rdata in your project and home directory."
+  },
+  {
+    "objectID": "01_Introduction/01_Introduction.html#git-some-version-control",
+    "href": "01_Introduction/01_Introduction.html#git-some-version-control",
+    "title": "Session 1: Introduction",
+    "section": "Git some Version Control",
+    "text": "Git some Version Control\nGit is an extensive application and too much to go through. But you do not need all the functionality to make efficient use of it’s main promise: keeping track of what is happening in your projects and giving you the ability to revert to an older state of your project.\n\nThis screenshot shows the last months of my PhD, when I was furiously working on integrating comments from different people. Not only helped git to show me my progress nicely, I also did not have to worry about accidentally deleting anything that might still prove valuable. Especially towards the end, I often removed sections or copied them to other chapters. Whenever I could not find a specific section, I went back to the last commit when I could still remember where it was.\nAdditionally, GitHub offers some nice features to organise and plan projects around issues.\n\nHere you can note down remaining problems and keep track of your progress. It keeps your head free for other things!\nLearn more, e.g., at: https://happygitwithr.com/"
+  },
+  {
+    "objectID": "04_Linking_and_joining_data_SQL/04_Linking_and_joining_data_SQL.html#this-course",
+    "href": "04_Linking_and_joining_data_SQL/04_Linking_and_joining_data_SQL.html#this-course",
+    "title": "Session 4: Linking and joining data & SQL",
+    "section": "This Course",
+    "text": "This Course\n\n\n\n\n\n    \n\n    \n\n    \n    \n    \n      \n        \n        \n              \n                Day\n                Session\n              \n        \n        \n        \n                \n                  1\n                  Introduction\n                \n                \n                  2\n                  Data Structures and Wrangling\n                \n                \n                  3\n                  Working with Files\n                \n                \n                  4\n                  Linking and joining data & SQL\n                \n                \n                  5\n                  Scaling, Reporting and Database Software\n                \n                \n                  6\n                  Introduction to the Web\n                \n                \n                  7\n                  Static Web Pages\n                \n                \n                  8\n                  Application Programming Interface (APIs)\n                \n                \n                  9\n                  Interactive Web Pages\n                \n                \n                  10\n                  Building a Reproducible Research Project"
+  },
+  {
+    "objectID": "04_Linking_and_joining_data_SQL/04_Linking_and_joining_data_SQL.html#the-plan-for-today",
+    "href": "04_Linking_and_joining_data_SQL/04_Linking_and_joining_data_SQL.html#the-plan-for-today",
+    "title": "Session 4: Linking and joining data & SQL",
+    "section": "The Plan for Today",
+    "text": "The Plan for Today\n\n\nIn this session, you learn:\n\nwhy and how to work with relational data\nhow to join data from different tables in R\nhow to join data from different tables in SQL\n\n\n Via DALL-E"
+  },
+  {
+    "objectID": "04_Linking_and_joining_data_SQL/04_Linking_and_joining_data_SQL.html#why-do-we-need-to-join-data",
+    "href": "04_Linking_and_joining_data_SQL/04_Linking_and_joining_data_SQL.html#why-do-we-need-to-join-data",
+    "title": "Session 4: Linking and joining data & SQL",
+    "section": "Why do we need to join data?",
+    "text": "Why do we need to join data?\n\n\n\nIt’s rare that a data analysis involves only a single data frame\nAs we learned in session 2: good tables don’t contain redundancies (information about different entities should be stored separately)\nMost databases use a relational database management system (or RDBMS)\nPractically, we always think of relations as a connection of two tables\nRelations of three or more tables are always a property of the relations between each pair"
+  },
+  {
+    "objectID": "04_Linking_and_joining_data_SQL/04_Linking_and_joining_data_SQL.html#basic-concept-keys",
+    "href": "04_Linking_and_joining_data_SQL/04_Linking_and_joining_data_SQL.html#basic-concept-keys",
+    "title": "Session 4: Linking and joining data & SQL",
+    "section": "Basic concept: keys",
+    "text": "Basic concept: keys\n\nprimary key: a variable or set of variables (which is then called a composite key) that uniquely identifies each observation\nforeign key: a variable (or set of variables) that refers to a primary key in another table\n\n\n\n\ndf1 &lt;- tibble(\n  id = 1:6,\n  capital_letters = LETTERS[1:6]\n)\ndf1\n\n# A tibble: 6 × 2\n     id capital_letters\n  &lt;int&gt; &lt;chr&gt;          \n1     1 A              \n2     2 B              \n3     3 C              \n4     4 D              \n5     5 E              \n6     6 F              \n\n\n\n\ndf2 &lt;- tibble(\n  id = c(1:5, 7),\n  lowercase_letters = letters[c(1:5, 7)]\n)\ndf2\n\n# A tibble: 6 × 2\n     id lowercase_letters\n  &lt;dbl&gt; &lt;chr&gt;            \n1     1 a                \n2     2 b                \n3     3 c                \n4     4 d                \n5     5 e                \n6     7 g"
+  },
+  {
+    "objectID": "04_Linking_and_joining_data_SQL/04_Linking_and_joining_data_SQL.html#two-different-joins",
+    "href": "04_Linking_and_joining_data_SQL/04_Linking_and_joining_data_SQL.html#two-different-joins",
+    "title": "Session 4: Linking and joining data & SQL",
+    "section": "Two different joins",
+    "text": "Two different joins\n\nMutating joins: add new variables to one data frame from matching observations in another.\nFiltering joins: filter observations from one data frame based on whether or not they match an observation in another."
+  },
+  {
+    "objectID": "04_Linking_and_joining_data_SQL/04_Linking_and_joining_data_SQL.html#left_join",
+    "href": "04_Linking_and_joining_data_SQL/04_Linking_and_joining_data_SQL.html#left_join",
+    "title": "Session 4: Linking and joining data & SQL",
+    "section": "left_join",
+    "text": "left_join\n\n\n\n\nMutating join\nkeeps all variables from x and y\nkeeps all rows from x\ndrops rows from y where key has no match in x"
+  },
+  {
+    "objectID": "04_Linking_and_joining_data_SQL/04_Linking_and_joining_data_SQL.html#right_join",
+    "href": "04_Linking_and_joining_data_SQL/04_Linking_and_joining_data_SQL.html#right_join",
+    "title": "Session 4: Linking and joining data & SQL",
+    "section": "right_join",
+    "text": "right_join\n\n\n\n\nMutating join\nkeeps all variables from x and y\nkeeps all rows from y\ndrops rows from x where key has no match in y\nif you would reverse x and y, it’s the same as left_join"
+  },
+  {
+    "objectID": "04_Linking_and_joining_data_SQL/04_Linking_and_joining_data_SQL.html#full_join",
+    "href": "04_Linking_and_joining_data_SQL/04_Linking_and_joining_data_SQL.html#full_join",
+    "title": "Session 4: Linking and joining data & SQL",
+    "section": "full_join",
+    "text": "full_join\n\n\n\n\nMutating join\nkeeps all variables from x and y\nkeeps all rows from x and y"
+  },
+  {
+    "objectID": "04_Linking_and_joining_data_SQL/04_Linking_and_joining_data_SQL.html#inner_join",
+    "href": "04_Linking_and_joining_data_SQL/04_Linking_and_joining_data_SQL.html#inner_join",
+    "title": "Session 4: Linking and joining data & SQL",
+    "section": "inner_join",
+    "text": "inner_join\n\n\n\n\nMutating join\nkeeps all variables from x and y\ndrops rows from x where key has no match in y\ndrops rows from y where key has no match in x\nessentially only keeps complete cases"
+  },
+  {
+    "objectID": "04_Linking_and_joining_data_SQL/04_Linking_and_joining_data_SQL.html#semi_join",
+    "href": "04_Linking_and_joining_data_SQL/04_Linking_and_joining_data_SQL.html#semi_join",
+    "title": "Session 4: Linking and joining data & SQL",
+    "section": "semi_join",
+    "text": "semi_join\n\n\n\n\nFiltering join\nonly keeps variables from x\ndrops rows from x where key has no match in y"
+  },
+  {
+    "objectID": "04_Linking_and_joining_data_SQL/04_Linking_and_joining_data_SQL.html#anti_join",
+    "href": "04_Linking_and_joining_data_SQL/04_Linking_and_joining_data_SQL.html#anti_join",
+    "title": "Session 4: Linking and joining data & SQL",
+    "section": "anti_join",
+    "text": "anti_join\n\n\n\n\nFiltering join\nonly keeps variables from x\ndrops rows from x where key has a match in y"
+  },
+  {
+    "objectID": "04_Linking_and_joining_data_SQL/04_Linking_and_joining_data_SQL.html#syntax-left-and-right",
+    "href": "04_Linking_and_joining_data_SQL/04_Linking_and_joining_data_SQL.html#syntax-left-and-right",
+    "title": "Session 4: Linking and joining data & SQL",
+    "section": "Syntax: left and right",
+    "text": "Syntax: left and right\n\n\n\nleft_join(df1, df2, by = \"id\")\n\n# A tibble: 6 × 3\n     id capital_letters lowercase_letters\n  &lt;dbl&gt; &lt;chr&gt;           &lt;chr&gt;            \n1     1 A               a                \n2     2 B               b                \n3     3 C               c                \n4     4 D               d                \n5     5 E               e                \n6     6 F               &lt;NA&gt;             \n\n\n\n\nright_join(df1, df2, by = \"id\")\n\n# A tibble: 6 × 3\n     id capital_letters lowercase_letters\n  &lt;dbl&gt; &lt;chr&gt;           &lt;chr&gt;            \n1     1 A               a                \n2     2 B               b                \n3     3 C               c                \n4     4 D               d                \n5     5 E               e                \n6     7 &lt;NA&gt;            g"
+  },
+  {
+    "objectID": "04_Linking_and_joining_data_SQL/04_Linking_and_joining_data_SQL.html#syntax-full-and-inner-join",
+    "href": "04_Linking_and_joining_data_SQL/04_Linking_and_joining_data_SQL.html#syntax-full-and-inner-join",
+    "title": "Session 4: Linking and joining data & SQL",
+    "section": "Syntax: full and inner join",
+    "text": "Syntax: full and inner join\n\n\n\nfull_join(df1, df2, by = \"id\")\n\n# A tibble: 7 × 3\n     id capital_letters lowercase_letters\n  &lt;dbl&gt; &lt;chr&gt;           &lt;chr&gt;            \n1     1 A               a                \n2     2 B               b                \n3     3 C               c                \n4     4 D               d                \n5     5 E               e                \n6     6 F               &lt;NA&gt;             \n7     7 &lt;NA&gt;            g                \n\n\n\n\ninner_join(df1, df2, by = \"id\")\n\n# A tibble: 5 × 3\n     id capital_letters lowercase_letters\n  &lt;dbl&gt; &lt;chr&gt;           &lt;chr&gt;            \n1     1 A               a                \n2     2 B               b                \n3     3 C               c                \n4     4 D               d                \n5     5 E               e"
+  },
+  {
+    "objectID": "04_Linking_and_joining_data_SQL/04_Linking_and_joining_data_SQL.html#syntax-semi-and-anti-join",
+    "href": "04_Linking_and_joining_data_SQL/04_Linking_and_joining_data_SQL.html#syntax-semi-and-anti-join",
+    "title": "Session 4: Linking and joining data & SQL",
+    "section": "Syntax: semi and anti join",
+    "text": "Syntax: semi and anti join\n\n\n\nsemi_join(df1, df2, by = \"id\")\n\n# A tibble: 5 × 2\n     id capital_letters\n  &lt;int&gt; &lt;chr&gt;          \n1     1 A              \n2     2 B              \n3     3 C              \n4     4 D              \n5     5 E              \n\n\nSame as:\n\ndf1 |&gt;\n  filter(id %in% df2$id)\n\n# A tibble: 5 × 2\n     id capital_letters\n  &lt;int&gt; &lt;chr&gt;          \n1     1 A              \n2     2 B              \n3     3 C              \n4     4 D              \n5     5 E              \n\n\n\n\nanti_join(df1, df2, by = \"id\")\n\n# A tibble: 1 × 2\n     id capital_letters\n  &lt;int&gt; &lt;chr&gt;          \n1     6 F              \n\n\n\ndf1 |&gt;\n  filter(!id %in% df2$id)\n\n# A tibble: 1 × 2\n     id capital_letters\n  &lt;int&gt; &lt;chr&gt;          \n1     6 F"
+  },
+  {
+    "objectID": "04_Linking_and_joining_data_SQL/04_Linking_and_joining_data_SQL.html#finding-keys",
+    "href": "04_Linking_and_joining_data_SQL/04_Linking_and_joining_data_SQL.html#finding-keys",
+    "title": "Session 4: Linking and joining data & SQL",
+    "section": "Finding keys",
+    "text": "Finding keys\n\n\n\npets &lt;- tribble(\n  ~animal  , ~name            , ~breed               ,\n  #-----\n  \"cat\"    , \"Leo\"            , \"European Shorthair\" ,\n  \"dog\"    , \"Bruno\"          , \"Labrador\"           ,\n  \"cat\"    , \"Charlie\"        , \"Ragdolls\"           ,\n  \"mouse\"  , \"Julius Cheeser\" , \"Agouti\"             ,\n  \"cat\"    , \"Felix\"          , \"Persian\"            ,\n  \"horse\"  , \"Tina\"           , \"Mustang\"            ,\n  \"rabbit\" , \"snowball\"       , \"Persian\"            ,\n)\n\n\n\nbreeds &lt;- tribble(\n  ~species , ~breed               , ~life_expectancy ,\n  #-----\n  \"cat\"    , \"European Shorthair\" ,               14 ,\n  \"dog\"    , \"Labrador\"           ,               11 ,\n  \"cat\"    , \"Ragdolls\"           ,               15 ,\n  \"cat\"    , \"Persian\"            ,               15 ,\n  \"mouse\"  , \"Agouti\"             ,                1 ,\n  \"snake\"  , \"Python\"             ,               25 ,\n  \"rabbit\" , \"Persian\"            ,               12 ,\n)\n\n\n\nTwo criteria:\n\nprimary key should uniquely identify cases\nprimary key should have a corresponding foreign key (at least for some cases)"
+  },
+  {
+    "objectID": "04_Linking_and_joining_data_SQL/04_Linking_and_joining_data_SQL.html#finding-keys-1",
+    "href": "04_Linking_and_joining_data_SQL/04_Linking_and_joining_data_SQL.html#finding-keys-1",
+    "title": "Session 4: Linking and joining data & SQL",
+    "section": "Finding keys",
+    "text": "Finding keys\n\nleft_join(pets, breeds, by = c(\"animal\" = \"species\"), suffix = c(\"_x\", \"_y\"))\n\n# A tibble: 13 × 5\n   animal name           breed_x            breed_y            life_expectancy\n   &lt;chr&gt;  &lt;chr&gt;          &lt;chr&gt;              &lt;chr&gt;                        &lt;dbl&gt;\n 1 cat    Leo            European Shorthair European Shorthair              14\n 2 cat    Leo            European Shorthair Ragdolls                        15\n 3 cat    Leo            European Shorthair Persian                         15\n 4 dog    Bruno          Labrador           Labrador                        11\n 5 cat    Charlie        Ragdolls           European Shorthair              14\n 6 cat    Charlie        Ragdolls           Ragdolls                        15\n 7 cat    Charlie        Ragdolls           Persian                         15\n 8 mouse  Julius Cheeser Agouti             Agouti                           1\n 9 cat    Felix          Persian            European Shorthair              14\n10 cat    Felix          Persian            Ragdolls                        15\n11 cat    Felix          Persian            Persian                         15\n12 horse  Tina           Mustang            &lt;NA&gt;                            NA\n13 rabbit snowball       Persian            Persian                         12\n\n\n\n\nleft_join(pets, breeds, by = c(\"animal\" = \"species\", \"breed\"))\n\n# A tibble: 7 × 4\n  animal name           breed              life_expectancy\n  &lt;chr&gt;  &lt;chr&gt;          &lt;chr&gt;                        &lt;dbl&gt;\n1 cat    Leo            European Shorthair              14\n2 dog    Bruno          Labrador                        11\n3 cat    Charlie        Ragdolls                        15\n4 mouse  Julius Cheeser Agouti                           1\n5 cat    Felix          Persian                         15\n6 horse  Tina           Mustang                         NA\n7 rabbit snowball       Persian                         12\n\nright_join(pets, breeds, by = c(\"animal\" = \"species\", \"breed\"))\n\n# A tibble: 7 × 4\n  animal name           breed              life_expectancy\n  &lt;chr&gt;  &lt;chr&gt;          &lt;chr&gt;                        &lt;dbl&gt;\n1 cat    Leo            European Shorthair              14\n2 dog    Bruno          Labrador                        11\n3 cat    Charlie        Ragdolls                        15\n4 mouse  Julius Cheeser Agouti                           1\n5 cat    Felix          Persian                         15\n6 rabbit snowball       Persian                         12\n7 snake  &lt;NA&gt;           Python                          25"
+  },
+  {
+    "objectID": "04_Linking_and_joining_data_SQL/04_Linking_and_joining_data_SQL.html#finding-keys-2",
+    "href": "04_Linking_and_joining_data_SQL/04_Linking_and_joining_data_SQL.html#finding-keys-2",
+    "title": "Session 4: Linking and joining data & SQL",
+    "section": "Finding keys",
+    "text": "Finding keys\n\nfull_join(pets, breeds, by = c(\"animal\" = \"species\", \"breed\"))\n\n# A tibble: 8 × 4\n  animal name           breed              life_expectancy\n  &lt;chr&gt;  &lt;chr&gt;          &lt;chr&gt;                        &lt;dbl&gt;\n1 cat    Leo            European Shorthair              14\n2 dog    Bruno          Labrador                        11\n3 cat    Charlie        Ragdolls                        15\n4 mouse  Julius Cheeser Agouti                           1\n5 cat    Felix          Persian                         15\n6 horse  Tina           Mustang                         NA\n7 rabbit snowball       Persian                         12\n8 snake  &lt;NA&gt;           Python                          25\n\n\n\ninner_join(pets, breeds, by = c(\"animal\" = \"species\", \"breed\"))\n\n# A tibble: 6 × 4\n  animal name           breed              life_expectancy\n  &lt;chr&gt;  &lt;chr&gt;          &lt;chr&gt;                        &lt;dbl&gt;\n1 cat    Leo            European Shorthair              14\n2 dog    Bruno          Labrador                        11\n3 cat    Charlie        Ragdolls                        15\n4 mouse  Julius Cheeser Agouti                           1\n5 cat    Felix          Persian                         15\n6 rabbit snowball       Persian                         12"
+  },
+  {
+    "objectID": "04_Linking_and_joining_data_SQL/04_Linking_and_joining_data_SQL.html#finding-keys-3",
+    "href": "04_Linking_and_joining_data_SQL/04_Linking_and_joining_data_SQL.html#finding-keys-3",
+    "title": "Session 4: Linking and joining data & SQL",
+    "section": "Finding keys",
+    "text": "Finding keys\n\n\n\nsemi_join(pets, breeds, by = c(\"animal\" = \"species\", \"breed\"))\n\n# A tibble: 6 × 3\n  animal name           breed             \n  &lt;chr&gt;  &lt;chr&gt;          &lt;chr&gt;             \n1 cat    Leo            European Shorthair\n2 dog    Bruno          Labrador          \n3 cat    Charlie        Ragdolls          \n4 mouse  Julius Cheeser Agouti            \n5 cat    Felix          Persian           \n6 rabbit snowball       Persian           \n\n\n\nanti_join(pets, breeds, by = c(\"animal\" = \"species\", \"breed\"))\n\n# A tibble: 1 × 3\n  animal name  breed  \n  &lt;chr&gt;  &lt;chr&gt; &lt;chr&gt;  \n1 horse  Tina  Mustang\n\n\n\n\npets |&gt;\n  filter(animal %in% breeds$species, breed %in% breeds$breed)\n\n# A tibble: 6 × 3\n  animal name           breed             \n  &lt;chr&gt;  &lt;chr&gt;          &lt;chr&gt;             \n1 cat    Leo            European Shorthair\n2 dog    Bruno          Labrador          \n3 cat    Charlie        Ragdolls          \n4 mouse  Julius Cheeser Agouti            \n5 cat    Felix          Persian           \n6 rabbit snowball       Persian           \n\n\n\npets |&gt;\n  filter(!animal %in% breeds$species, !breed %in% breeds$breed)\n\n# A tibble: 1 × 3\n  animal name  breed  \n  &lt;chr&gt;  &lt;chr&gt; &lt;chr&gt;  \n1 horse  Tina  Mustang"
+  },
+  {
+    "objectID": "04_Linking_and_joining_data_SQL/04_Linking_and_joining_data_SQL.html#many-to-many",
+    "href": "04_Linking_and_joining_data_SQL/04_Linking_and_joining_data_SQL.html#many-to-many",
+    "title": "Session 4: Linking and joining data & SQL",
+    "section": "Many to many",
+    "text": "Many to many\n\n\n\nWhen you get a many-to-many instead of a many-to-one join, it can indicate a problem\nEither you have chosen the wrong key by accident or your data model is wrong\nBut the question is a conceptual one:\n\nFor example, several pets usually have the same species and breed, but one pet should have one breed (or maybe a mix)\nBut a single pet can have multiple owners, and each owner can have multiple pets\n\nSo ask yourself: is it plausible that one obesrvation in table A relates to several in B\n\n\nmany-to-one\n\nmany-to-many"
+  },
+  {
+    "objectID": "04_Linking_and_joining_data_SQL/04_Linking_and_joining_data_SQL.html#case-study-2016-us-primaries",
+    "href": "04_Linking_and_joining_data_SQL/04_Linking_and_joining_data_SQL.html#case-study-2016-us-primaries",
+    "title": "Session 4: Linking and joining data & SQL",
+    "section": "Case study: 2016 US primaries",
+    "text": "Case study: 2016 US primaries\n\nlibrary(rio)\ncsv_folder_url &lt;- \"https://raw.githubusercontent.com/houstondatavis/data-jam-august-2016/master/csv\"\nresults &lt;- import(paste(csv_folder_url, \"primary_results.csv\", sep = \"/\"))\nschedule &lt;- import(paste(csv_folder_url, \"primary_schedule.csv\", sep = \"/\"))\nfacts &lt;- import(paste(csv_folder_url, \"county_facts.csv\", sep = \"/\")) |&gt;\n  select(\n    area_name,\n    population = Pop_2014_count,\n    pop_change = Pop_change_pct,\n    over65 = Age_over_65_pct,\n    female = Sex_female_pct,\n    white = Race_white_pct,\n    college = Pop_college_grad_pct,\n    income = Income_per_capita\n  )\n\n\n\n\nglimpse(results, width = 50)\n\nRows: 24,611\nColumns: 8\n$ state              &lt;chr&gt; \"Alabama\", \"Alabama\",…\n$ state_abbreviation &lt;chr&gt; \"AL\", \"AL\", \"AL\", \"AL…\n$ county             &lt;chr&gt; \"Autauga\", \"Autauga\",…\n$ fips               &lt;dbl&gt; 1001, 1001, 1003, 100…\n$ party              &lt;chr&gt; \"Democrat\", \"Democrat…\n$ candidate          &lt;chr&gt; \"Bernie Sanders\", \"Hi…\n$ votes              &lt;int&gt; 544, 2387, 2694, 5290…\n$ fraction_votes     &lt;dbl&gt; 0.182, 0.800, 0.329, …\n\n\n\n\nglimpse(schedule, width = 50)\n\nRows: 113\nColumns: 4\n$ date  &lt;chr&gt; \"2/1/16\", \"2/9/16\", \"2/20/16\", \"2/…\n$ state &lt;chr&gt; \"Iowa\", \"New Hampshire\", \"Nevada\",…\n$ party &lt;chr&gt; \"Democrat\", \"Democrat\", \"Democrat\"…\n$ type  &lt;chr&gt; \"Semi-open caucus\", \"Semi-closed p…\n\n\n\n\nglimpse(facts, width = 50)\n\nRows: 3,195\nColumns: 8\n$ area_name  &lt;chr&gt; \"United States\", \"Alabama\", \"…\n$ population &lt;int&gt; 318857056, 4849377, 55395, 20…\n$ pop_change &lt;dbl&gt; 3.3, 1.4, 1.5, 9.8, -2.1, -1.…\n$ over65     &lt;dbl&gt; 14.5, 15.3, 13.8, 18.7, 16.5,…\n$ female     &lt;dbl&gt; 50.8, 51.5, 51.4, 51.2, 46.6,…\n$ white      &lt;dbl&gt; 77.4, 69.7, 77.9, 87.1, 50.2,…\n$ college    &lt;dbl&gt; 28.8, 22.6, 20.9, 27.7, 13.4,…\n$ income     &lt;int&gt; 28155, 23680, 24571, 26766, 1…\n\n\n\n\n\nRQ 1: How was each candidate doing at specific points in time?\nRQ 2: Was there a connection between age and candidate preference in the Democratic Party?"
+  },
+  {
+    "objectID": "04_Linking_and_joining_data_SQL/04_Linking_and_joining_data_SQL.html#us-primaries-data-wrangling",
+    "href": "04_Linking_and_joining_data_SQL/04_Linking_and_joining_data_SQL.html#us-primaries-data-wrangling",
+    "title": "Session 4: Linking and joining data & SQL",
+    "section": "2016 US primaries: data wrangling",
+    "text": "2016 US primaries: data wrangling\n\n\nConvert the date in the schedule to date class:\n\nschedule &lt;- schedule |&gt;\n  mutate(date = lubridate::mdy(date))\nschedule\n\n          date                state      party                type\n1   2016-02-01                 Iowa   Democrat    Semi-open caucus\n2   2016-02-09        New Hampshire   Democrat Semi-closed primary\n3   2016-02-20               Nevada   Democrat       Closed caucus\n4   2016-02-27       South Carolina   Democrat        Open primary\n5   2016-03-01              Alabama   Democrat        Open primary\n6   2016-03-01       American Samoa   Democrat       Closed caucus\n7   2016-03-01             Arkansas   Democrat        Open primary\n8   2016-03-01             Colorado   Democrat       Closed caucus\n9   2016-03-01              Georgia   Democrat        Open primary\n10  2016-03-01        Massachusetts   Democrat Semi-closed primary\n11  2016-03-01            Minnesota   Democrat         Open caucus\n12  2016-03-01             Oklahoma   Democrat Semi-closed primary\n13  2016-03-01            Tennessee   Democrat        Open primary\n14  2016-03-01                Texas   Democrat        Open primary\n15  2016-03-01              Vermont   Democrat        Open primary\n16  2016-03-01             Virginia   Democrat        Open primary\n17  2016-03-05               Kansas   Democrat       Closed caucus\n18  2016-03-05            Louisiana   Democrat      Closed primary\n19  2016-03-05             Nebraska   Democrat       Closed caucus\n20  2016-03-06                Maine   Democrat       Closed caucus\n21  2016-03-08     Democrats Abroad   Democrat      Closed primary\n22  2016-03-08             Michigan   Democrat        Open primary\n23  2016-03-08          Mississippi   Democrat        Open primary\n24  2016-03-12    Northern Marianas   Democrat       Closed caucus\n25  2016-03-15              Florida   Democrat      Closed primary\n26  2016-03-15             Illinois   Democrat        Open primary\n27  2016-03-15             Missouri   Democrat        Open primary\n28  2016-03-15       North Carolina   Democrat Semi-closed primary\n29  2016-03-15                 Ohio   Democrat   Semi-open primary\n30  2016-03-22              Arizona   Democrat      Closed primary\n31  2016-03-22                Idaho   Democrat         Open caucus\n32  2016-03-22                 Utah   Democrat    Semi-open caucus\n33  2016-03-26               Alaska   Democrat       Closed caucus\n34  2016-03-26               Hawaii   Democrat  Semi-closed caucus\n35  2016-03-26           Washington   Democrat         Open caucus\n36  2016-04-05            Wisconsin   Democrat        Open primary\n37  2016-04-09              Wyoming   Democrat       Closed caucus\n38  2016-04-19             New York   Democrat      Closed primary\n39  2016-04-26          Connecticut   Democrat      Closed primary\n40  2016-04-26             Delaware   Democrat      Closed primary\n41  2016-04-26             Maryland   Democrat      Closed primary\n42  2016-04-26         Pennsylvania   Democrat      Closed primary\n43  2016-04-26         Rhode Island   Democrat Semi-closed primary\n44  2016-05-03              Indiana   Democrat        Open primary\n45  2016-05-07                 Guam   Democrat       Closed caucus\n46  2016-05-10        West Virginia   Democrat Semi-closed primary\n47  2016-05-17             Kentucky   Democrat      Closed primary\n48  2016-05-17               Oregon   Democrat      Closed primary\n49  2016-06-04       Virgin Islands   Democrat       Closed caucus\n50  2016-06-05          Puerto Rico   Democrat        Open primary\n51  2016-06-07           California   Democrat Semi-closed primary\n52  2016-06-07              Montana   Democrat        Open primary\n53  2016-06-07           New Jersey   Democrat Semi-closed primary\n54  2016-06-07           New Mexico   Democrat      Closed primary\n55  2016-06-07         North Dakota   Democrat         Open caucus\n56  2016-06-07         South Dakota   Democrat Semi-closed primary\n57  2016-06-14 District of Columbia   Democrat      Closed primary\n58  2016-02-01                 Iowa Republican       Closed caucus\n59  2016-02-09        New Hampshire Republican Semi-closed primary\n60  2016-02-20       South Carolina Republican        Open primary\n61  2016-02-23               Nevada Republican       Closed caucus\n62  2016-03-01              Alabama Republican        Open primary\n63  2016-03-01               Alaska Republican       Closed caucus\n64  2016-03-01             Arkansas Republican        Open primary\n65  2016-03-01             Colorado Republican       Closed caucus\n66  2016-03-01              Georgia Republican        Open primary\n67  2016-03-01        Massachusetts Republican Semi-closed primary\n68  2016-03-01            Minnesota Republican         Open caucus\n69  2016-03-01         North Dakota Republican       Closed caucus\n70  2016-03-01             Oklahoma Republican      Closed primary\n71  2016-03-01            Tennessee Republican        Open primary\n72  2016-03-01                Texas Republican        Open primary\n73  2016-03-01              Vermont Republican        Open primary\n74  2016-03-01             Virginia Republican        Open primary\n75  2016-03-01              Wyoming Republican       Closed caucus\n76  2016-03-05               Kansas Republican       Closed caucus\n77  2016-03-05             Kentucky Republican       Closed caucus\n78  2016-03-05            Louisiana Republican      Closed primary\n79  2016-03-05                Maine Republican       Closed caucus\n80  2016-03-06          Puerto Rico Republican        Open primary\n81  2016-03-08               Hawaii Republican       Closed caucus\n82  2016-03-08                Idaho Republican      Closed primary\n83  2016-03-08             Michigan Republican        Open primary\n84  2016-03-08          Mississippi Republican        Open primary\n85  2016-03-10       Virgin Islands Republican       Closed caucus\n86  2016-03-12 District of Columbia Republican   Closed convention\n87  2016-03-12                 Guam Republican       Closed caucus\n88  2016-03-15              Florida Republican      Closed primary\n89  2016-03-15             Illinois Republican        Open primary\n90  2016-03-15             Missouri Republican        Open primary\n91  2016-03-15    Northern Marianas Republican       Closed caucus\n92  2016-03-15       North Carolina Republican Semi-closed primary\n93  2016-03-15                 Ohio Republican Semi-closed primary\n94  2016-03-22       American Samoa Republican         Open caucus\n95  2016-03-22              Arizona Republican      Closed primary\n96  2016-03-22                 Utah Republican  Semi-closed caucus\n97  2016-04-05            Wisconsin Republican        Open primary\n98  2016-04-19             New York Republican      Closed primary\n99  2016-04-26          Connecticut Republican      Closed primary\n100 2016-04-26             Delaware Republican      Closed primary\n101 2016-04-26             Maryland Republican      Closed primary\n102 2016-04-26         Pennsylvania Republican      Closed primary\n103 2016-04-26         Rhode Island Republican Semi-closed primary\n104 2016-05-03              Indiana Republican        Open primary\n105 2016-05-10             Nebraska Republican Semi-closed primary\n106 2016-05-10        West Virginia Republican Semi-closed primary\n107 2016-05-17               Oregon Republican      Closed primary\n108 2016-05-24           Washington Republican      Closed primary\n109 2016-06-07           California Republican      Closed primary\n110 2016-06-07              Montana Republican      Closed primary\n111 2016-06-07           New Jersey Republican Semi-closed primary\n112 2016-06-07           New Mexico Republican      Closed primary\n113 2016-06-07         South Dakota Republican      Closed primary\n\n\n\nAggregate results on the state level instead of the county level:\n\nresults_state &lt;- results |&gt;\n  group_by(state, party, candidate) |&gt;\n  summarize(votes = sum(votes))\nresults_state\n\n# A tibble: 290 × 4\n# Groups:   state, party [95]\n   state   party      candidate        votes\n   &lt;chr&gt;   &lt;chr&gt;      &lt;chr&gt;            &lt;int&gt;\n 1 Alabama Democrat   Bernie Sanders   76399\n 2 Alabama Democrat   Hillary Clinton 309928\n 3 Alabama Republican Ben Carson       87517\n 4 Alabama Republican Donald Trump    371735\n 5 Alabama Republican John Kasich      37970\n 6 Alabama Republican Marco Rubio     159802\n 7 Alabama Republican Ted Cruz        180608\n 8 Alaska  Democrat   Bernie Sanders     440\n 9 Alaska  Democrat   Hillary Clinton     99\n10 Alaska  Republican Ben Carson        2401\n# ℹ 280 more rows"
+  },
+  {
+    "objectID": "04_Linking_and_joining_data_SQL/04_Linking_and_joining_data_SQL.html#us-primaries-candidates-performance-over-time",
+    "href": "04_Linking_and_joining_data_SQL/04_Linking_and_joining_data_SQL.html#us-primaries-candidates-performance-over-time",
+    "title": "Session 4: Linking and joining data & SQL",
+    "section": "2016 US primaries: candidates performance over time",
+    "text": "2016 US primaries: candidates performance over time\n\nresults_state_time &lt;- results_state |&gt;\n  inner_join(schedule, by = c(\"state\", \"party\"))\nresults_state_time\n\n# A tibble: 290 × 6\n# Groups:   state, party [95]\n   state   party      candidate        votes date       type         \n   &lt;chr&gt;   &lt;chr&gt;      &lt;chr&gt;            &lt;int&gt; &lt;date&gt;     &lt;chr&gt;        \n 1 Alabama Democrat   Bernie Sanders   76399 2016-03-01 Open primary \n 2 Alabama Democrat   Hillary Clinton 309928 2016-03-01 Open primary \n 3 Alabama Republican Ben Carson       87517 2016-03-01 Open primary \n 4 Alabama Republican Donald Trump    371735 2016-03-01 Open primary \n 5 Alabama Republican John Kasich      37970 2016-03-01 Open primary \n 6 Alabama Republican Marco Rubio     159802 2016-03-01 Open primary \n 7 Alabama Republican Ted Cruz        180608 2016-03-01 Open primary \n 8 Alaska  Democrat   Bernie Sanders     440 2016-03-26 Closed caucus\n 9 Alaska  Democrat   Hillary Clinton     99 2016-03-26 Closed caucus\n10 Alaska  Republican Ben Carson        2401 2016-03-01 Closed caucus\n# ℹ 280 more rows\n\n\n\n\nresults_state_time |&gt;\n  arrange(date) |&gt;\n  group_by(candidate) |&gt;\n  mutate(votes_agg = cumsum(votes)) |&gt;\n  ungroup() |&gt;\n  ggplot(mapping = aes(x = date, y = votes_agg, colour = candidate)) +\n  geom_line()\n\n\n\n\n\n\n\n\n\n\n\nresults_state_time |&gt;\n  arrange(date) |&gt;\n  group_by(candidate) |&gt;\n  mutate(votes_agg = cumsum(votes)) |&gt;\n  ungroup() |&gt;\n  ggplot(mapping = aes(x = date, y = votes_agg, colour = candidate)) +\n  geom_line() +\n  facet_wrap(\"party\")"
+  },
+  {
+    "objectID": "04_Linking_and_joining_data_SQL/04_Linking_and_joining_data_SQL.html#us-primaries-candidates-performance-vs-average-age",
+    "href": "04_Linking_and_joining_data_SQL/04_Linking_and_joining_data_SQL.html#us-primaries-candidates-performance-vs-average-age",
+    "title": "Session 4: Linking and joining data & SQL",
+    "section": "2016 US primaries: candidates performance vs average age",
+    "text": "2016 US primaries: candidates performance vs average age\n\n\nresults_state_facts &lt;- results_state |&gt;\n  inner_join(facts, by = c(\"state\" = \"area_name\")) |&gt;\n  group_by(state, party) |&gt;\n  mutate(total_votes = sum(votes), pct_votes = votes / total_votes) |&gt;\n  ungroup()\nresults_state_facts\n\n\n# A tibble: 290 × 13\n   state   party      candidate  votes population pop_change over65 female white\n   &lt;chr&gt;   &lt;chr&gt;      &lt;chr&gt;      &lt;int&gt;      &lt;int&gt;      &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;\n 1 Alabama Democrat   Bernie S…  76399    4849377        1.4   15.3   51.5  69.7\n 2 Alabama Democrat   Hillary … 309928    4849377        1.4   15.3   51.5  69.7\n 3 Alabama Republican Ben Cars…  87517    4849377        1.4   15.3   51.5  69.7\n 4 Alabama Republican Donald T… 371735    4849377        1.4   15.3   51.5  69.7\n 5 Alabama Republican John Kas…  37970    4849377        1.4   15.3   51.5  69.7\n 6 Alabama Republican Marco Ru… 159802    4849377        1.4   15.3   51.5  69.7\n 7 Alabama Republican Ted Cruz  180608    4849377        1.4   15.3   51.5  69.7\n 8 Alaska  Democrat   Bernie S…    440     736732        3.7    9.4   47.4  66.9\n 9 Alaska  Democrat   Hillary …     99     736732        3.7    9.4   47.4  66.9\n10 Alaska  Republican Ben Cars…   2401     736732        3.7    9.4   47.4  66.9\n# ℹ 280 more rows\n# ℹ 4 more variables: college &lt;dbl&gt;, income &lt;int&gt;, total_votes &lt;int&gt;,\n#   pct_votes &lt;dbl&gt;\n\n\n\n\nresults_state_facts |&gt;\n  filter(\n    party == \"Democrat\",\n    candidate %in% c(\"Bernie Sanders\", \"Hillary Clinton\")\n  ) |&gt;\n  ggplot(aes(x = over65, y = pct_votes, colour = candidate)) +\n  geom_point() +\n  geom_smooth(method = \"lm\", formula = y ~ x)"
+  },
+  {
+    "objectID": "04_Linking_and_joining_data_SQL/04_Linking_and_joining_data_SQL.html#exercises-1",
+    "href": "04_Linking_and_joining_data_SQL/04_Linking_and_joining_data_SQL.html#exercises-1",
+    "title": "Session 4: Linking and joining data & SQL",
+    "section": "Exercises 1",
+    "text": "Exercises 1\n\nSee if some of the other variables influence support for Sanders or Clinton\nBelow I prepared code that loads data from the nycflights13 package which is about flights departing NYC in 2013:\n\n\nlibrary(nycflights13)\ndata(airports)\ndata(flights)\ndata(weather)\ndata(planes)\ndata(airlines)\n\nThe dataset is perfect for practicing joining data, as the set is split into tables that relate to each other. You can see the relation in the diagram below:\n\nImagine you wanted to draw (approximately) the route each plane flies from its origin to its destination. What variables would you need? What data frames would you need to combine?\n\nAdd the location of the origin and destination (i.e. the lat and lon) to flights.\nWhich airlines departed most often from the NYC airports (i.e. JFK, LGA or EWR). Use their real names not the abbreviation\nHow could you calculate the average age of the planes departing from NYC? (hint: you can calculate averages with mean(), you might want to use na.rm = TRUE)"
+  },
+  {
+    "objectID": "04_Linking_and_joining_data_SQL/04_Linking_and_joining_data_SQL.html#why-learn-sql",
+    "href": "04_Linking_and_joining_data_SQL/04_Linking_and_joining_data_SQL.html#why-learn-sql",
+    "title": "Session 4: Linking and joining data & SQL",
+    "section": "Why learn SQL?",
+    "text": "Why learn SQL?\n\n\n\nmanaging tables in files instead of a database is error-prone:\n\nyou need to keep files consistent\nyou need to maintain relational integrity\n\nusing files instead of a database is slow:\n\nyou have to read in files before doing operations on the data (although systems like arrow improve the situation)\nyou need to use your local hardware instead of a remote server (although you could SSH into a server)\ncollaboration is limited and again error-prone\n\ndatabase management system (DBMS), which solve these issues often speak Structured Query Language (SQL)\n\n\n\n\n\n\n\nInteracting with a database management system from Weidmann (2023), p. 105."
+  },
+  {
+    "objectID": "04_Linking_and_joining_data_SQL/04_Linking_and_joining_data_SQL.html#sql-basic-syntax",
+    "href": "04_Linking_and_joining_data_SQL/04_Linking_and_joining_data_SQL.html#sql-basic-syntax",
+    "title": "Session 4: Linking and joining data & SQL",
+    "section": "SQL basic syntax",
+    "text": "SQL basic syntax\n\nR has a generic interface to communicate with relational databases: R Database Interface or DBI\n\n\nlibrary(DBI)\n\nTo communicate with a specific database format, DBI needs a driver\n\nlibrary(RSQLite)\n\n\nRSQLite: translates R commands to SQLite\nSQLite: a free and open source, well-known embedded database engine"
+  },
+  {
+    "objectID": "04_Linking_and_joining_data_SQL/04_Linking_and_joining_data_SQL.html#creating-and-connecting-to-an-sqlite-database",
+    "href": "04_Linking_and_joining_data_SQL/04_Linking_and_joining_data_SQL.html#creating-and-connecting-to-an-sqlite-database",
+    "title": "Session 4: Linking and joining data & SQL",
+    "section": "Creating and connecting to an SQLite database",
+    "text": "Creating and connecting to an SQLite database\n\ndir.create(\"data\", showWarnings = FALSE)\nunlink(\"data/db.sql\") # just to make sure we use a new db\ndb &lt;- dbConnect(SQLite(), \"data/db.sql\")\ndb\n\n&lt;SQLiteConnection&gt;\n  Path: data/db.sql\n  Extensions: TRUE\n\nclass(db)\n\n[1] \"SQLiteConnection\"\nattr(,\"package\")\n[1] \"RSQLite\"\n\n\n\ndbConnect(): sets up a connection\nSQLite(): provides the driver for the specific DBMS\n\nLet’s see what’s in the database so far:\n\ndbGetQuery(db, \"SELECT name FROM sqlite_master\")\n\n[1] name\n&lt;0 rows&gt; (or 0-length row.names)\n\n\nNothing. SQLite databases are typically stored in a single file:\n\nfile.size(\"data/db.sql\")\n\n[1] 0\n\n\nOur file has the size 0, which means it consists just of a place-holder."
+  },
+  {
+    "objectID": "04_Linking_and_joining_data_SQL/04_Linking_and_joining_data_SQL.html#adding-a-table-to-the-sqlite-database",
+    "href": "04_Linking_and_joining_data_SQL/04_Linking_and_joining_data_SQL.html#adding-a-table-to-the-sqlite-database",
+    "title": "Session 4: Linking and joining data & SQL",
+    "section": "Adding a table to the SQLite database",
+    "text": "Adding a table to the SQLite database\nSo far, the database is empty:\n\n# this is a shorthand for \"SELECT name FROM sqlite_master\" above\ndbListTables(db)\n\ncharacter(0)\n\n\nBefore we can add data, we have to create a table in the database:\n\ndbExecute(\n  db,\n  \"CREATE TABLE df1 (\n            election_id integer,\n            capital_letters varchar)\"\n)\n\n[1] 0\n\ndbListTables(db)\n\n[1] \"df1\"\n\n\nBesides integer and varchar (suitable for short strings), you can also use real (numeric), dates and blob (stored as binary data).\nNow we can add cases:\n\ndbExecute(\n  db,\n  \"INSERT INTO df1\n            VALUES (1, 'A')\"\n)\n\n[1] 1\n\n\nAnd we can pull the data back out:\n\ndbGetQuery(db, \"SELECT * FROM df1\")\n\n  election_id capital_letters\n1           1               A\n\n\nWe can start from scratch by deleting this table:\n\ndbExecute(db, \"DROP TABLE df1\")\n\n[1] 0"
+  },
+  {
+    "objectID": "04_Linking_and_joining_data_SQL/04_Linking_and_joining_data_SQL.html#adding-a-table-with-constraints",
+    "href": "04_Linking_and_joining_data_SQL/04_Linking_and_joining_data_SQL.html#adding-a-table-with-constraints",
+    "title": "Session 4: Linking and joining data & SQL",
+    "section": "Adding a table with constraints",
+    "text": "Adding a table with constraints\nWe dropped the last table, so the database is empty again\n\ndbListTables(db)\n\ncharacter(0)\n\n\nLet’s define the table again, but add constraints to enforce certain data:\n\ndbExecute(\n  db,\n  \"CREATE TABLE df1 (\n              id INTEGER PRIMARY KEY,\n              capital_letters VARCHAR(1) CHECK (capital_letters GLOB '[A-Z]'), \n              my_date DATE CHECK (my_date &gt; '2000-01-01')\n          )\"\n)\n\n[1] 0\n\ndbListTables(db)\n\n[1] \"df1\"\n\n\n\nid is now a primary key, which makes sure that it is unique\nthe field capital_letters is now constrained to capital letters\nonly dates in 2000 or later are allowed"
+  },
+  {
+    "objectID": "04_Linking_and_joining_data_SQL/04_Linking_and_joining_data_SQL.html#adding-a-table-with-constraints-1",
+    "href": "04_Linking_and_joining_data_SQL/04_Linking_and_joining_data_SQL.html#adding-a-table-with-constraints-1",
+    "title": "Session 4: Linking and joining data & SQL",
+    "section": "Adding a table with constraints",
+    "text": "Adding a table with constraints\nLet’s try to add a case:\n\ndbExecute(\n  db,\n  \"INSERT INTO df1\n            VALUES (1, 'a', '1999-12-31')\"\n)\n\nError:\n! CHECK constraint failed: capital_letters GLOB '[A-Z]'\n\n\nLet’s try again with a capital letter:\n\ndbExecute(\n  db,\n  \"INSERT INTO df1\n            VALUES (1, 'A', '1999-12-31')\"\n)\n\nError:\n! CHECK constraint failed: my_date &gt; '2000-01-01'\n\n\nOK, let’s adhere to the constraints:\n\ndbExecute(\n  db,\n  \"INSERT INTO df1\n            VALUES (1, 'A', '2000-12-31')\"\n)\n\n[1] 1\n\n\nAnd let’s test the last constraint:\n\ndbExecute(\n  db,\n  \"INSERT INTO df1\n            VALUES (1, 'A', '2000-12-31')\"\n)\n\nError:\n! UNIQUE constraint failed: df1.id"
+  },
+  {
+    "objectID": "04_Linking_and_joining_data_SQL/04_Linking_and_joining_data_SQL.html#adding-data",
+    "href": "04_Linking_and_joining_data_SQL/04_Linking_and_joining_data_SQL.html#adding-data",
+    "title": "Session 4: Linking and joining data & SQL",
+    "section": "Adding Data",
+    "text": "Adding Data\nWe already know how to add a complete case:\n\ndbExecute(\n  db,\n  \"INSERT INTO df1\n            VALUES (2, 'B', '2000-12-31')\"\n)\n\n[1] 1\n\n\nBut you can also add a case with a missing value:\n\ndbExecute(\n  db,\n  \"INSERT INTO df1 (id, capital_letters)\n            VALUES (3, 'C')\"\n)\n\n[1] 1\n\n\nOR:\n\ndbExecute(\n  db,\n  \"INSERT INTO df1 \n            VALUES (4, 'D', NULL)\"\n)\n\n[1] 1\n\n\n\ndbGetQuery(db, \"SELECT * FROM df1\")\n\n  id capital_letters    my_date\n1  1               A 2000-12-31\n2  2               B 2000-12-31\n3  3               C       &lt;NA&gt;\n4  4               D       &lt;NA&gt;"
+  },
+  {
+    "objectID": "04_Linking_and_joining_data_SQL/04_Linking_and_joining_data_SQL.html#updating-data",
+    "href": "04_Linking_and_joining_data_SQL/04_Linking_and_joining_data_SQL.html#updating-data",
+    "title": "Session 4: Linking and joining data & SQL",
+    "section": "Updating Data",
+    "text": "Updating Data\nIf we made a mistake or something changes, we can update a specific row:\n\ndbExecute(\n  db,\n  \"UPDATE df1\n               SET my_date = '2023-07-22'\n               WHERE id = 3\"\n)\n\n[1] 1\n\n\nOr we can add a new variable and calculate it from existing values:\n\ndbExecute(db, \"ALTER TABLE df1 ADD year integer\")\n\n[1] 0\n\ndbExecute(\n  db,\n  \"UPDATE df1\n               SET year = strftime('%Y', my_date)\"\n)\n\n[1] 4\n\n\n\ndbGetQuery(db, \"SELECT * FROM df1\")\n\n  id capital_letters    my_date year\n1  1               A 2000-12-31 2000\n2  2               B 2000-12-31 2000\n3  3               C 2023-07-22 2023\n4  4               D       &lt;NA&gt;   NA"
+  },
+  {
+    "objectID": "04_Linking_and_joining_data_SQL/04_Linking_and_joining_data_SQL.html#accessing-data",
+    "href": "04_Linking_and_joining_data_SQL/04_Linking_and_joining_data_SQL.html#accessing-data",
+    "title": "Session 4: Linking and joining data & SQL",
+    "section": "Accessing Data",
+    "text": "Accessing Data\nWe have already seen the SELECT command, let’s explore what else we can do!\nAccess only certain fields:\n\ndbGetQuery(db, \"SELECT id, year FROM df1\")\n\n  id year\n1  1 2000\n2  2 2000\n3  3 2023\n4  4   NA\n\n\nAccess only certain rows:\n\ndbGetQuery(\n  db,\n  \"SELECT id, year \n                FROM df1\n                WHERE year &gt; 2000\"\n)\n\n  id year\n1  3 2023\n\n\nComputing new values on the fly:\n\ndbGetQuery(db, \"SELECT id, my_date, strftime('%d, %m', my_date) FROM df1\")\n\n  id    my_date strftime('%d, %m', my_date)\n1  1 2000-12-31                      31, 12\n2  2 2000-12-31                      31, 12\n3  3 2023-07-22                      22, 07\n4  4       &lt;NA&gt;                        &lt;NA&gt;"
+  },
+  {
+    "objectID": "04_Linking_and_joining_data_SQL/04_Linking_and_joining_data_SQL.html#deleting-data",
+    "href": "04_Linking_and_joining_data_SQL/04_Linking_and_joining_data_SQL.html#deleting-data",
+    "title": "Session 4: Linking and joining data & SQL",
+    "section": "Deleting Data",
+    "text": "Deleting Data\nTwo ways to get rid of data:\n\nDELETE: used to remove rows from a table\nDROP: used to remove entire database objects like tables, databases, indexes, or views\n\n\ndbExecute(\n  db,\n  \"DELETE FROM df1 \n               WHERE id = 1\"\n)\n\n[1] 1\n\ndbGetQuery(db, \"SELECT * FROM df1\")\n\n  id capital_letters    my_date year\n1  2               B 2000-12-31 2000\n2  3               C 2023-07-22 2023\n3  4               D       &lt;NA&gt;   NA\n\n\n\ndbExecute(db, \"DROP TABLE df1\")\n\n[1] 0\n\ndbGetQuery(db, \"SELECT * FROM df1\")\n\nError:\n! no such table: df1"
+  },
+  {
+    "objectID": "04_Linking_and_joining_data_SQL/04_Linking_and_joining_data_SQL.html#sql-basic-syntax-summary",
+    "href": "04_Linking_and_joining_data_SQL/04_Linking_and_joining_data_SQL.html#sql-basic-syntax-summary",
+    "title": "Session 4: Linking and joining data & SQL",
+    "section": "SQL basic syntax: summary",
+    "text": "SQL basic syntax: summary\n\n\n\ninsensitive to line breaks\ncase-insensitive\nconvention to spell SQL keywords in upper case, and names of tables, columns, and functions in lower case\nimportant verbs are:\n\nCREATE: define a new table\nINSERT: add new rows to a table\nUPDATE: modify existing rows in a table\nALTER: modify existing fields in a table\nSELECT: query data from one or more tables\nDELETE: remove rows from a table\nDROP: remove a database object (e.g., table)\n\n\n\n\ndbGetQuery(\n  db,\n  \"SELECT * \n                FROM df1\n                WHERE id &lt; 4\"\n)\n\n\ndbGetQuery(db, \"sELeCt id FROM Df1 wHEre iD &lt; 4\")"
+  },
+  {
+    "objectID": "04_Linking_and_joining_data_SQL/04_Linking_and_joining_data_SQL.html#sql-basic-syntax-from-r",
+    "href": "04_Linking_and_joining_data_SQL/04_Linking_and_joining_data_SQL.html#sql-basic-syntax-from-r",
+    "title": "Session 4: Linking and joining data & SQL",
+    "section": "SQL basic syntax (from R)",
+    "text": "SQL basic syntax (from R)\nThere are a couple of useful functions in the DBI package/the driver packages. We’ve seen the dbListTables already:\n\ndbListTables(db)\n\ncharacter(0)\n\n\nYou can also create a table from a data.frame:\n\ndbWriteTable(conn = db, name = \"df1\", value = df1)\ndbWriteTable(conn = db, name = \"df2\", value = df2)\n\nAnd get information about the defined fields (fields is the equivalent of columns):\n\ndbListFields(conn = db, name = \"df1\")\n\n[1] \"id\"              \"capital_letters\"\n\ndbListFields(conn = db, name = \"df2\")\n\n[1] \"id\"                \"lowercase_letters\""
+  },
+  {
+    "objectID": "04_Linking_and_joining_data_SQL/04_Linking_and_joining_data_SQL.html#sql-basic-syntax-from-r-1",
+    "href": "04_Linking_and_joining_data_SQL/04_Linking_and_joining_data_SQL.html#sql-basic-syntax-from-r-1",
+    "title": "Session 4: Linking and joining data & SQL",
+    "section": "SQL basic syntax (from R)",
+    "text": "SQL basic syntax (from R)\nWe can read the entire table back into R:\n\ndbReadTable(conn = db, \"df1\")\n\n  id capital_letters\n1  1               A\n2  2               B\n3  3               C\n4  4               D\n5  5               E\n6  6               F\n\n\nDelete (drop) a table:\n\ndbRemoveTable(conn = db, \"df1\")\n\nCheck if a table exists\n\nif (!dbExistsTable(conn = db, \"df1\")) {\n  message(\"df1 does not exist. Creating it\")\n  dbWriteTable(conn = db, name = \"df1\", value = df1)\n}"
+  },
+  {
+    "objectID": "04_Linking_and_joining_data_SQL/04_Linking_and_joining_data_SQL.html#exercises-2",
+    "href": "04_Linking_and_joining_data_SQL/04_Linking_and_joining_data_SQL.html#exercises-2",
+    "title": "Session 4: Linking and joining data & SQL",
+    "section": "Exercises 2",
+    "text": "Exercises 2\n\ncreate a new table in db called elections with the fields: election_id, country_name, election_date, party_id, vote_share, seats, and seats_total. Choose appropriate data types for the fields (maybe peak ahead to the next exercise).\nUsing SQL syntax, add this data to the elections table:\n\n\n\n\n\n\n\n\n\n\n\n\n\nelection_id\ncountry_name\nelection_date\nparty_id\nvote_share\nseats\nseats_total\n\n\n\n\n1030\nAustria\n1919-02-16\n97\n40.75\n72\n170\n\n\n\n\nUsing SQL syntax, add this data to the elections table:\n\n\n\n\nelection_id\ncountry_name\nelection_date\nvote_share\nparty_id\n\n\n\n\n872\nBelgium\n1908-05-24\n22.6\n2422\n\n\n\n\nQuerying data from elections, create an R object that has the election_id, party_id and vote_share fields for elections after 1910.\nQuerying data from elections, get election_id, party_id, vote_share fields and just the year of the election.\nAdd a new field vote_share_prop to the elections database which shows the vote share as proportion rather than a percentage."
+  },
+  {
+    "objectID": "04_Linking_and_joining_data_SQL/04_Linking_and_joining_data_SQL.html#some-good-news",
+    "href": "04_Linking_and_joining_data_SQL/04_Linking_and_joining_data_SQL.html#some-good-news",
+    "title": "Session 4: Linking and joining data & SQL",
+    "section": "Some good news",
+    "text": "Some good news\n\n\nWe basically already know how joining in SQL works!"
+  },
+  {
+    "objectID": "04_Linking_and_joining_data_SQL/04_Linking_and_joining_data_SQL.html#sql-vs-r-left_join",
+    "href": "04_Linking_and_joining_data_SQL/04_Linking_and_joining_data_SQL.html#sql-vs-r-left_join",
+    "title": "Session 4: Linking and joining data & SQL",
+    "section": "SQL vs R: left_join",
+    "text": "SQL vs R: left_join\n\n\n\n\nR\n\nleft_join(x = df1, y = df2, by = c(\"id\" = \"id\"))\n\n# A tibble: 6 × 3\n     id capital_letters lowercase_letters\n  &lt;dbl&gt; &lt;chr&gt;           &lt;chr&gt;            \n1     1 A               a                \n2     2 B               b                \n3     3 C               c                \n4     4 D               d                \n5     5 E               e                \n6     6 F               &lt;NA&gt;             \n\n\n\nSQL\n\ndbGetQuery(\n  db,\n  \"SELECT * FROM df1 \n                LEFT JOIN df2 \n                ON df1.id = df2.id\"\n)\n\n  id capital_letters id lowercase_letters\n1  1               A  1                 a\n2  2               B  2                 b\n3  3               C  3                 c\n4  4               D  4                 d\n5  5               E  5                 e\n6  6               F NA              &lt;NA&gt;"
+  },
+  {
+    "objectID": "04_Linking_and_joining_data_SQL/04_Linking_and_joining_data_SQL.html#right_join-1",
+    "href": "04_Linking_and_joining_data_SQL/04_Linking_and_joining_data_SQL.html#right_join-1",
+    "title": "Session 4: Linking and joining data & SQL",
+    "section": "right_join",
+    "text": "right_join\n\n\n\n\nR\n\nright_join(x = df1, y = df2, by = c(\"id\" = \"id\"))\n\n# A tibble: 6 × 3\n     id capital_letters lowercase_letters\n  &lt;dbl&gt; &lt;chr&gt;           &lt;chr&gt;            \n1     1 A               a                \n2     2 B               b                \n3     3 C               c                \n4     4 D               d                \n5     5 E               e                \n6     7 &lt;NA&gt;            g                \n\n\n\nSQL\n\ndbGetQuery(\n  db,\n  \"SELECT * FROM df1\n                RIGHT JOIN df2 \n                ON df1.id = df2.id\"\n)\n\n  id capital_letters id lowercase_letters\n1  1               A  1                 a\n2  2               B  2                 b\n3  3               C  3                 c\n4  4               D  4                 d\n5  5               E  5                 e\n6 NA            &lt;NA&gt;  7                 g"
+  },
+  {
+    "objectID": "04_Linking_and_joining_data_SQL/04_Linking_and_joining_data_SQL.html#full_join-1",
+    "href": "04_Linking_and_joining_data_SQL/04_Linking_and_joining_data_SQL.html#full_join-1",
+    "title": "Session 4: Linking and joining data & SQL",
+    "section": "full_join",
+    "text": "full_join\n\n\n\n\nR\n\nfull_join(x = df1, y = df2, by = c(\"id\" = \"id\"))\n\n# A tibble: 7 × 3\n     id capital_letters lowercase_letters\n  &lt;dbl&gt; &lt;chr&gt;           &lt;chr&gt;            \n1     1 A               a                \n2     2 B               b                \n3     3 C               c                \n4     4 D               d                \n5     5 E               e                \n6     6 F               &lt;NA&gt;             \n7     7 &lt;NA&gt;            g                \n\n\n\nSQL\n\ndbGetQuery(\n  db,\n  \"SELECT * FROM df1\n                FULL JOIN df2\n                ON df1.id = df2.id\"\n)\n\n  id capital_letters id lowercase_letters\n1  1               A  1                 a\n2  2               B  2                 b\n3  3               C  3                 c\n4  4               D  4                 d\n5  5               E  5                 e\n6  6               F NA              &lt;NA&gt;\n7 NA            &lt;NA&gt;  7                 g"
+  },
+  {
+    "objectID": "04_Linking_and_joining_data_SQL/04_Linking_and_joining_data_SQL.html#inner_join-1",
+    "href": "04_Linking_and_joining_data_SQL/04_Linking_and_joining_data_SQL.html#inner_join-1",
+    "title": "Session 4: Linking and joining data & SQL",
+    "section": "inner_join",
+    "text": "inner_join\n\n\n\n\nR\n\ninner_join(x = df1, y = df2, by = c(\"id\" = \"id\"))\n\n# A tibble: 5 × 3\n     id capital_letters lowercase_letters\n  &lt;dbl&gt; &lt;chr&gt;           &lt;chr&gt;            \n1     1 A               a                \n2     2 B               b                \n3     3 C               c                \n4     4 D               d                \n5     5 E               e                \n\n\n\nSQL\n\ndbGetQuery(\n  db,\n  \"SELECT * FROM df1 \n                INNER JOIN df2 \n                ON df1.id = df2.id\"\n)\n\n  id capital_letters id lowercase_letters\n1  1               A  1                 a\n2  2               B  2                 b\n3  3               C  3                 c\n4  4               D  4                 d\n5  5               E  5                 e"
+  },
+  {
+    "objectID": "04_Linking_and_joining_data_SQL/04_Linking_and_joining_data_SQL.html#semi_join-1",
+    "href": "04_Linking_and_joining_data_SQL/04_Linking_and_joining_data_SQL.html#semi_join-1",
+    "title": "Session 4: Linking and joining data & SQL",
+    "section": "semi_join",
+    "text": "semi_join\n\n\n\n\nR\n\nsemi_join(x = df1, y = df2, by = c(\"id\" = \"id\"))\n\n# A tibble: 5 × 2\n     id capital_letters\n  &lt;int&gt; &lt;chr&gt;          \n1     1 A              \n2     2 B              \n3     3 C              \n4     4 D              \n5     5 E              \n\n\n\ndf1 |&gt;\n  filter(id %in% df2$id)\n\n# A tibble: 5 × 2\n     id capital_letters\n  &lt;int&gt; &lt;chr&gt;          \n1     1 A              \n2     2 B              \n3     3 C              \n4     4 D              \n5     5 E              \n\n\n\nSQL\n\ndbGetQuery(\n  db,\n  \"SELECT * FROM df1 \n                WHERE EXISTS (\n                  SELECT * FROM df2 \n                  WHERE df1.id = df2.id\n                )\"\n)\n\n  id capital_letters\n1  1               A\n2  2               B\n3  3               C\n4  4               D\n5  5               E"
+  },
+  {
+    "objectID": "04_Linking_and_joining_data_SQL/04_Linking_and_joining_data_SQL.html#anti_join-1",
+    "href": "04_Linking_and_joining_data_SQL/04_Linking_and_joining_data_SQL.html#anti_join-1",
+    "title": "Session 4: Linking and joining data & SQL",
+    "section": "anti_join",
+    "text": "anti_join\n\n\n\n\nR\n\nanti_join(x = df1, y = df2, by = c(\"id\" = \"id\"))\n\n# A tibble: 1 × 2\n     id capital_letters\n  &lt;int&gt; &lt;chr&gt;          \n1     6 F              \n\n\n\ndf1 |&gt;\n  filter(!id %in% df2$id)\n\n# A tibble: 1 × 2\n     id capital_letters\n  &lt;int&gt; &lt;chr&gt;          \n1     6 F              \n\n\n\nSQL\n\ndbGetQuery(\n  db,\n  \"SELECT * FROM df1 \n                WHERE NOT EXISTS (\n                  SELECT 1 FROM df2\n                  WHERE df1.id = df2.id\n                )\"\n)\n\n  id capital_letters\n1  6               F"
+  },
+  {
+    "objectID": "04_Linking_and_joining_data_SQL/04_Linking_and_joining_data_SQL.html#exercises-3",
+    "href": "04_Linking_and_joining_data_SQL/04_Linking_and_joining_data_SQL.html#exercises-3",
+    "title": "Session 4: Linking and joining data & SQL",
+    "section": "Exercises 3",
+    "text": "Exercises 3\n\nAdd the three data.frames from the 2016 primaries case study to the database (schedule, results_state, and facts)\nRight join results_state and facts\nRecreate the table results_state_time by querying and joining from db. Hint: multiple keys can be used by putting AND between them, e.g., ON df1.id = df2.id AND df1.id2 = df2.id2."
+  },
+  {
+    "objectID": "04_Linking_and_joining_data_SQL/04_Linking_and_joining_data_SQL.html#working-with-connections-in-r",
+    "href": "04_Linking_and_joining_data_SQL/04_Linking_and_joining_data_SQL.html#working-with-connections-in-r",
+    "title": "Session 4: Linking and joining data & SQL",
+    "section": "Working with connections in R",
+    "text": "Working with connections in R\nIf you think SQL is not necessarily your thing, there is good news: dbplyr makes it possible to connect to tables and use dplyr syntax. You don’t have to attach dbplyr for that, you just need dplyr and have dbplyr installed.\n\nlibrary(dbplyr) # you don't usually need to load this, just have it installed\n\nLet’s create a new table for that:\n\ndbWriteTable(db, \"diamonds\", diamonds)\n\nTo connect to a table in a database, we can use tbl:\n\ndiamonds_con &lt;- tbl(db, \"diamonds\")\ndiamonds_con\n\n# A query:  ?? x 10\n# Database: sqlite 3.53.3 [data/db.sql]\n   carat cut       color clarity depth table price     x     y     z\n   &lt;dbl&gt; &lt;chr&gt;     &lt;chr&gt; &lt;chr&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;\n 1  0.23 Ideal     E     SI2      61.5    55   326  3.95  3.98  2.43\n 2  0.21 Premium   E     SI1      59.8    61   326  3.89  3.84  2.31\n 3  0.23 Good      E     VS1      56.9    65   327  4.05  4.07  2.31\n 4  0.29 Premium   I     VS2      62.4    58   334  4.2   4.23  2.63\n 5  0.31 Good      J     SI2      63.3    58   335  4.34  4.35  2.75\n 6  0.24 Very Good J     VVS2     62.8    57   336  3.94  3.96  2.48\n 7  0.24 Very Good I     VVS1     62.3    57   336  3.95  3.98  2.47\n 8  0.26 Very Good H     SI1      61.9    55   337  4.07  4.11  2.53\n 9  0.22 Fair      E     VS2      65.1    61   337  3.87  3.78  2.49\n10  0.23 Very Good H     VS1      59.4    61   338  4     4.05  2.39\n# ℹ more rows"
+  },
+  {
+    "objectID": "04_Linking_and_joining_data_SQL/04_Linking_and_joining_data_SQL.html#working-with-connections-in-r-1",
+    "href": "04_Linking_and_joining_data_SQL/04_Linking_and_joining_data_SQL.html#working-with-connections-in-r-1",
+    "title": "Session 4: Linking and joining data & SQL",
+    "section": "Working with connections in R",
+    "text": "Working with connections in R\nHowever, this table is just a connections, and R has pulled only the first couple of rows to display them.\n\nobject.size(diamonds)\n\n3456848 bytes\n\nobject.size(diamonds_con)\n\n8112 bytes\n\n\nThis is also why View doesn’t really work well:\n\nView(diamonds_con)"
+  },
+  {
+    "objectID": "04_Linking_and_joining_data_SQL/04_Linking_and_joining_data_SQL.html#collect",
+    "href": "04_Linking_and_joining_data_SQL/04_Linking_and_joining_data_SQL.html#collect",
+    "title": "Session 4: Linking and joining data & SQL",
+    "section": "collect",
+    "text": "collect\nTo get the object in R properly, you need to collect the data first:\n\nx_df &lt;- collect(diamonds_con)\n\nx_df is now a real data.frame\n\nobject.size(x_df)\n\n4102608 bytes\n\n\n\nView(diamonds_con)"
+  },
+  {
+    "objectID": "04_Linking_and_joining_data_SQL/04_Linking_and_joining_data_SQL.html#supports-dplyr-verbs",
+    "href": "04_Linking_and_joining_data_SQL/04_Linking_and_joining_data_SQL.html#supports-dplyr-verbs",
+    "title": "Session 4: Linking and joining data & SQL",
+    "section": "Supports dplyr verbs",
+    "text": "Supports dplyr verbs\nFilter, select, mutate and summarise:\n\ndiamonds_con |&gt;\n  filter(cut == \"Premium\", price &lt; 400) |&gt;\n  select(price) |&gt;\n  mutate(price_gbp = price * 0.77) |&gt;\n  summarise(avg_price = mean(price), avg_price_gbp = mean(price_gbp))\n\n# A query:  ?? x 2\n# Database: sqlite 3.53.3 [data/db.sql]\n  avg_price avg_price_gbp\n      &lt;dbl&gt;         &lt;dbl&gt;\n1      376.          289.\n\n\nJoins also work:\n\ndf1_con &lt;- tbl(db, \"df1\")\ndf2_con &lt;- tbl(db, \"df2\")\ndf1_con |&gt;\n  left_join(df2_con, by = \"id\") |&gt;\n  collect()\n\n# A tibble: 6 × 3\n     id capital_letters lowercase_letters\n  &lt;int&gt; &lt;chr&gt;           &lt;chr&gt;            \n1     1 A               a                \n2     2 B               b                \n3     3 C               c                \n4     4 D               d                \n5     5 E               e                \n6     6 F               &lt;NA&gt;"
+  },
+  {
+    "objectID": "04_Linking_and_joining_data_SQL/04_Linking_and_joining_data_SQL.html#supports-dplyr-verbs-1",
+    "href": "04_Linking_and_joining_data_SQL/04_Linking_and_joining_data_SQL.html#supports-dplyr-verbs-1",
+    "title": "Session 4: Linking and joining data & SQL",
+    "section": "Supports dplyr verbs",
+    "text": "Supports dplyr verbs\nIf you decide to implement this query somewhere else, you can show it after executing it:\n\ndf1_con |&gt;\n  left_join(df2_con, by = \"id\") |&gt;\n  show_query()\n\n&lt;SQL&gt;\nSELECT `df1`.*, `lowercase_letters`\nFROM `df1`\nLEFT JOIN `df2`\n  ON (`df1`.`id` = `df2`.`id`)"
+  },
+  {
+    "objectID": "04_Linking_and_joining_data_SQL/04_Linking_and_joining_data_SQL.html#collect-vs.-compute",
+    "href": "04_Linking_and_joining_data_SQL/04_Linking_and_joining_data_SQL.html#collect-vs.-compute",
+    "title": "Session 4: Linking and joining data & SQL",
+    "section": "collect() vs. compute()",
+    "text": "collect() vs. compute()\n\ncollect() gets data from the database; like dbGetQuery()\ncompute() changes data in the database; like dbExecute()\n\nWe join the two tables again, and also compute a new column:\n\ndf1_con |&gt;\n  left_join(df2_con, by = \"id\") |&gt;\n  mutate(all_letters = paste(capital_letters, lowercase_letters)) |&gt;\n  collect()\n\n# A tibble: 6 × 4\n     id capital_letters lowercase_letters all_letters\n  &lt;int&gt; &lt;chr&gt;           &lt;chr&gt;             &lt;chr&gt;      \n1     1 A               a                 A a        \n2     2 B               b                 B b        \n3     3 C               c                 C c        \n4     4 D               d                 D d        \n5     5 E               e                 E e        \n6     6 F               &lt;NA&gt;              &lt;NA&gt;       \n\n\nInstead of just bringing this new table to R, we can directly save it to the database\n\ndf1_con |&gt;\n  left_join(df2_con, by = \"id\") |&gt;\n  mutate(all_letters = paste(capital_letters, lowercase_letters)) |&gt;\n  compute() # only this line is different!\n\n# A query:  ?? x 4\n# Database: sqlite 3.53.3 [data/db.sql]\n     id capital_letters lowercase_letters all_letters\n  &lt;int&gt; &lt;chr&gt;           &lt;chr&gt;             &lt;chr&gt;      \n1     1 A               a                 A a        \n2     2 B               b                 B b        \n3     3 C               c                 C c        \n4     4 D               d                 D d        \n5     5 E               e                 E e        \n6     6 F               &lt;NA&gt;              &lt;NA&gt;"
+  },
+  {
+    "objectID": "04_Linking_and_joining_data_SQL/04_Linking_and_joining_data_SQL.html#collect-vs.-compute-1",
+    "href": "04_Linking_and_joining_data_SQL/04_Linking_and_joining_data_SQL.html#collect-vs.-compute-1",
+    "title": "Session 4: Linking and joining data & SQL",
+    "section": "collect() vs. compute()",
+    "text": "collect() vs. compute()\nHowever, if we look at the table, it still looks the same\n\ndf1_con |&gt;\n  collect()\n\n# A tibble: 6 × 2\n     id capital_letters\n  &lt;int&gt; &lt;chr&gt;          \n1     1 A              \n2     2 B              \n3     3 C              \n4     4 D              \n5     5 E              \n6     6 F              \n\n\nSo what gives?"
+  },
+  {
+    "objectID": "04_Linking_and_joining_data_SQL/04_Linking_and_joining_data_SQL.html#collect-vs.-compute-2",
+    "href": "04_Linking_and_joining_data_SQL/04_Linking_and_joining_data_SQL.html#collect-vs.-compute-2",
+    "title": "Session 4: Linking and joining data & SQL",
+    "section": "collect() vs. compute()",
+    "text": "collect() vs. compute()\nWhen we list the tables, we see what happened:\n\ndbListTables(db)\n\n[1] \"dbplyr_tmp_pZQC99zo3l\" \"df1\"                   \"df2\"                  \n[4] \"diamonds\"              \"sqlite_stat1\"          \"sqlite_stat4\"         \n\n\ndbplyr by default does not overwrite the original table, but instead saves the results to a new, temporary table (they are removed when you disconnect from the db).\nIf we want to create a persistent version of the table, we can do:\n\ndf1_con |&gt;\n  left_join(df2_con, by = \"id\") |&gt;\n  mutate(all_letters = paste(capital_letters, lowercase_letters)) |&gt;\n  compute(temporary = FALSE, name = \"df1_updated\")\n\n# A query:  ?? x 4\n# Database: sqlite 3.53.3 [data/db.sql]\n     id capital_letters lowercase_letters all_letters\n  &lt;int&gt; &lt;chr&gt;           &lt;chr&gt;             &lt;chr&gt;      \n1     1 A               a                 A a        \n2     2 B               b                 B b        \n3     3 C               c                 C c        \n4     4 D               d                 D d        \n5     5 E               e                 E e        \n6     6 F               &lt;NA&gt;              &lt;NA&gt;       \n\n\n\ntbl(db, \"df1_updated\")\n\n# A query:  ?? x 4\n# Database: sqlite 3.53.3 [data/db.sql]\n     id capital_letters lowercase_letters all_letters\n  &lt;int&gt; &lt;chr&gt;           &lt;chr&gt;             &lt;chr&gt;      \n1     1 A               a                 A a        \n2     2 B               b                 B b        \n3     3 C               c                 C c        \n4     4 D               d                 D d        \n5     5 E               e                 E e        \n6     6 F               &lt;NA&gt;              &lt;NA&gt;"
+  },
+  {
+    "objectID": "04_Linking_and_joining_data_SQL/04_Linking_and_joining_data_SQL.html#collect-vs.-compute-3",
+    "href": "04_Linking_and_joining_data_SQL/04_Linking_and_joining_data_SQL.html#collect-vs.-compute-3",
+    "title": "Session 4: Linking and joining data & SQL",
+    "section": "collect() vs. compute()",
+    "text": "collect() vs. compute()\nAnd finally, if we want to update the table in place, we can bring it into R and then copy it back to overwrite the old one:\n\ntemp &lt;- df1_con |&gt;\n  left_join(df2_con, by = \"id\") |&gt;\n  mutate(all_letters = paste(capital_letters, lowercase_letters)) |&gt;\n  collect()\ncopy_to(db, temp, \"df1\", overwrite = TRUE)\n\nNow, we replaced the original version:\n\ndf1_con |&gt;\n  collect()\n\n# A tibble: 6 × 4\n     id capital_letters lowercase_letters all_letters\n  &lt;int&gt; &lt;chr&gt;           &lt;chr&gt;             &lt;chr&gt;      \n1     1 A               a                 A a        \n2     2 B               b                 B b        \n3     3 C               c                 C c        \n4     4 D               d                 D d        \n5     5 E               e                 E e        \n6     6 F               &lt;NA&gt;              &lt;NA&gt;"
+  },
+  {
+    "objectID": "04_Linking_and_joining_data_SQL/04_Linking_and_joining_data_SQL.html#case-study-new-york-city-flight-data",
+    "href": "04_Linking_and_joining_data_SQL/04_Linking_and_joining_data_SQL.html#case-study-new-york-city-flight-data",
+    "title": "Session 4: Linking and joining data & SQL",
+    "section": "Case study: New York City flight data",
+    "text": "Case study: New York City flight data\nLet’s move the nycflights13 into a new database:\n\nlibrary(nycflights13)\nunlink(\"data/db_nyc.sql\") # just to make sure we use a new db\ndb_nyc &lt;- dbConnect(SQLite(), \"data/db_nyc.sql\")\ndbWriteTable(db_nyc, \"airports\", airports)\ndbWriteTable(db_nyc, \"flights\", flights)\ndbWriteTable(db_nyc, \"weather\", weather)\ndbWriteTable(db_nyc, \"planes\", planes)\ndbWriteTable(db_nyc, \"airlines\", airlines)\n\n\nRQ1: Is there a relationship between the age of a plane and its delays?\nRQ2: What weather conditions make it more likely to see a delay?"
+  },
+  {
+    "objectID": "04_Linking_and_joining_data_SQL/04_Linking_and_joining_data_SQL.html#nyc-flights-age-vs-delays",
+    "href": "04_Linking_and_joining_data_SQL/04_Linking_and_joining_data_SQL.html#nyc-flights-age-vs-delays",
+    "title": "Session 4: Linking and joining data & SQL",
+    "section": "NYC flights: age vs delays",
+    "text": "NYC flights: age vs delays\n\nplane_delays_age &lt;- tbl(db_nyc, \"flights\") |&gt;\n  inner_join(tbl(db_nyc, \"planes\"), by = \"tailnum\", suffix = c(\"\", \"_plane\")) |&gt;\n  mutate(plane_age = year - year_plane) |&gt;\n  select(arr_delay, plane_age) |&gt;\n  filter(!is.na(arr_delay), !is.na(plane_age)) |&gt;\n  collect()\n\n\n\nplane_delays_age |&gt;\n  group_by(plane_age) |&gt;\n  summarise(avg_delay = mean(arr_delay)) |&gt;\n  ggplot(aes(x = plane_age, y = avg_delay)) +\n  geom_point() +\n  geom_smooth(method = \"lm\", formula = y ~ x)"
+  },
+  {
+    "objectID": "04_Linking_and_joining_data_SQL/04_Linking_and_joining_data_SQL.html#nyc-flights-weather-conditions-vs-delays",
+    "href": "04_Linking_and_joining_data_SQL/04_Linking_and_joining_data_SQL.html#nyc-flights-weather-conditions-vs-delays",
+    "title": "Session 4: Linking and joining data & SQL",
+    "section": "NYC flights: weather conditions vs delays",
+    "text": "NYC flights: weather conditions vs delays\n\nplane_delays_weather &lt;- tbl(db_nyc, \"flights\") |&gt;\n  inner_join(tbl(db_nyc, \"weather\"), by = c(\"time_hour\", \"origin\")) |&gt;\n  filter(!is.na(temp), !is.na(arr_delay), !is.na(wind_speed)) |&gt;\n  collect()\n\n\n\nplane_delays_weather |&gt;\n  ggplot(aes(x = temp, y = arr_delay)) +\n  geom_point() +\n  geom_smooth(method = \"lm\", formula = y ~ x)\n\n\n\n\n\n\n\n\n\n\n\nplane_delays_weather |&gt;\n  ggplot(aes(x = wind_speed, y = arr_delay)) +\n  geom_point() +\n  geom_smooth(method = \"lm\", formula = y ~ x)"
+  },
+  {
+    "objectID": "04_Linking_and_joining_data_SQL/04_Linking_and_joining_data_SQL.html#should-you-learn-sql-properly",
+    "href": "04_Linking_and_joining_data_SQL/04_Linking_and_joining_data_SQL.html#should-you-learn-sql-properly",
+    "title": "Session 4: Linking and joining data & SQL",
+    "section": "Should you learn SQL properly?",
+    "text": "Should you learn SQL properly?\nIt depends!\n\nhow often and how advanced do you want to use it?\ndo you want to stay in the R ecosystem or extend your knowledge beyond it?\nhow many clients will use your database?\n\nThere is an interesting video discussing the question in more detail here: https://youtu.be/gdzONbwfWk0"
+  },
+  {
+    "objectID": "01_Introduction/01_Introduction.html#skills",
+    "href": "01_Introduction/01_Introduction.html#skills",
+    "title": "Session 1: Introduction",
+    "section": "Skills",
+    "text": "Skills\n\n\n\nI don’t mind if you use AI (Claude (Code), ChaGPT, etc.)\nJust make sure you are still picking up new skills\nE.g., ask the LLM to explain, not write code (including asking for help if things)\nIf the LLM write code, make sure you understand everything it is doing (if you don’t see previous bullet)\nGoal: you know how to recognize/fix critical issues!\n\n\n\n\n\nGenerated w. OpenAI’s DALL·E"
+  },
+  {
+    "objectID": "01_Introduction/01_Introduction.html#access-to-information",
+    "href": "01_Introduction/01_Introduction.html#access-to-information",
+    "title": "Session 1: Introduction",
+    "section": "Access to Information",
+    "text": "Access to Information\n\n\n\nCoding agent (like Claude Code) needs to know why+how you want to do something (otherwise 🎲)\nSo you need to understand what you are doing\nYou need to (be able to) explain to AI what you want and give it the necessary resources\nFor example:\n\nGive agents access to your project folder ()\nPut background information (e.g., methods chapter, Readme, Claude.md) in repo\n\n\n\n\n\n\n\n\n\nBeware of context rot!\n\n\nLong conversations / Many tokens make models become ‘dumber’\n\n\n\n\n\n\n\n\n\n\n\nCaution\n\n\nNote that when using cloud models, the company controlling the API gets this information too!\n\n\n\n\n\n\n\n\nGenerated w. OpenAI’s DALL·E\n\n\n\n\n\nwhen someone utterly fails at using AI, it is usually because they assume AI know everything\nModels have broad knowledge, not specialised knowledge about your project"
+  },
+  {
+    "objectID": "01_Introduction/01_Introduction.html#accountability",
+    "href": "01_Introduction/01_Introduction.html#accountability",
+    "title": "Session 1: Introduction",
+    "section": "Accountability",
+    "text": "Accountability\n\n\n\nInternal training at IBM 1979"
+  },
+  {
+    "objectID": "01_Introduction/01_Introduction.html#accountability-1",
+    "href": "01_Introduction/01_Introduction.html#accountability-1",
+    "title": "Session 1: Introduction",
+    "section": "Accountability",
+    "text": "Accountability\n\n\n\nInternal training at IBM 1979; corrected for coding\n\n\n\n\n\n\n\n\n\nCaution\n\n\nIf AI makes a mistake and you did not catch it, you are getting the bad grade/reputational damage"
+  },
+  {
+    "objectID": "01_Introduction/01_Introduction.html#section",
+    "href": "01_Introduction/01_Introduction.html#section",
+    "title": "Session 1: Introduction",
+    "section": "",
+    "text": "Total: 14:15 17:45\n\n\n.reveal .striped tbody tr:nth-child(odd) &gt; * {\n  background-color: #FDE000;\n}\n.reveal .striped tbody tr:nth-child(even) &gt; * {\n  background-color: #E6E6E6;\n}\n\n\n\n\nOption A\n\n\n\nSession 1\n14:15\n15:45\n\n\nBreak\n15:45\n16:15\n\n\nSession 2\n16:15\n17:45\n\n\n\n\nOption B\n\n\n\nSession 1\n14:15\n15:15\n\n\nBreak 1\n15:15\n15:30\n\n\nSession 2\n15:30\n16:30\n\n\nBreak 2\n16:30\n16:45\n\n\nSession 3\n16:45\n17:45\n\n\n\n\nOption C\n\n\n\nSession 1\n14:15\n15:45\n\n\nBreak 1\n15:45\n16:00\n\n\nSession 2\n16:00\n17:30\n\n\nBreak 2\n17:30\n17:45"
   }
 ]

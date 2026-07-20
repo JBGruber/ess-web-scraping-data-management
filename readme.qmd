@@ -61,7 +61,6 @@ if (!requireNamespace("jbgtemplates", quietly = TRUE)) {
 }
 jbgtemplates::install_deps(gh_packages = c(
   "JBGruber/paperboy",
-  "JBGruber/playwrightr",
   "ccs-amsterdam/amcat4r"
 ))
 ```

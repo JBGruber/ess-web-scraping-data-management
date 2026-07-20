@@ -5,6 +5,11 @@ project:
     - index.qmd
     - "0*_*/*.qmd"
     - 10_Conclusion/10_Conclusion.qmd
+  resources:
+    - "!**/media/**"
+    - "!**/*_files/**"
+    - "!**/data/**"
+  post-render: cleanup-docs.r
 
 website:
   title: "Introduction to Web Scraping and Data Management for Social Scientists"
@@ -28,3 +33,4 @@ format:
     toc: true
     code-copy: true
     code-overflow: wrap
+    embed-resources: true

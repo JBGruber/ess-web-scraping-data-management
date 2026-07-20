@@ -1444,8 +1444,7 @@ sessionInfo()
 
 
 <!-- This is just some extra CSS code to make presentation look pretty -->
-```{css}
-#| echo: false
+```{css, echo=FALSE}
 .table-striped {
   > tbody > tr:nth-of-type(odd) > * {
     background-color: #fff9ce;

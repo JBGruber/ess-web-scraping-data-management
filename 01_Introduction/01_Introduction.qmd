@@ -128,13 +128,62 @@ Contact:
 
 ::::
 
+# Breaks?
+##
+
+Total:	14:15	17:45
+
+<!-- This is just some extra CSS code to make the included Markdown tables pretty -->
+```{css}
+.reveal .striped tbody tr:nth-child(odd) > * {
+  background-color: #FDE000;
+}
+.reveal .striped tbody tr:nth-child(even) > * {
+  background-color: #E6E6E6;
+}
+```
+
+:::: {.columns .striped}
+::: {.column width="33%"}
+### Option A
+
+|           |       |       |
+|-----------|-------|-------|
+| Session 1 | 14:15 | 15:45 |
+| Break     | 15:45 | 16:15 |
+| Session 2 | 16:15 | 17:45 |
+:::
+::: {.column width="33%"}
+### Option B
+
+|           |       |       |
+|-----------|-------|-------|
+| Session 1 | 14:15 | 15:15 |
+| Break 1   | 15:15 | 15:30 |
+| Session 2 | 15:30 | 16:30 |
+| Break 2   | 16:30 | 16:45 |
+| Session 3 | 16:45 | 17:45 |
+:::
+::: {.column width="33%"}
+### Option C
+
+|           |       |       |
+|-----------|-------|-------|
+| Session 1 | 14:15 | 15:45 |
+| Break 1   | 15:45 | 16:00 |
+| Session 2 | 16:00 | 17:30 |
+| Break 2   | 17:30 | 17:45 |
+:::
+::::
+
+
 # How to use the course material
 ## Prerequisites
 
 You should have this software installed:
 
 - [R](https://cran.r-project.org/)
-- An IDE, preferably [RStudio Desktop](https://posit.co/download/rstudio-desktop/), but you can also use [VSCodium](https://vscodium.com/) or [VSCodium](https://code.visualstudio.com/download) or [Positron](https://github.com/posit-dev/positron)
+- An IDE, preferably [RStudio Desktop](https://posit.co/download/rstudio-desktop/), but you can also use [VSCodium](https://vscodium.com/) or [VS Code](https://code.visualstudio.com/download) or [Positron](https://github.com/posit-dev/positron)
 - [Quarto](https://quarto.org/docs/get-started/)
 
 ## R version
@@ -175,7 +224,7 @@ I tend to jump back and forth between the slides and RStudio
 
 ![](media/slide-view.png)
 
-See the html file in each session folder
+See the rendered slides on: <https://jbgruber.github.io/ess-web-scraping-data-management/>
 :::
 
 ::: {.column width="50%"}
@@ -191,11 +240,13 @@ See the qmd file in each session folder
 ## Use the course marerial
 
 1. Pull the latest version at the beginning of each session
-2. Make a copy of the qmd file and name it, e.g., "1_Introduction_to_Computing_notes.qmd"
+2. Make a copy of the qmd file and name it, e.g., "1_Introduction_notes.qmd"
 3. Use this file to make notes, for example by adding comments using this syntax `<!-- your comment -->` (RStudio shortcut Ctrl + Shift + C / Command + Shift + C on macOS)
-- Alternatively, open the slides in a browser and press `e` to export them to PDF (and take notes with PDF reader)
+- Alternatively, you can annotate a PDF version of the slides by heading to the [website](https://jbgruber.github.io/ess-web-scraping-data-management/), clicking on the slides you want, then press `e` to export them to PDF (and take notes with PDF reader)
 
-<span style='color:red;'>This is to make sure you don't get any git conflicts when you pull and I updated something in the material in the meantime.</span>
+::: {.callout-warning}
+This is to make sure you don't get any **git conflicts** when you pull and I updated something in the material in the meantime.
+:::
 
 <!-- This is a comment. You can leave them here to take notes linked to the slides. -->
 
@@ -207,7 +258,67 @@ See the qmd file in each session folder
 
 # Using AI in this course
 
+## Skills {.late-summer}
 
+:::: {.columns}
+::: {.column .incremental width="60%"}
+- I don't mind if you use AI (Claude (Code), ChaGPT, etc.)
+- Just make sure you are still picking up new skills
+- E.g., ask the LLM to *explain*, not *write* code (including asking for help if things)
+- If the LLM write code, make sure you understand everything it is doing (if you don't see previous bullet)
+- Goal: **you know how to recognize/fix critical issues!**
+:::
+::: {.column width="40%"}
+![Generated w. OpenAI’s DALL·E](media/skills.jpeg)
+:::
+::::
+
+## Access to Information {.fall}
+
+:::: {.columns}
+::: {.column .incremental width="50%"}
+- Coding agent (like Claude Code) needs to know why+how you want to do something (otherwise 🎲)
+- So you need to understand what you are doing
+- You need to (be able to) explain to AI what you want and give it the necessary resources
+- For example:
+  - Give agents access to your project folder ()
+  - Put background information (e.g., methods chapter, Readme, Claude.md) in repo
+
+
+::: {.callout-tip .fragment}
+## Beware of context rot!
+
+Long conversations / Many tokens make models become 'dumber'
+:::
+
+::: {.callout-caution .fragment}
+Note that when using cloud models, the company controlling the API gets this information too!
+:::
+
+:::
+::: {.column width="38%"}
+![Generated w. OpenAI’s DALL·E](media/no-info.jpeg){height="60%"}
+:::
+::::
+
+:::{.notes}
+- when someone utterly fails at using AI, it is usually because they assume AI know everything
+- Models have broad knowledge, not specialised knowledge about your project
+:::
+
+## Accountability {.summer}
+
+![Internal training at IBM 1979](media/accountability.webp){.nostretch fig-align="center" width="50%"}
+
+## Accountability {.summer}
+
+![Internal training at IBM 1979; corrected for coding](media/accountability2.webp){.nostretch fig-align="center" width="50%"}
+
+::: {.absolute  .fragment  width="25%" top="300" right="0"}
+::: {.callout-caution}
+If AI makes a mistake and you did not catch it, you are getting the bad grade/reputational damage
+:::
+:::
 
 
 # `R` refresher
@@ -349,17 +460,7 @@ install_github("JBGruber/paperboy", Ncpus = 6)
   - stackoverflow.com (if you want to ask a question instead see [how to ask a good question](http://stackoverflow.com/help/how-to-ask) and use a [reproducible example](http://stackoverflow.com/questions/5963269))
   - R help list (stat.ethz.ch) 
   - https://www.r-bloggers.com/ (collection of personal blog posts related to R -- so quality varies)
-- ChatGPT/Claude/Gemini/DeepSeek
-
-```{r}
-#| eval: false
-library(askgpt)
-log_init()
-mean[1:10]
-askgpt("What is wrong with my last command?")
-```
-
-![](https://user-images.githubusercontent.com/23524101/220632749-da59fe90-d6a2-4ebd-bbfe-d1164e8a7944.mp4)
+- Claude/ChatGPT/Gemini/DeepSeek
 
 ## Functions
 
@@ -609,17 +710,23 @@ aggregated_df[order(aggregated_df$total_quantity, decreasing = TRUE)[1:5], ]
 
 ## Advantages 
 
-This is where *literate programming* has a lot of advantages:
+:::: {.columns}
 
-1. **Enhanced Documentation**: Literate programming combines code and documentation in a single, integrated document. This approach encourages researchers to write clear and comprehensive explanations of their code, making it easier for others (and even themselves) to understand the working of the code, (research) design choices, and logic.
-2. **Improved Readability**: By structuring code and documentation in a literate programming style, the resulting code becomes more readable and coherent. The narrative flow helps readers follow the thought process and intentions of the programmer, leading to improved comprehension and maintainability.
-3. **Modular and Reusable Code**: Literate programming emphasizes the organization of code into coherent and reusable chunks as they writers come to think of them similar to paragraphs in a text, where each chunk develops one specific idea.
-4. **Collaboration and Communication**: Literate programming enhances collaboration among developers by providing a common platform to discuss, share, and review code. The narrative style fosters effective communication, allowing team members to understand the codebase more easily and collaborate more efficiently.
-5. **Extensibility and Maintenance**: Well-documented literate programs are typically easier to extend and maintain over time. The clear explanation of choices and functionality helps yourself and others in the future to make decisions about modifications, enhancements, and bug fixes.
-6. **Reproducibilty and accountability**: when you save rendered output of an analysis, you know exactly how a table of plot was created. If there are several versions, you can always turn to the rendered document and check which data, code and package versions were used to do your analuysis (at least when documents were written in a specific way.
+::: {.column .incremental width="30%"}
+1. Easier to **understand for yourself**: keep code and explanation together
+2. Easier to **find** the code you are looking for: already use the figure and table captions from the article
+3. Easier to **write coherent code**: organize code in the way your paper is organized too
+4. Easier for your co-authors or **others to understand your scripts**
+5. Easier to continue where you left off
+6. Easier for others to **reproduce** your analyses
+:::
 
-Quarto (and its predecessor R Markdown) were designed to make it easy for you to make the most of these advantages.
-We have already been using these tools throughout the workshop and I hope this made you more familiar with them.
+::: {.column width="55%" }
+![Quarto (and its predecessor R Markdown) was designe with literate programming in mind](media/literate.png)
+:::
+
+::::
+
 
 ## Exercises 3
 

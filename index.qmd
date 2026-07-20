@@ -45,7 +45,7 @@ fmt_links <- function(paths_str) {
 
 sessions <- tribble(
   ~Day, ~Date, ~Session, ~slides, ~solutions,
-  1, "Mon, 20 July", "Introduction", "01_Introduction/01_Introduction_to_Computing", "01_Introduction/01_solutions",
+  1, "Mon, 20 July", "Introduction", "01_Introduction/01_Introduction", "01_Introduction/01_solutions",
   2, "Tue, 21 July", "Data Structures and Wrangling", "02_Data_Structures_Wrangling/02_Data_Structures_Wrangling", "02_Data_Structures_Wrangling/02_solutions",
   3, "Wed, 22 July", "Working with Files", "03_Working_with_Files/03_Working_with_Files", "03_Working_with_Files/03_solutions",
   4, "Thu, 23 July", "Linking and Joining Data & SQL", "04_Linking_and_joining_data_SQL/04_Linking_and_joining_data_SQL", "04_Linking_and_joining_data_SQL/04_solutions",
