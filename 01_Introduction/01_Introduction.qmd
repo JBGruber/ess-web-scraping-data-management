@@ -134,7 +134,7 @@ Contact:
 Total:	14:15	17:45
 
 <!-- This is just some extra CSS code to make the included Markdown tables pretty -->
-```{css}
+```{css, include=FALSE}
 .reveal .striped tbody tr:nth-child(odd) > * {
   background-color: #FDE000;
 }

@@ -6,7 +6,7 @@ date: 2026-07-21
 from: markdown+emoji
 format:
   revealjs:
-    smaller: true
+    smaller: false
     width: 1600
     height: 900
     scrollable: true
@@ -126,7 +126,13 @@ Can be broadly separated into three steps [@weidmann_data_2023]:
 
 ## Your turn (Exercises 1)
 
-- What was your worst experience with data?
+- What was your worst experience with data and how it could have been prevented?
+
+::: {.notes}
+Think about a data processing issue you experienced, you do not have to share it, but you can if you want.
+
+mine: I was a research assistant in a project and only when we reviewed the final version of the paper (after peer review), we noticed that the total number of cases was wrong. We noticed that we accidentally dropped these cases while joining two tables. Luckily it did not change the conclusion of the paper, but we had to change out almost every number and redo all tables.
+:::
 
 # What is Data?
 ## Definition
@@ -136,7 +142,7 @@ Can be broadly separated into three steps [@weidmann_data_2023]:
 ::: {.column width="60%"}
 ::: {.incremental}
 - systematic and structured way of representing information (about the real world)
-- consist of content + structure
+- consist of: *content* + *structure*
   - content: WHAT is stored, the information itself (e.g., numbers, text, images, sound or videos)
   - structure: HOW information is stored
   - structure makes information (easily) **readable by a computer**
@@ -199,7 +205,7 @@ Source: @weidmann_data_2023
 ## Your turn (Exercises 2)
 
 - Did I forget any data structures?
-- head to https://www.menti.com/ and vote with code "6800 3260"
+- head to https://www.menti.com/ and vote with code "4880 1541"
 
 
 # From information to structured data
@@ -236,7 +242,7 @@ easy to extract for humans, but it is much more difficult to process computation
 
 - Regular expressions are "a very terse language that allow you to describe patterns in strings" [@WickhamR4DS]
 - **String**: sequences of characters, for instance, letters and punctuation (stored as `character` in `R`). Example: "Headline"
-- **Regular expressions**: string patterns with non-literal meaning that tells computer what to look for:
+- **Regular expressions**: string patterns with non-literal meaning that tells a computer what to look for:
   ```{r}
   strings <- c("headline", "Headline")
   str_view(strings, "[Hh]")
@@ -248,35 +254,35 @@ easy to extract for humans, but it is much more difficult to process computation
   
   Explanation: `[Hh]` characters inside square brackets are matched
   
-## Regular Expression: your "friend" when working with strings
+## Regular Expression: your "friend" when working with strings {.smaller}
 
 | **Specifier: What to match**                                                                  | Syntax     | Example      | Matches                                                                      |
 | :----------------------------------------| :--------: | :----------: | :--------------------------------------------------------------------------: |
 | All characters except for new lines      | `.`        | `d.g`        | <code>**dig**</code>, <code>**d!g**</code>                                   |
-| Word characters `(letters, digits,_)`    | `\\w`      | `d\\wg`      | <code>**dig**</code>, <code>**dog**</code>, `d2g`                            |
+| Word characters `(letters, digits,_)`    | `\\w`      | `d\\wg`      | <code>**dig**</code>, <code>**dog**</code>,  <code>**`d2g`** </code>                            |
 | Digits `(0 to 9)`                        | `\\d`      | `202\\d`     | <code>**2020**</code>, <code>**2021**</code>                                 |
 | Whitespace `(space, tab, newline)`       | `\\s`      |              |                                                                              |
 | Newline                                  | `\n`       |              |                                                                              |
-| Beginning of the string                  | `^`        | `^go`        | <code>**go**<span class='gray'></span>go go</code>                           |
-| Ending of the string                     | `$`        | `go$`        | <code><span class='gray'></span>go go**go**</code>                           |
+| Beginning of the string                  | `^`        | `^go`        | <code>**go**go go</code>                           |
+| Ending of the string                     | `$`        | `go$`        | <code>go go**go**</code>                           |
 | Beginning or end of word                 | `\\b`      | `\\bword\\b` | <code>a **word**! And two words</code>                                       |
 | Either first or second option            | `…|…`      | `cat|dog`    | <code>A **cat** is chased by a **dog**</code>                                |
 | **Quantifier: How many to match**        |            |              |                                                                              |  
 | Zero or more                             | `*`        | `d.*g`       | <code>**dg**</code>, <code>**drag**</code>, <code>**d = g**</code>           |
-| Zero or more (non-greedy)                | `*?`       | `d.*?g`      | <code>**dog**<span class='gray'></span>g</code>                              |
-| One or more                              | `+`        | `\\d+%`      | <code>**1%**</code>, <code>an increase from **25% to 30%**</code>            |
-| One or more (non-greedy)                 | `+?`       | `\\d+%`      | <code>an increase from **25%** to 30%</code>                                 |
+| Zero or more (non-greedy)                | `*?`       | `d.*?g`      | <code>**dog**g</code>                              |
+| One or more                              | `+`        | `".+"`       | <code>**"blue" jacket, "red"**</code>            |
+| One or more (non-greedy)                 | `+?`       | `".+"`       | <code>**"blue"** jacket, **"red"**</code>                                 |
 | Zero or one                              | `?`        | `colou?r`    | <code>**color**</code>, <code>**colour**</code>                              |
 | Exactly *n* times                        | `{n}`      | `\\d{4}`     | <code>**1940**</code>, <code>**2020**</code>                                 |
 | At least *n* times                       | `{n,}`     | `\\d{3,}`    | <code>**194**</code>, <code>**2020**</code> but not `19`                     |
 | Between *n* and *m* times                | `{n,m}`    | `\\d{3,4}`   | <code>**194**</code>, <code>**2020**</code> but not `19`, `20200`            |  
 | **Other constructs**                     |            |              |                                                                              |
-| Groups                                   | `(…)`      | `'(bla ){2}'`| <code>**bla bla **bla</code>                                                 |
+| Groups                                   | `(…)`      | `(bla ){2}`| <code>**bla bla **bla</code>                                                 |
 | Back references                          | `\\1`      | `str_replace("this", "(th)is", "\\1ose")` | produces "those"                                |
-| Selection of characters                  | `[…]`      | `d[ieo]g`    | <code>**dig**</code>, <code>**dog**</code>, `dug`                            |
+| Selection of characters                  | `[…]`      | `d[ieou]g`   | <code>**dig**</code>, <code>**dog**</code>, `dug`                            |
 | Range of characters in selection         | `[A-z]`    | `[Hhu]`      | <code>**H**i, **h**ow are yo**u**</code>                                     |
-| Everything except selection              | `[^...]`   | `[^Hhl]`     | <code>H**i, **h**ow are yo**u</code>                                         |
-| Escape special character                 | `\\`       | `3\\.14`     | `3.14` but not `3,14`                                                        |
+| Everything except selection              | `[^...]`   | `[^Hhu]`     | <code>H**i, **h**ow are yo**u</code>                                         |
+| Escape special character                 | `\\`       | `3\\.14`     | <code>**3.14**</code> but not `3,14`                                                        |
 | Lookahead                                | `(?=)`     | `thi(?=s)`   | <code>**thi**s</code>                                                        |
 | Lookbehind                               | `(?<=)`    | `(?<=t)his`  | <code>t**his**</code>                                                        |
 | Negative lookahead                       | `(?!)`     | `thi(?!s)`   | <code>**thi**n</code>, <code>thistle</code>                                  |
@@ -299,6 +305,7 @@ easy to extract for humans, but it is much more difficult to process computation
 - [@WickhamR4DS](https://r4ds.had.co.nz/strings.html#matching-patterns-with-regular-expressions)
 - [@cssbook](https://cssbook.net/content/chapter09.html#sec-regular)
 - [@Hase_textasdata](https://bookdown.org/valerie_hase/TextasData_HS2021/tutorial-9-searching-manipulating-string-patterns.html)
+- [Regular Expressions in R Cheat Sheet](https://github.com/rstudio/cheatsheets/blob/main/regex.pdf)
 
 
 ## Longer Example
@@ -528,14 +535,14 @@ country_df |>
 Let's say you don't like that the founding of France is set to the founding of the French Republic (22 September 1792) and you want to use the date of the Treaty of Verdun (10 August 843) instead:
 
 ```{r}
-France <- tibble(
+France_updated <- tibble(
   country = "France",
   inhabitants = 67000000L,
   capital = "Paris",
   founded = as.Date("843-08-10")
 )
 country_df |>
-  rows_update(France, by = "country") |>
+  rows_update(France_updated, by = "country") |>
   filter(founded < "1300-01-01")
 ```
 
@@ -927,7 +934,54 @@ good_table |>
 
 We have reconstructed bad table :sweat:
 
-[-> What is a variable and what is an observation depends on the questions you ask]{.fragment}
+##
+
+::: {.callout-note}
+## on Tidy Data
+
+What is a variable and what is an observation depends on the questions you ask of the data, not on some fixed property of the dataset itself
+:::
+
+```{r}
+#| echo: false
+contacts <- tribble(
+  ~person    , ~home_phone , ~work_phone ,
+  "Amy Chen" , "555-0101"  , "555-0201"  ,
+  "Ben Diaz" , "555-0102"  , "555-0201"  ,
+  "Cara Fox" , "555-0103"  , "555-0203"
+)
+```
+
+:::: {.columns}
+::: {.column width="50%"}
+### Question A: What are this person's numbers?
+
+The observational unit is one *person* &rarr; wide format (`home_phone`/`work_phone` are two variables):
+
+```{r}
+contacts
+```
+:::
+::: {.column width="50%"}
+### Question B: Is a number shared by multiple people?
+
+The observational unit is one *person-number* pair &rarr; long format (`phone_number` becomes a variable to group by):
+
+```{r}
+contacts |>
+  pivot_longer(
+    cols = c(home_phone, work_phone),
+    names_to = "number_type",
+    values_to = "phone_number"
+  ) |>
+  count(phone_number, sort = TRUE)
+```
+:::
+::::
+
+::: {.ref}
+Source: @wickham_tidy_2014
+:::
 
 ## `pivot_wider`: fix patient data
 
@@ -1285,7 +1339,7 @@ sessionInfo()
 ```
 
 <!-- This is just some extra CSS code to make the included Markdown tables pretty -->
-```{css}
+```{css, echo=FALSE}
 .table-striped {
   > tbody > tr:nth-of-type(odd) > * {
     background-color: #fff9ce;
