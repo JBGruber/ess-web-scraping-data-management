@@ -13,6 +13,7 @@ country_df <- readRDS("data/country_df.rds")
 ```
 
 ```{r}
+library(tidyverse)
 country_df |>
   mutate(
     # with mutate, we can change one of multiple columns or create new ones
