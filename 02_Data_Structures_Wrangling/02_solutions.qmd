@@ -6,6 +6,21 @@ format: html
 ## Exercises 3
 
 1. replace all whitespace characters in the country columns of `country_df` with underscores (`_`)
+
+```{r}
+# I saved country_df data.frame from the main qmd file and import it here. We will learn how this works in session 3
+country_df <- readRDS("data/country_df.rds")
+```
+
+```{r}
+country_df |>
+  mutate(
+    # with mutate, we can change one of multiple columns or create new ones
+    country = str_replace_all(country, "\\s", "_")
+  )
+```
+
+
 2. remove all punctuation from the `data_input` vector
 
 ```{r}
@@ -61,6 +76,7 @@ Vatican City is a country with 825 inhabitants, its capital is Vatican City, and
 
 ```{r}
 library(stringr)
+str_remove_all(data_input, "[,.!@?]")
 ```
 
 3. Extract the date from the string and turn it into a proper date vector:
@@ -69,8 +85,31 @@ library(stringr)
 string <- "Military defeats following the outbreak of the French Revolutionary Wars resulted in the insurrection of 10 August 1792. The monarchy was abolished and replaced by the French First Republic one month later."
 ```
 
-4. Check which of the lines in `data_input` have the word "million" (hint: you need to split the string into a vector with `str_split()` first)
+```{r}
+dates <- str_extract_all(string, "\\d{1,2} [A-z]+ \\d{3,4}")
+lubridate::dmy(dates)
+```
+
+
+4. Check which of the lines in `data_input` have the word "million" (hint: you need to split the string into a vector with `str_split_1()` first)
+
+```{r}
+lines <- str_split_1(data_input, "\n")
+str_detect(lines, "million")
+str_which(lines, "million")
+```
+
+
 5. Now save a subset of the lines into a new object
+
+There are many ways you could solve this. I would suggest to build on the last question and take the subset of lines that have the word "million' in them:
+
+```{r}
+lines_million <- str_subset(lines, "million")
+```
+
+Alternatively, you could make a data.frame first, as I have done in class and then use filter together with `str_detect.`
+
 6. From the following vector, I want you to write code that identifies the URLs from the German Wikipedia that do *not* use the secure Hypertext Transfer Protocol (HTTPS):
 
 ```{r}
@@ -87,17 +126,127 @@ vec <- c(
 )
 ```
 
+German Wikipedia artilces start with "de.wikipedia" instead of "en.wikipedia". The URLs that do not se HTTPS use "http" in the beginning. So all URLs that start with "http://de" fir the condition:
+
+```{r}
+str_detect(vec, "^http://de")
+```
+
+
 ## Exercises 4
 
 1. From the `airports` table in the `nycflights13` package, access all airports that are in the Los Angeles time zone:
 
 ```{r}
+nycflights13::airports
+```
+
+- I would approach this by first using `View()` on the table. Some people struggles with that, as the table was not in the environment and you can't click on it in the Environment tab of RStudio. So let's fix that first:
+
+```{r}
 airports <- nycflights13::airports
 ```
 
+- Using the search function in the table viewer, we can look for "Los Angeles". We can then see that there is a column called `tzone` that has the value "America/Los_Angeles". This is the Los Angeles time zone. So we can use filter to access these
+
+```{r}
+airports |>
+  filter(tzone == "America/Los_Angeles")
+```
+
+- If you took question literally, you might want to have just the airport names:
+
+```{r}
+airports |>
+  filter(tzone == "America/Los_Angeles") |>
+  pull(name)
+```
+
 2. Access the `faa` of the airport at latitude 40.87522 and longitude -74.28136
+
+- I had assume this would work:
+
+```{r}
+airports |>
+  filter(lat == 40.87522, lon == -74.28136) |>
+  pull(faa)
+```
+
+- Unfortunately, I hadn't checked the results. It is a little tricky to make exact comparisons between numeric values. So the only direct solution would have been something like this:
+
+```{r}
+airports |>
+  filter(lat > 40.87521, lat < 40.87523, lon > -74.28137, lon < -74.28135) |>
+  pull(faa)
+```
+
+
+- A good workaround that some of you cam up with is to use `View(airports)` again and then use the search function to look for the numbers. Then you know which aiport is meant:
+
+```{r}
+airports |>
+  filter(name == "Caldwell Essex County Airport") |>
+  pull(faa)
+```
+
+
 3. The Las Vegas International Aiport (LAS) has been renamed since the dataset was created. Update the name to "Harry Reid International"
+
+- You can basically just copy the code from the slides:
+
+```{r}
+France <- tibble(
+  country = "France",
+  inhabitants = 67000000L,
+  capital = "Paris",
+  founded = as.Date("843-08-10")
+)
+country_df |>
+  rows_update(France, by = "country") |>
+  filter(founded < "1300-01-01")
+```
+
+And change it to fit the new task
+
+```{r}
+las <- tibble(
+  faa = "LAS",
+  name = "Harry Reid International",
+  lat = 36.080056,
+  lon = -115.15225,
+  alt = 2141,
+  tz = -8,
+  dst = "A",
+  tzone = "America/Los_Angeles"
+)
+airports |>
+  rows_update(las, by = "faa")
+```
+
+
+
 4. Delete all aiports that have `NA` as their timezone
+
+To delete rows, I would always suggest that you create a new objects, which does not contain the rows you do not want:
+
+```{r}
+airports_clean <- airports |>
+  filter(!is.na(tzone))
+```
+
+Side note: it would be logical to do something likes this:
+
+```{r}
+airports |>
+  filter(!tzone == NA)
+```
+
+But that will not work in `R` because all comparisons to `NA` result in `NA`. You can test this with:
+
+```{r}
+1 == NA
+```
+
 
 ## Exercises 5
 

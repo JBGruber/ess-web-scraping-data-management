@@ -6,7 +6,7 @@ date: 2026-07-22
 from: markdown+emoji
 format:
   revealjs:
-    smaller: true
+    smaller: false
     width: 1600
     height: 900
     scrollable: true
@@ -114,7 +114,7 @@ I generally recommend you change that:
 ::: {.column width="60%"}
 ### Windows
 
-[![](https://help.autodesk.com/sfdcarticles/img/0EM3g000000e60L)](https://www.autodesk.com/support/technical/article/caas/sfdcarticles/sfdcarticles/How-to-enable-hidden-file-extensions-in-Windows.html){target="_blank"}
+[![](media/win_hidden.jpg)](https://www.autodesk.com/support/technical/article/caas/sfdcarticles/sfdcarticles/How-to-enable-hidden-file-extensions-in-Windows.html){target="_blank"}
 :::
 
 ::: {.column width="30%" }
@@ -152,7 +152,7 @@ Basic difference between file types:
 - Binary files contain some meta information on how they should be interpreted. Plain text files **do not**
 - What specific bytes represent which character is defined in the *file encoding*
 - Unfortunately, there are **different standards** (e.g., UTF-8, ASCII, Windows-1252)
-- The file itself gives no hint what encoding it uses :crying_cat_face:
+- The file itself often gives no hint what encoding it uses :crying_cat_face:
 :::
 
 ::: {.column width="50%" }
@@ -188,6 +188,17 @@ It has the very annoying habit of forcing a different encoding.
 
 ```{r}
 file.copy("data/files/un-secretaries.txt", "data/files/un-secretaries_win.txt")
+```
+
+
+<!-- ignore this chunk, it is just for rendering -->
+```{r}
+#| echo: false
+if (!interactive()) {
+  readLines("data/files/un-secretaries_win.txt") |>
+    iconv(from = "UTF8", to = "ISO-8859-1") |>
+    writeLines("data/files/un-secretaries_win.txt")
+}
 ```
 
 Let's open this file with Notepad, do nothing and just save it (or open it in RStuido and use `File` -> `Save with Encoding`)
@@ -494,7 +505,7 @@ This won't, even though it works on my machine :stuck_out_tongue::
 ```{r}
 #| eval: false
 plenary_speeches_raw <- rio::import(
-  "/home/johannes/Documents/GitHub/ess-web-scraping-data-management/03_Working_with_Files/data/files/csv-example.csv"
+  "/home/johannes/Dropbox/Teaching/ess-web-scraping-data-management/03_Working_with_Files/data/files/csv-example.csv"
 )
 ```
 
@@ -561,7 +572,7 @@ But the basic idea is simple:
 Say you found an issue in your pre-processing.
 You fix the issue and re-run the pre-processing script.
 But what else needs to be fixed?
-From the perspective of make, everything in the flowchart above after the pre-processing step needs to be rebuilt.
+From the perspective of make, everything in the flowchart after the pre-processing step needs to be rebuilt.
 If you name your files in a sensible way and record the order of things, that should be no problem.
 You can use a little functions that implements make-like processing
 
@@ -672,15 +683,26 @@ map(dataset_files, read_dat) |>
 
 ## Files as databases: Why?
 
-::: {.incremental}
+:::: {.columns}
+::: {.column .incremental width="60%"}
 - when working with larger datasets, the available memory of your computer becomes an issue
 - "big data" is often defined as datasets larger than your memory
-- in these cases you have three choices
+- in these cases you have four choices
 
 1. Let each Quarto file do less (and break up tasks into more files)
 2. Chunk your analysis. Often, you can perform analysis or pre-processing on one subset of the data after the other and combine the results
 3. Get better hardware or use cloud computing (both are expensive, [but possible](https://cloudyr.github.io/packages/index.html))
+4. **Do not load the full data into memory**
 :::
+::: {.column width="30%" }
+![Storage vs. Memory](https://www.thetechedvocate.org/wp-content/uploads/2023/07/memory-vs-storage_6019c498d2ad7-660x400@2x.png)
+[](https://www.thetechedvocate.org/storage-vs-memory/){target="_blank"}
+:::
+
+::::
+
+
+
 
 ## Files as databases: How?
 
@@ -775,7 +797,7 @@ Since we can filter it though, the memory footprint will still be much smaller.
 
 - git was developed for collaborative work on software
 - it is excellently suited for research projects as well!
-- you can get a free Github premium account with your university address
+- you can get a free Github premium account with a university address
 - this enables you to have private repositories (otherwise all repositories are public)
 - widely used system with good learning materials, for example: @happygitwithr
 
@@ -786,6 +808,27 @@ Since we can filter it though, the memory footprint will still be much smaller.
 - GitHub limits file sizes for upload
 - synchronising projects becomes slow if large binary files are committed
 :::
+
+## Git some Version Control
+
+Git is an extensive application and too much to go through.
+But you do not need all the functionality to make efficient use of it's main promise: keeping track of what is happening in your projects and giving you the ability to revert to an older state of your project.
+
+![](../01_Introduction/media/github.com_JBGruber_PhD_commits_master.png)
+
+This screenshot shows the last months of my PhD, when I was furiously working on integrating comments from different people.
+Not only helped git to show me my progress nicely, I also did not have to worry about accidentally deleting anything that might still prove valuable.
+Especially towards the end, I often removed sections or copied them to other chapters.
+Whenever I could not find a specific section, I went back to the last commit when I could still remember where it was.
+
+Additionally, GitHub offers some nice features to organise and plan projects around *issues*.
+
+![](../01_Introduction/media/github.com_project.png)
+
+Here you can note down remaining problems and keep track of your progress.
+It keeps your head free for other things!
+
+Learn more, e.g., at: <https://happygitwithr.com/>
 
 ## Google Sheets
 

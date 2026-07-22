@@ -44,3 +44,5 @@ e5277ed915dac5918289e064ee7b9007.mp4
 /.quarto/
 
 **/*.quarto_ipynb
+snowflake.log
+data/
