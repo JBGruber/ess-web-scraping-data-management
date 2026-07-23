@@ -5,9 +5,9 @@ author: "Johannes B. Gruber"
 date: 2026-07-23
 format:
   revealjs:
-    smaller: true
-    width: 1600
-    height: 900
+    smaller: false
+    width: 1920
+    height: 1080
     scrollable: true
     code-line-numbers: true
     slide-number: c/t
@@ -1196,7 +1196,7 @@ diamonds_con
 
 ## Working with connections in `R`  {visibility="uncounted"}
 
-However, this table is just a connections, and `R` has pulled only the first couple of rows to display them.
+However, this table is just a connection, and `R` has pulled only the first couple of rows to display them.
 
 ```{r}
 object.size(diamonds)

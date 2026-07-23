@@ -920,6 +920,12 @@ Not as common, but sometimes one or two columns contain several variables:
 cms_patient_experience
 ```
 
+:::{.incremental}
+- `cms_patient_experience` contains patient experience data (see `?cms_patient_experience`)
+- What is messy here? The `measure_cd` column holds **six different variables** (the `CAHPS_GRP_*` survey measures), and their values are all crammed into the single `prf_rate` column
+- As a result each organisation is spread across 6 rows, so *one observation does not form one row*
+:::
+
 In this case, we need to do the opposite operations: widening data
 
 ```{r}
@@ -1159,6 +1165,8 @@ I pulled this messy data off the ESS Twitter page:
 ```{r}
 ess_tweets <- readRDS("data/nested_ess.rds")
 ```
+
+![](media/twitter.png)
 
 Let's try and have a look:
 

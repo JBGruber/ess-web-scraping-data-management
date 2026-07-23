@@ -190,14 +190,13 @@ It has the very annoying habit of forcing a different encoding.
 file.copy("data/files/un-secretaries.txt", "data/files/un-secretaries_win.txt")
 ```
 
-
 <!-- ignore this chunk, it is just for rendering -->
 ```{r}
 #| echo: false
 if (!interactive()) {
-  readLines("data/files/un-secretaries_win.txt") |>
+  readLines("data/files/un-secretaries.txt") |>
     iconv(from = "UTF8", to = "ISO-8859-1") |>
-    writeLines("data/files/un-secretaries_win.txt")
+    writeLines("data/files/un-secretaries_win.txt", useBytes = TRUE)
 }
 ```
 

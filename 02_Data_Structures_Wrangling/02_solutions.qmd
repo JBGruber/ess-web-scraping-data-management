@@ -254,19 +254,61 @@ But that will not work in `R` because all comparisons to `NA` result in `NA`. Yo
 1. Look at the table `billboard` that is included in `tidyr`. What is not tidy about it?
 
 ```{r}
+library(tidyr)
 billboard
 ```
 
+- this is  wide or messy or bad table (whichever name you prefer) because the observations (song rankings by week 1, 2, 3, and so on) are stored in columns rather than rows
+- if you want to learn more about this table, you can use `?billboard` or look at it using `View(billboard)`
+
 2. Tidy the data
+
+- since the format is wide and we want a long (or tidy) table, we need `pivot_longer`
+
+```{r}
+billboard |>
+  pivot_longer(
+    cols = starts_with("wk"), # which columns should be made longer
+    names_to = "week", # in which column should the former column names be stored
+    values_to = "rank" # in which column should the values be stored
+  )
+```
+
+
 3. The new table contains many missing values (`NA`s) explain why and if you should delete them
+
+- Looking at the song "Dancing Queen", we see that it was on the very last place of the top 100 for 5 weeks. Afterwards it apparently dropped out of the top 100. Since other songs remained there much longer, whoever created the table needed many extra columns that are empty for this song. Since we pivoted all values into the long format, the missing values remained
+- I think the NAs should be removed as they add no values. If we wanted to count how long a song was in the top 100, we could still do so. The information that it was not in the top 100 in week 40 or 47 is redundant
+
+
 4. Independently from whether it is the right thing to do or now: delete the `NA`s
-4. Why does this code fail?
+
+```{r}
+billboard |>
+  pivot_longer(
+    cols = starts_with("wk"), # which columns should be made longer
+    names_to = "week", # in which column should the former column names be stored
+    values_to = "rank" # in which column should the values be stored
+  ) |>
+  filter(!is.na(rank)) # we remove rows where the function is.na() returns TRUE for the rank column
+```
+
+5. Why does this code fail?
 
 ```{r}
 #| error: true
 table4a |>
   pivot_longer(c(1999, 2000), names_to = "year", values_to = "cases")
 ```
+
+This might become a little clearer when adding the missing argument name. `c(1999, 2000)` indicates which columns should be turned longer. But column names can't be numeric or integer in `R`. If they consist of numbers, they must be turned into character:
+
+```{r}
+table4a |>
+  pivot_longer(cols = c("1999", "2000"), names_to = "year", values_to = "cases")
+```
+
+However, the cols argument can deal with numbers. Then they indicate which column, starting to count from the first column on the left, should be treated. What the code above did was to say turn columns 1999 and 2000 places from the left into the long format. Since the table only has 3 columns, the code failed.
 
 5. Make this into a tidy table
 
@@ -278,6 +320,13 @@ preg <- tribble(
 )
 ```
 
+Maybe te hardest thing here is to think what would be cases here and what are variables, since there is no ID. We need to consider what the table shows. We have counts of females and males who are pregnant. So pregnant, gender and how often they appear together are variables, I would say:
+
+```{r}
+preg |>
+  pivot_longer(cols = male:female, names_to = "gender", values_to = "n")
+```
+
 ## Exercises 6
 
 1. The object below is a nested list with Game of Thrones characters. Tidy the data into a data.frame that contains at least name, gender, culture and birthday of each character
@@ -286,7 +335,113 @@ preg <- tribble(
 got_characters <- repurrrsive::got_chars
 ```
 
+- My first approach would be to just test if `bind_rows` knows how to solve this automagically:
+
+```{r}
+#| error: true
+got_characters |> 
+  bind_rows()
+```
+
+- unfortunatly, the list elements are not easily coerced into data.frames, so we need to write a special function and map over the list elements
+- I usually start with the first element of the list and develop code to get this into a data.frame
+
+```{r}
+# select first element
+got_characters_1 <- got_characters |> pluck(1)
+# transform information into a tibble/data.frame
+tibble(
+  name = got_characters_1$name,
+  gender = got_characters_1$gender,
+  culture = got_characters_1$culture,
+  born = got_characters_1$born
+  # you can extend the list, but this is the minimum the exercises asked for
+)
+```
+
+- Now we can wrap this in a function, map over all list elements with it, and combine into one data.frame
+
+```{r}
+got_characters |> 
+  map(function(element) {
+    tibble(
+      name = element$name,
+      gender = element$gender,
+      culture = element$culture,
+      born = element$born
+    )
+  }) |> 
+  bind_rows()
+```
+
 2. From the `got_characters` object, also extract in which season(s) they appear, so that the data frame contains one row per season appearance (and still the same character information as above) 
+
+- When you look at the `seasons` field, you noticed that this is a nested column
+
+```{r}
+got_characters_1$tvSeries
+```
+
+- Yet, as long as you only have one nested field, you can use a behaviour of `R`: automatic recycling of lenght 1 elements:
+
+```{r}
+tibble(
+  name = got_characters_1$name,
+  gender = got_characters_1$gender,
+  culture = got_characters_1$culture,
+  born = got_characters_1$born,
+  seasons = got_characters_1$tvSeries
+)
+```
+
+- This is similar to unnesting: the rows of length 1 are recycled (duplicated) until all columns have the same length
+
+```{r}
+got_characters |> 
+  map(function(element) {
+    tibble(
+      name = element$name,
+      gender = element$gender,
+      culture = element$culture,
+      born = element$born,
+      seasons = element$tvSeries
+    )
+  }) |> 
+  bind_rows()
+```
+
+- Bonus: it would be slightly differnt if you wanted to include another nested field too
+- the only way to create a tibble now is to store the columns as lists
+
+```{r}
+tibble(
+  name = got_characters_1$name,
+  gender = got_characters_1$gender,
+  culture = got_characters_1$culture,
+  born = got_characters_1$born,
+  seasons = list(got_characters_1$tvSeries),
+  titles = list(got_characters_1$titles)
+)
+```
+
+- to get the whole table, you would need to do this for all elements, then unnest the nested columns to get a tidy data.frame of the person-season-title observation
+
+```{r}
+got_characters |> 
+  map(function(element) {
+    tibble(
+      name = element$name,
+      gender = element$gender,
+      culture = element$culture,
+      born = element$born,
+      seasons = list(element$tvSeries),
+      titles = list(element$titles)
+    )
+  }) |> 
+  bind_rows() |> 
+  unnest(seasons) |> 
+  unnest(titles)
+```
 
 3. Sometimes, it makes sense to keep nested information around for later. The `got_characters` object contains aliases for the characters. Store them along the character name in a nested format, so that each row looks like this:
 
@@ -302,10 +457,101 @@ tibble(
 )
 ```
 
+- we did something similar in the bonus above. The code is essentially the same, but I'm not unnesting this time
+
+```{r}
+got_characters |> 
+  map(function(element) {
+    tibble(
+      name = element$name,
+      gender = element$gender,
+      culture = element$culture,
+      born = element$born,
+      seasons = list(element$tvSeries),
+      aliases = list(element$aliases)
+    )
+  }) |> 
+  bind_rows() 
+```
+
 4. The object below contains someone's music collection. Create a tidy table of the artist this person listens to:
 
 ```{r}
 music_collection <- repurrrsive::discog
 ```
 
+- I tried `bind_rows`, which does not error, but somehow produces a data.frame with 1,705 rows from just 155 list elements!
+
+```{r}
+music_collection |> 
+  bind_rows()
+```
+
+- so we take the same approach as before
+
+```{r}
+music_collection |> 
+  map(function(element) {
+    tibble(
+      instance_id = element$instance_id,
+      date_added = element$date_added,
+      id = element$id,
+      rating = element$rating,
+      basic_information = list(element$basic_information)
+    )
+  }) |> 
+  bind_rows()
+```
+
+- Now we still need some information from the `basic_information` column (artist name)
+- We can again use the first instance to look for the name
+
+```{r}
+basic_information_1 <- music_collection[[1]]$basic_information
+basic_information_1 |> 
+  lobstr::tree()
+```
+
+- So the artist's name lives under `basic_information_1$artists[[1]]$name`, but the `[[1]]` indicates there might be more than 1 artist at a time, which we can get with 
+
+```{r}
+purrr::map_chr(basic_information_1$artists, function(x) pluck(x, "name"))
+```
+
+- now we can do this for the entire list
+
+```{r}
+music_collection |> 
+  map(function(element) {
+    tibble(
+      instance_id = element$instance_id,
+      date_added = element$date_added,
+      id = element$id,
+      rating = element$rating,
+      basic_information = list(element$basic_information),
+      # once again, the other values are recycled if there is more than 1 artist name
+      artist_name = purrr::map_chr(element$basic_information$artists, function(x) pluck(x, "name"))
+    )
+  }) |> 
+  bind_rows()
+```
+
+
 5. Now add the title of the songs to the artists table
+
+```{r}
+music_collection |> 
+  map(function(element) {
+    tibble(
+      instance_id = element$instance_id,
+      date_added = element$date_added,
+      id = element$id,
+      rating = element$rating,
+      basic_information = list(element$basic_information),
+      # once again, the other values are recycled if there is more than 1 artist name
+      artist_name = purrr::map_chr(element$basic_information$artists, function(x) pluck(x, "name")),
+      song_title = element$basic_information$title
+    )
+  }) |> 
+  bind_rows()
+```
