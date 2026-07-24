@@ -1,0 +1,126 @@
+services:
+  caddy:
+    profiles: [deploy, deploy-noelastic]
+    image: ccsamsterdam/amcat4_frontend:${AMCAT4_VERSION:-latest}
+    container_name: katty
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      - AMCAT4_URL=${AMCAT4_URL:-http://localhost}
+    volumes:
+      - caddy_data:/data
+      - caddy_config:/config
+    networks:
+      - amcat-net
+    depends_on:
+      - api
+
+  api:
+    profiles: [deploy, deploy-noelastic]
+    image: ccsamsterdam/amcat4_backend:${AMCAT4_VERSION:-latest}
+    container_name: amcat4
+    restart: unless-stopped
+    networks:
+      - amcat-net
+    environment:
+      # For deploy-noelastic, set amcat4_elastic_host in .env to point to your external Elasticsearch
+      - amcat4_elastic_host=${amcat4_elastic_host:-http://elasticsearch:9200}
+      - amcat4_host=${AMCAT4_URL:-http://localhost}
+      - FORWARDED_ALLOW_IPS=*
+      # Passthrough environment variables for the API configuration
+      - amcat4_elastic_password
+      - amcat4_elastic_verify_ssl
+      - amcat4_system_index
+      - amcat4_auth
+      - amcat4_middlecat_url
+      - amcat4_admin_email
+
+  elasticsearch-init:
+    profiles: [deploy, dev]
+    image: busybox
+    user: root
+    command: chown -R 1000:0 /snapshots
+    volumes:
+      - ${ELASTIC_SNAPSHOT_PATH:-snapshot_data}:/snapshots
+
+  elasticsearch: &elastic_base
+    profiles: [deploy]
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.18.4
+    depends_on:
+      elasticsearch-init:
+        condition: service_completed_successfully
+    restart: unless-stopped
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          'curl -s http://localhost:9200/_cluster/health | grep -vq ''"status":"red"''',
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 15
+    networks:
+      - amcat-net
+    environment:
+      - discovery.type=single-node
+      - bootstrap.memory_lock=true
+      - xpack.security.enabled=false
+      # Set ELASTIC_MEMORY in .env to at most half available memory, and at most 32g
+      - ES_JAVA_OPTS=-Xms${ELASTIC_MEMORY:-1g} -Xmx${ELASTIC_MEMORY:-1g}
+      # Snapshot repositories must be within this path. By default uses a named Docker volume;
+      # set ELASTIC_SNAPSHOT_PATH in .env to a host path to access snapshots outside the container.
+      - path.repo=/usr/share/elasticsearch/data/snapshots
+    volumes:
+      - ${ELASTIC_DATA_STORAGE:-elasticsearch_data}:/usr/share/elasticsearch/data:rw
+      - ${ELASTIC_SNAPSHOT_PATH:-snapshot_data}:/usr/share/elasticsearch/data/snapshots:rw
+
+  elasticsearch-dev:
+    <<: *elastic_base
+    profiles: [dev]
+    ports:
+      - "127.0.0.1:9200:9200"
+
+  # S3-compatible storage — only used in local dev (run with --profile dev)
+  s3:
+    profiles: [dev]
+    image: chrislusf/seaweedfs:latest
+    container_name: seaweedfs01
+    command:
+      [
+        "server",
+        "-s3",
+        "-s3.config=/etc/seaweedfs/s3config.json",
+        "-s3.allowEmptyFolder=false",
+      ]
+    volumes:
+      - seaweedfs_data:/data
+      - ./deploy/s3config.json:/etc/seaweedfs/s3config.json:ro
+    ports:
+      - "127.0.0.1:8333:8333" # S3 Gateway
+      # - "127.0.0.1:8889:8888" # Web UI
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8888/"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - amcat-net
+
+networks:
+  amcat-net:
+
+volumes:
+  elasticsearch_data:
+  snapshot_data:
+  caddy_data:
+  caddy_config:
+  seaweedfs_data:

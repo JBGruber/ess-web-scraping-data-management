@@ -28,7 +28,6 @@ test.qmd
 04_Linking_and_joining_data_SQL/media/venn_only.pdf
 04_Linking_and_joining_data_SQL/data/db_nyc.sql
 04_Linking_and_joining_data_SQL/notes.md
-05_Scaling_Reporting_and_Database_Software/data/docker-compose-amcat.yml
 07_Static_Web_Pages/data/za
 07_Static_Web_Pages/cookies.txt
 
@@ -46,3 +45,7 @@ e5277ed915dac5918289e064ee7b9007.mp4
 **/*.quarto_ipynb
 snowflake.log
 data/
+
+# Allow
+!05_Scaling_Reporting_and_Database_Software/data
+05_Scaling_Reporting_and_Database_Software/data/setup_public_server.R

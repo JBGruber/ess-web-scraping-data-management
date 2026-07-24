@@ -6,6 +6,42 @@ format: html
 ## Exercises 1
 
 1. See if some of the other variables influence support for Sanders or Clinton
+
+All you need to do to solve this is to replace the x aesthetical mapping with a different variable:
+
+```{r}
+results_state_facts |>
+  filter(
+    party == "Democrat",
+    candidate %in% c("Bernie Sanders", "Hillary Clinton")
+  ) |>
+  ggplot(aes(x = white, y = pct_votes, colour = candidate)) +
+  geom_point() +
+  geom_smooth(method = "lm", formula = y ~ x)
+```
+
+```{r}
+results_state_facts |>
+  filter(
+    party == "Democrat",
+    candidate %in% c("Bernie Sanders", "Hillary Clinton")
+  ) |>
+  ggplot(aes(x = college, y = pct_votes, colour = candidate)) +
+  geom_point() +
+  geom_smooth(method = "lm", formula = y ~ x)
+```
+
+```{r}
+results_state_facts |>
+  filter(
+    party == "Democrat",
+    candidate %in% c("Bernie Sanders", "Hillary Clinton")
+  ) |>
+  ggplot(aes(x = female, y = pct_votes, colour = candidate)) +
+  geom_point() +
+  geom_smooth(method = "lm", formula = y ~ x)
+```
+
 2. Below I prepared code that loads data from the `nycflights13` package which is about flights departing NYC in 2013:
 
 ```{r}
@@ -17,16 +53,81 @@ data(planes)
 data(airlines)
 ```
 
-The dataset is perfect for practicing joining data, as the set is split into tables that relate to each other.
-You can see the relation in the diagram below:
+The dataset is perfect for practising joining data, as the set is split into tables that relate to each other.
+You can see the realtion in the diagram below:
 
 ![](https://raw.githubusercontent.com/hadley/r4ds/main/diagrams/relational.png)
 
 Imagine you wanted to draw (approximately) the route each plane flies from its origin to its destination. What variables would you need? What data frames would you need to combine?
 
+- `flights` contains an origin and a destination airport. Looking at `airports` with `View(airports)` we see a longitude and a latitude coordinate. By joining `flights` and `airports`, we could calculate the differences in longitude and latitude.
+
 3. Add the location of the origin *and* destination (i.e. the `lat` and `lon`) to `flights`.
+
+- for this, we need to join the tables two times. Once we join `origin` with `faa`, and once `dest` with `faa`
+- since we are only interested in the `lat` and `lon` variables, we could first select a subset from the `airports` table (this is optional)
+
+```{r}
+airports_loc <- airports |>
+  select(faa, lat, lon)
+```
+
+
+```{r}
+flights |>
+  left_join(airports_loc, by = c("origin" = "faa")) |>
+  left_join(
+    airports_loc,
+    by = c("dest" = "faa"),
+    # using the suffix produces cleaner variable names
+    suffix = c("_origin", "_dest")
+  )
+```
+
+
 4. Which airlines departed most often from the NYC airports (i.e. JFK, LGA or EWR). Use their real names not the abbreviation
+
+```{r}
+flights |>
+  filter(origin %in% c("JFK", "LGA", "EWR")) |>
+  left_join(airlines, by = "carrier") |>
+  count(name, sort = TRUE)
+```
+
+
+
 5. How could you calculate the average age of the planes departing from NYC? (hint: you can calculate averages with `mean()`, you might want to use `na.rm = TRUE`)
+
+- first, we need to join `flights` with `planes` to see which planes depart from NYC and how often.
+- looking at `View(flights)` and `View(planes)`, we see that a common key is `tailnum`
+- if we decide to calculate the mean age of the plane for every departure we would use `left_join`:
+
+```{r}
+airplanes_deps <- flights |>
+  filter(origin %in% c("JFK", "LGA", "EWR")) |>
+  left_join(planes, by = "tailnum", suffix = c("", "_plane"))
+```
+
+- alternatively, you might want to check which of the planes started from NYC and then calculate the mean age of these planes. In this case, you need to `right_join`, as you do not want duplicated planes
+
+```{r}
+airplanes_deps <- flights |>
+  filter(origin %in% c("JFK", "LGA", "EWR")) |>
+  right_join(planes, by = "tailnum", suffix = c("", "_plane"))
+```
+
+- now you can calculate the mean age:
+
+```{r}
+mean(airplanes_deps$year_plane, na.rm = TRUE)
+# or as tidy code
+airplanes_deps |>
+  summarise(year_plane = mean(year_plane, na.rm = TRUE))
+```
+
+- you have to add `na.rm = TRUE` or the result will always be `NA`
+
+
 
 ## Exercises 2
 

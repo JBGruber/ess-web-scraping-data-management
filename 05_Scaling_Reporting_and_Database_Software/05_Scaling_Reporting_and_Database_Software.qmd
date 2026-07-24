@@ -186,6 +186,8 @@ db <- dbConnect(
 )
 ```
 
+Note: if you did not set up your own local PostgreSQL server, you can use mine for now. Just replace `localhost` with `204.168.185.249` and `user = "postgres"` with your name in lowercase (e.g., `user = "johannes"`)
+
 ```{r}
 #| echo: false
 # To make sure this produces the same results every time, I remove all users and tables from the database
@@ -481,7 +483,7 @@ Same as with `PostgreSQL`, we can use Docker.
 
 ```{r}
 curl::curl_download(
-  url = "https://raw.githubusercontent.com/ccs-amsterdam/amcat4docker/main/docker-compose.yml",
+  url = "https://raw.githubusercontent.com/ccs-amsterdam/amcat4/refs/heads/master/deploy/docker-compose.yml",
   destfile = "data/docker-compose-amcat.yml"
 )
 ```
@@ -504,63 +506,6 @@ Configure the AmCAT server:
 
 ```sh
 docker exec -it amcat4 amcat4 config
-#> Reading/writing settings from .env
-#> 
-#> host: Host this instance is served at (needed for checking tokens)
-#> The current value for host is http://localhost/amcat.
-#> Enter a new value, press [enter] to leave unchanged, or press #> [control+c] to abort: 
-#> 
-#> elastic_password: Elasticsearch password. This the password for the #> 'elastic' user when Elastic xpack security is enabled
-#> The current value for elastic_password is None.
-#> Enter a new value, press [enter] to leave unchanged, or press #> [control+c] to abort: 
-#> 
-#> elastic_host: Elasticsearch host. Default: https://localhost:9200 if #> elastic_password is set, http://localhost:9200 otherwise
-#> The current value for elastic_host is http://elastic8:9200.
-#> Enter a new value, press [enter] to leave unchanged, or press #> [control+c] to abort: 
-#> 
-#> elastic_verify_ssl: Elasticsearch verify SSL (only used if #> elastic_password is set). Default: True unless host is localhost)
-#> The current value for elastic_verify_ssl is True.
-#> Enter a new value, press [enter] to leave unchanged, or press #> [control+c] to abort: 
-#> 
-#> system_index: Elasticsearch index to store authorization information #> in
-#> The current value for system_index is amcat4_system.
-#> Enter a new value, press [enter] to leave unchanged, or press #> [control+c] to abort: 
-#> 
-#> auth: Do we require authorization?
-#>   Possible choices:
-#>   - no_auth: everyone (that can reach the server) can do anything #> they want
-#>   - allow_guests: everyone can use the server, dependent on #> index-level guest_role authorization settings
-#>   - allow_authenticated_guests: everyone can use the server, if they #> have a valid middlecat login,
-#> and dependent on index-level guest_role authorization settings
-#>   - authorized_users_only: only people with a valid middlecat login #> and an explicit server role can use the server
-#> 
-#> The current value for auth is AuthOptions.no_auth.
-#> Enter a new value, press [enter] to leave unchanged, or press #> [control+c] to abort: 
-#> 
-#> middlecat_url: Middlecat server to trust as ID provider
-#> The current value for middlecat_url is https://middlecat.net.
-#> Enter a new value, press [enter] to leave unchanged, or press #> [control+c] to abort: 
-#> 
-#> admin_email: Email address for a hardcoded admin email (useful for #> setup and recovery)
-#> The current value for admin_email is None.
-#> Enter a new value, press [enter] to leave unchanged, or press #> [control+c] to abort: 
-#> 
-#> minio_host: None
-#> The current value for minio_host is None.
-#> Enter a new value, press [enter] to leave unchanged, or press #> [control+c] to abort: 
-#> 
-#> minio_tls: None
-#> The current value for minio_tls is False.
-#> Enter a new value, press [enter] to leave unchanged, or press #> [control+c] to abort: 
-#> 
-#> minio_access_key: None
-#> The current value for minio_access_key is None.
-#> Enter a new value, press [enter] to leave unchanged, or press #> [control+c] to abort: 
-#> 
-#> minio_secret_key: None
-#> The current value for minio_secret_key is None.
-#> Enter a new value, press [enter] to leave unchanged, or press #> [control+c] to abort: 
-#> *** Written .env file to .env ***
 ```
 
 
@@ -571,7 +516,7 @@ We need to log in, which you can do without a user by default:
 ```{r connect_amcat}
 # remotes::install_github("ccs-amsterdam/amcat4r")
 library(amcat4r)
-amcat_login("http://localhost/amcat")
+amcat_login("http://localhost/api")
 ```
 
 We can have a look at the example corpus with:

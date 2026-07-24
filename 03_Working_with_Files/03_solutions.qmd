@@ -62,8 +62,85 @@ bad_csv <- rio::import("data/csv-bad-example.csv", skip = 3, fill = TRUE)
 
 1. When might it make sense to treat a folder full of files as a database?
 
+- when you have files which all have the same data structure
+
 2. When could it make sense to save data in an arrow database full of csv files?
+
+- when a real database would be too much hassle
+- when you want to add new data repeatedly (e.g., when you run a web scraping script every day)
 
 3. `arrow` also supports a file format called Parquet. Using it instead of CSV files increases speed and reduces file sizes, while it is also widely used by other languages and programs. Create a new folder where you store the Houses of Commons data in one file per speaker (hint read `?arrow::write_parquet` first).
 
+You can solve this exercise by changing the code that wrote the csv files:
+
+```{r hoc_export}
+#| eval: false
+if (!dir.exists("data/house_of_commons")) {
+  # I split this into file just for demonstration puposes
+  corp_hoc_list <- split(corp_hoc_df, corp_hoc_df$party)
+  dir.create("data/house_of_commons")
+  for (party in names(corp_hoc_list)) {
+    rio::export(
+      corp_hoc_list[[party]],
+      paste0("data/house_of_commons/", party, ".csv")
+    )
+  }
+}
+list.files("data/house_of_commons")
+```
+
+First, we need to change the code that split up the data per party, into data per speaker:
+
+```{r}
+corp_hoc <- "data/Corp_HouseOfCommons_V2.rds"
+corp_hoc_df <- readRDS(corp_hoc) |>
+  mutate(date = as.Date(date))
+corp_hoc_list <- split(corp_hoc_df, corp_hoc_df$speaker)
+```
+
+Now we can create a new folder to store the new files:
+
+```{r}
+dir.create("data/house_of_commons_parquet")
+```
+
+Next, we have to loop over each speaker and export them to their own file.
+We do this in the same way as before, but use `write_parquet` instead.
+Reading the help file, I find this example:
+
+```{r}
+#| eval: false
+tf1 <- tempfile(fileext = ".parquet")
+write_parquet(data.frame(x = 1:5), tf1)
+```
+
+It looks like `write_parquet` works in the same way as `rio::export`!
+So all we need to change is the function name and the file extension:
+
+```{r}
+for (speaker in names(corp_hoc_list)) {
+  arrow::write_parquet(
+    corp_hoc_list[[speaker]],
+    paste0("data/house_of_commons_parquet/", speaker, ".parquet")
+  )
+}
+```
+
+
 4. Connect to the "database" of Parquet files and make a plot showing how many entries there are over the years per party
+
+```{r}
+library(arrow)
+corp_hoc_con <- open_dataset(
+  sources = "data/house_of_commons_parquet",
+  format = "parquet"
+)
+```
+
+```{r}
+corp_hoc_con |>
+  count(party, year = lubridate::year(date)) |>
+  collect() |>
+  ggplot(aes(x = year, y = n, colour = party)) +
+  geom_line()
+```
