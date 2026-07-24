@@ -1,6 +1,5 @@
 services:
   caddy:
-    profiles: [deploy, deploy-noelastic]
     image: ccsamsterdam/amcat4_frontend:${AMCAT4_VERSION:-latest}
     container_name: katty
     restart: unless-stopped
@@ -18,7 +17,6 @@ services:
       - api
 
   api:
-    profiles: [deploy, deploy-noelastic]
     image: ccsamsterdam/amcat4_backend:${AMCAT4_VERSION:-latest}
     container_name: amcat4
     restart: unless-stopped
@@ -38,7 +36,6 @@ services:
       - amcat4_admin_email
 
   elasticsearch-init:
-    profiles: [deploy, dev]
     image: busybox
     user: root
     command: chown -R 1000:0 /snapshots
@@ -46,7 +43,6 @@ services:
       - ${ELASTIC_SNAPSHOT_PATH:-snapshot_data}:/snapshots
 
   elasticsearch: &elastic_base
-    profiles: [deploy]
     image: docker.elastic.co/elasticsearch/elasticsearch:8.18.4
     depends_on:
       elasticsearch-init:
