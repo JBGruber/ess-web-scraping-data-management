@@ -1,6 +1,8 @@
 ---
 title: "solutions session 4"
 format: html
+execute:
+  eval: false
 ---
 
 ## Exercises 1

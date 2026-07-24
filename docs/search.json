@@ -18,7 +18,7 @@
     "href": "index.html#schedule",
     "title": "Introduction to Web Scraping and Data Management for Social Scientists",
     "section": "Schedule",
-    "text": "Schedule\nSlides are uploaded here as the course progresses.\n\n\n\n\n\nDay\nDate\nSession\nMaterials\nExercises\n\n\n\n\n1\nMon, 20 July\nIntroduction\nSlides\nExercises\n\n\n2\nTue, 21 July\nData Structures and Wrangling\nSlides\nExercises\n\n\n3\nWed, 22 July\nWorking with Files\nSlides\nExercises\n\n\n4\nThu, 23 July\nLinking and Joining Data & SQL\nSlides\nnot yet available\n\n\n5\nFri, 24 July\nScaling, Reporting and Database Software\nnot yet available\nnot yet available\n\n\n6\nMon, 27 July\nIntroduction to the Web\nnot yet available\nnot yet available\n\n\n7\nTue, 28 July\nStatic Web Pages\nnot yet available\nnot yet available\n\n\n8\nWed, 29 July\nApplication Programming Interfaces (APIs)\nnot yet available\nnot yet available\n\n\n9\nThu, 30 July\nInteractive Web Pages\nnot yet available\n–\n\n\n10\nFri, 31 July\nBuilding a Reproducible Research Project\nnot yet available\n–"
+    "text": "Schedule\nSlides are uploaded here as the course progresses.\n\n\n\n\n\nDay\nDate\nSession\nMaterials\nExercises\n\n\n\n\n1\nMon, 20 July\nIntroduction\nSlides\nExercises\n\n\n2\nTue, 21 July\nData Structures and Wrangling\nSlides\nExercises\n\n\n3\nWed, 22 July\nWorking with Files\nSlides\nExercises\n\n\n4\nThu, 23 July\nLinking and Joining Data & SQL\nSlides\nExercises\n\n\n5\nFri, 24 July\nScaling, Reporting and Database Software\nSlides\nnot yet available\n\n\n6\nMon, 27 July\nIntroduction to the Web\nnot yet available\nnot yet available\n\n\n7\nTue, 28 July\nStatic Web Pages\nnot yet available\nnot yet available\n\n\n8\nWed, 29 July\nApplication Programming Interfaces (APIs)\nnot yet available\nnot yet available\n\n\n9\nThu, 30 July\nInteractive Web Pages\nnot yet available\n–\n\n\n10\nFri, 31 July\nBuilding a Reproducible Research Project\nnot yet available\n–"
   },
   {
     "objectID": "index.html#required-software",
@@ -1587,5 +1587,285 @@
     "title": "solutions",
     "section": "Exercises 3",
     "text": "Exercises 3\n\nWhen might it make sense to treat a folder full of files as a database?\n\n\nwhen you have files which all have the same data structure\n\n\nWhen could it make sense to save data in an arrow database full of csv files?\n\n\nwhen a real database would be too much hassle\nwhen you want to add new data repeatedly (e.g., when you run a web scraping script every day)\n\n\narrow also supports a file format called Parquet. Using it instead of CSV files increases speed and reduces file sizes, while it is also widely used by other languages and programs. Create a new folder where you store the Houses of Commons data in one file per speaker (hint read ?arrow::write_parquet first).\n\nYou can solve this exercise by changing the code that wrote the csv files:\n\nif (!dir.exists(\"data/house_of_commons\")) {\n  # I split this into file just for demonstration puposes\n  corp_hoc_list &lt;- split(corp_hoc_df, corp_hoc_df$party)\n  dir.create(\"data/house_of_commons\")\n  for (party in names(corp_hoc_list)) {\n    rio::export(\n      corp_hoc_list[[party]],\n      paste0(\"data/house_of_commons/\", party, \".csv\")\n    )\n  }\n}\nlist.files(\"data/house_of_commons\")\n\nFirst, we need to change the code that split up the data per party, into data per speaker:\n\ncorp_hoc &lt;- \"data/Corp_HouseOfCommons_V2.rds\"\ncorp_hoc_df &lt;- readRDS(corp_hoc) |&gt;\n  mutate(date = as.Date(date))\ncorp_hoc_list &lt;- split(corp_hoc_df, corp_hoc_df$speaker)\n\nNow we can create a new folder to store the new files:\n\ndir.create(\"data/house_of_commons_parquet\")\n\nWarning in dir.create(\"data/house_of_commons_parquet\"):\n'data/house_of_commons_parquet' already exists\n\n\nNext, we have to loop over each speaker and export them to their own file. We do this in the same way as before, but use write_parquet instead. Reading the help file, I find this example:\n\ntf1 &lt;- tempfile(fileext = \".parquet\")\nwrite_parquet(data.frame(x = 1:5), tf1)\n\nIt looks like write_parquet works in the same way as rio::export! So all we need to change is the function name and the file extension:\n\nfor (speaker in names(corp_hoc_list)) {\n  arrow::write_parquet(\n    corp_hoc_list[[speaker]],\n    paste0(\"data/house_of_commons_parquet/\", speaker, \".parquet\")\n  )\n}\n\n\nConnect to the “database” of Parquet files and make a plot showing how many entries there are over the years per party\n\n\nlibrary(arrow)\n\nSome features are not enabled in this build of Arrow. Run `arrow_info()` for more information.\n\n\n\nAttaching package: 'arrow'\n\n\nThe following object is masked from 'package:lubridate':\n\n    duration\n\n\nThe following object is masked from 'package:utils':\n\n    timestamp\n\ncorp_hoc_con &lt;- open_dataset(\n  sources = \"data/house_of_commons_parquet\",\n  format = \"parquet\"\n)\n\n\ncorp_hoc_con |&gt;\n  count(party, year = lubridate::year(date)) |&gt;\n  collect() |&gt;\n  ggplot(aes(x = year, y = n, colour = party)) +\n  geom_line()"
+  },
+  {
+    "objectID": "05_Scaling_Reporting_and_Database_Software/05_Scaling_Reporting_and_Database_Software.html#this-course",
+    "href": "05_Scaling_Reporting_and_Database_Software/05_Scaling_Reporting_and_Database_Software.html#this-course",
+    "title": "Session 5: Database Software and Scaling your Analyses",
+    "section": "This Course",
+    "text": "This Course\n\n\n\n\n\n    \n\n    \n\n    \n    \n    \n      \n        \n        \n              \n                Day\n                Session\n              \n        \n        \n        \n                \n                  1\n                  Introduction\n                \n                \n                  2\n                  Data Structures and Wrangling\n                \n                \n                  3\n                  Working with Files\n                \n                \n                  4\n                  Linking and joining data & SQL\n                \n                \n                  5\n                  Database Software and Scaling your Analyses\n                \n                \n                  6\n                  Introduction to the Web\n                \n                \n                  7\n                  Static Web Pages\n                \n                \n                  8\n                  Application Programming Interface (APIs)\n                \n                \n                  9\n                  Interactive Web Pages\n                \n                \n                  10\n                  Building a Reproducible Research Project"
+  },
+  {
+    "objectID": "05_Scaling_Reporting_and_Database_Software/05_Scaling_Reporting_and_Database_Software.html#the-plan-for-today",
+    "href": "05_Scaling_Reporting_and_Database_Software/05_Scaling_Reporting_and_Database_Software.html#the-plan-for-today",
+    "title": "Session 5: Database Software and Scaling your Analyses",
+    "section": "The Plan for Today",
+    "text": "The Plan for Today\n\n\nIn this session, you learn:\n\nRepetition: DBMS\nWorking with PostgreSQL\nWorking with text databases\nBenchmarking\nFinal scaling tips\n\n\n Nik via unsplash.com"
+  },
+  {
+    "objectID": "05_Scaling_Reporting_and_Database_Software/05_Scaling_Reporting_and_Database_Software.html#dbms-servers-and-clients",
+    "href": "05_Scaling_Reporting_and_Database_Software/05_Scaling_Reporting_and_Database_Software.html#dbms-servers-and-clients",
+    "title": "Session 5: Database Software and Scaling your Analyses",
+    "section": "DBMS: servers and clients",
+    "text": "DBMS: servers and clients\n\n\n\nmost DBMS are set up in client-server architecture:\n\nserver: can be a computer somewhere or a process on your own computer that fulfills requests\nDBMS server: contains the database and database management system\nclient: interacts with server (sends requests, receives responses)\nDBMS client: can upload and retrieve data from server or send processing instructions\n\nWhy though:\n\nserver can run on more powerful hardware somewhere else\nrequests from multiple users don’t interfere with each other\naccess control per user to support different roles\n\n\n\n\n\n\n\n\nInteracting with a database management system from Weidmann (2023), p. 105."
+  },
+  {
+    "objectID": "05_Scaling_Reporting_and_Database_Software/05_Scaling_Reporting_and_Database_Software.html#got-server",
+    "href": "05_Scaling_Reporting_and_Database_Software/05_Scaling_Reporting_and_Database_Software.html#got-server",
+    "title": "Session 5: Database Software and Scaling your Analyses",
+    "section": "Got Server?",
+    "text": "Got Server?\n\n\n\n\n\n\n\n\nhttps://azure.microsoft.com/en-us/free/"
+  },
+  {
+    "objectID": "05_Scaling_Reporting_and_Database_Software/05_Scaling_Reporting_and_Database_Software.html#rdbms-software",
+    "href": "05_Scaling_Reporting_and_Database_Software/05_Scaling_Reporting_and_Database_Software.html#rdbms-software",
+    "title": "Session 5: Database Software and Scaling your Analyses",
+    "section": "RDBMS software",
+    "text": "RDBMS software\n\nmany popular choices alternatives:\n\nOracle Database\nMySQL\nMicrosoft SQL Server\nIBM Db2\nMicrosoft Access\nSQLite (free software)\nMariaDB (free software)\n\nall use slightly different dialects of SQL, but the core functionality is the same\nWe will use PostgreSQL: free and open source, well-known, and many other programming languages and tools can interface to it"
+  },
+  {
+    "objectID": "05_Scaling_Reporting_and_Database_Software/05_Scaling_Reporting_and_Database_Software.html#installation",
+    "href": "05_Scaling_Reporting_and_Database_Software/05_Scaling_Reporting_and_Database_Software.html#installation",
+    "title": "Session 5: Database Software and Scaling your Analyses",
+    "section": "Installation",
+    "text": "Installation\n\n\nWe are using Docker to spin up a local server that has PostgreSQL already installed.\nYou have to type this into your Terminal(!):\ndocker-compose -f 05_Scaling_Reporting_and_Database_Software/data/docker-compose.yml up -d\nThis is running the compose file below:\nservices:\n  postgres:\n    image: postgres\n    container_name: postgres_db\n    environment:\n      POSTGRES_USER: postgres\n      POSTGRES_PASSWORD: pgpasswd\n      POSTGRES_DB: dbintro\n    ports:\n      - \"5432:5432\"\n    volumes:\n      - pgdata:/var/lib/postgresql/data\n\nvolumes:\n  pgdata:"
+  },
+  {
+    "objectID": "05_Scaling_Reporting_and_Database_Software/05_Scaling_Reporting_and_Database_Software.html#connecting-from-r",
+    "href": "05_Scaling_Reporting_and_Database_Software/05_Scaling_Reporting_and_Database_Software.html#connecting-from-r",
+    "title": "Session 5: Database Software and Scaling your Analyses",
+    "section": "Connecting from R",
+    "text": "Connecting from R\n\nlibrary(DBI)\nlibrary(RPostgres)\ndb &lt;- dbConnect(\n  Postgres(),\n  dbname = \"dbintro\",\n  host = \"localhost\", # Make sure to specify the host\n  port = 5432L,\n  user = \"postgres\",\n  password = \"pgpasswd\"\n)\n\nNote: if you did not set up your own local PostgreSQL server, you can use mine for now. Just replace localhost with 204.168.185.249 and user = \"postgres\" with your name in lowercase (e.g., user = \"johannes\")\nLet’s fill this database with the nycflights13 flights data:\n\nlibrary(nycflights13)\ndbWriteTable(db, name = \"airports\", value = airports, overwrite = TRUE)\ndbWriteTable(db, name = \"flights\", value = flights, overwrite = TRUE)\ndbWriteTable(db, name = \"weather\", value = weather, overwrite = TRUE)\ndbWriteTable(db, name = \"planes\", value = planes, overwrite = TRUE)\ndbWriteTable(db, name = \"airlines\", value = airlines, overwrite = TRUE)"
+  },
+  {
+    "objectID": "05_Scaling_Reporting_and_Database_Software/05_Scaling_Reporting_and_Database_Software.html#connecting-from-the-terminal",
+    "href": "05_Scaling_Reporting_and_Database_Software/05_Scaling_Reporting_and_Database_Software.html#connecting-from-the-terminal",
+    "title": "Session 5: Database Software and Scaling your Analyses",
+    "section": "Connecting from the terminal",
+    "text": "Connecting from the terminal\n\n\ndocker exec -it -u postgres postgres_db psql -d dbintro\nInside the Docker container (that is the name of a server running via docker), you can list tables with:\n\\dt\nYou can run SQL operations in here without R:\nSELECT * FROM airports;\n#                     ^\nNote that commands are only executed when SQL encounters a ;!\n\nExit a long print with q"
+  },
+  {
+    "objectID": "05_Scaling_Reporting_and_Database_Software/05_Scaling_Reporting_and_Database_Software.html#working-with-postgresql-pretty-similar-to-sqlite",
+    "href": "05_Scaling_Reporting_and_Database_Software/05_Scaling_Reporting_and_Database_Software.html#working-with-postgresql-pretty-similar-to-sqlite",
+    "title": "Session 5: Database Software and Scaling your Analyses",
+    "section": "Working with PostgreSQL: pretty similar to SQLite…",
+    "text": "Working with PostgreSQL: pretty similar to SQLite…\nBut not the same…\n\ndbExecute(\n  db,\n  \"CREATE TABLE df1 (\n              id SERIAL PRIMARY KEY,\n              capital_letters VARCHAR(1) CHECK (capital_letters ~ '^[A-Z]$'), \n              my_date DATE CHECK (my_date &gt; '2000-01-01')\n          )\"\n)\n\n[1] 0"
+  },
+  {
+    "objectID": "05_Scaling_Reporting_and_Database_Software/05_Scaling_Reporting_and_Database_Software.html#working-with-postgresql-and-dbplyr-the-same-as-sqlite",
+    "href": "05_Scaling_Reporting_and_Database_Software/05_Scaling_Reporting_and_Database_Software.html#working-with-postgresql-and-dbplyr-the-same-as-sqlite",
+    "title": "Session 5: Database Software and Scaling your Analyses",
+    "section": "Working with PostgreSQL and dbplyr: the same as SQLite",
+    "text": "Working with PostgreSQL and dbplyr: the same as SQLite\nI copied this from the last session, and it works just as well:\n\n\ntbl(db, \"flights\") |&gt;\n  inner_join(tbl(db, \"planes\"), by = \"tailnum\", suffix = c(\"\", \"_plane\")) |&gt;\n  mutate(plane_age = year - year_plane) |&gt;\n  select(arr_delay, plane_age) |&gt;\n  filter(!is.na(arr_delay), !is.na(plane_age)) |&gt;\n  collect() |&gt;\n  group_by(plane_age) |&gt;\n  summarise(avg_delay = mean(arr_delay)) |&gt;\n  ggplot(aes(x = plane_age, y = avg_delay)) +\n  geom_point() +\n  geom_smooth(method = \"lm\", formula = y ~ x)"
+  },
+  {
+    "objectID": "05_Scaling_Reporting_and_Database_Software/05_Scaling_Reporting_and_Database_Software.html#user-based-authentication",
+    "href": "05_Scaling_Reporting_and_Database_Software/05_Scaling_Reporting_and_Database_Software.html#user-based-authentication",
+    "title": "Session 5: Database Software and Scaling your Analyses",
+    "section": "User-based authentication",
+    "text": "User-based authentication\nImagine this:\n\nyou have a team of researchers\nsome are responsible for data gathering (annotation, webscraping, conducting survey waves, etc.)\nsome are responsible for data analysis\nyou are responsible for data management and public reporting\nYou want to make sure that:\n\nresearchers in team gathering do not overwrite each others changes\nteam analysis always has the newest data\nthe summary data on the website is online as soon as possible\n\nwith PostgreSQL you can make sure the two groups don disrupt each other and the most recent results are pull from the database automatically"
+  },
+  {
+    "objectID": "05_Scaling_Reporting_and_Database_Software/05_Scaling_Reporting_and_Database_Software.html#user-based-authentication-users",
+    "href": "05_Scaling_Reporting_and_Database_Software/05_Scaling_Reporting_and_Database_Software.html#user-based-authentication-users",
+    "title": "Session 5: Database Software and Scaling your Analyses",
+    "section": "User-based authentication: users",
+    "text": "User-based authentication: users\nWe create three new users:\n\none for the one researchers in the gatherer group\none for the one analyser in the analysis group\none called “reader” which represents the general public\n\n\ndbExecute(db, \"CREATE USER gatherer WITH ENCRYPTED PASSWORD 'supersecret'\")\n\n[1] 0\n\ndbExecute(db, \"CREATE USER analyser WITH ENCRYPTED PASSWORD 'supersecret'\")\n\n[1] 0\n\ndbExecute(db, \"CREATE USER reader WITH ENCRYPTED PASSWORD 'supersecret'\")\n\n[1] 0\n\n\nWe can look at users:\n\ndbGetQuery(db, \"SELECT usename FROM pg_user\")\n\n   usename\n1 postgres\n2 gatherer\n3 analyser\n4   reader"
+  },
+  {
+    "objectID": "05_Scaling_Reporting_and_Database_Software/05_Scaling_Reporting_and_Database_Software.html#user-based-authentication-users-1",
+    "href": "05_Scaling_Reporting_and_Database_Software/05_Scaling_Reporting_and_Database_Software.html#user-based-authentication-users-1",
+    "title": "Session 5: Database Software and Scaling your Analyses",
+    "section": "User-based authentication: users",
+    "text": "User-based authentication: users\nLet’s log in as analyser:\n\ndb_analyser &lt;- dbConnect(\n  Postgres(),\n  dbname = \"dbintro\",\n  host = \"localhost\", # Make sure to specify the host\n  port = 5432L,\n  user = \"analyser\",\n  password = \"supersecret\"\n)"
+  },
+  {
+    "objectID": "05_Scaling_Reporting_and_Database_Software/05_Scaling_Reporting_and_Database_Software.html#user-based-authentication-roles",
+    "href": "05_Scaling_Reporting_and_Database_Software/05_Scaling_Reporting_and_Database_Software.html#user-based-authentication-roles",
+    "title": "Session 5: Database Software and Scaling your Analyses",
+    "section": "User-based authentication: roles",
+    "text": "User-based authentication: roles\nSo far, neither of the new users can do anything:\n\ntbl(db_analyser, \"flights\")\n\nError in `dbplyr_query_fields()`:\n! Can't query fields.\nℹ Using SQL: SELECT * FROM \"flights\" AS \"q01\" WHERE (0 = 1)\nCaused by error:\n! Failed to fetch row : ERROR:  permission denied for table flights\n\n\nThey have to be assigned roles first"
+  },
+  {
+    "objectID": "05_Scaling_Reporting_and_Database_Software/05_Scaling_Reporting_and_Database_Software.html#user-based-authentication-roles-1",
+    "href": "05_Scaling_Reporting_and_Database_Software/05_Scaling_Reporting_and_Database_Software.html#user-based-authentication-roles-1",
+    "title": "Session 5: Database Software and Scaling your Analyses",
+    "section": "User-based authentication: roles",
+    "text": "User-based authentication: roles\nWe first give the “gatherer” user permission to update a table:\n\ndbExecute(db, \"GRANT UPDATE,INSERT ON flights TO gatherer\")\n\n[1] 0\n\n\nSince we do not fully trust the analyser, we give them read-only access to flights, but access to everything in df1, which we pretend that the results of the analysis are stored in:\n\ndbExecute(db, \"GRANT SELECT ON flights TO analyser\")\n\n[1] 0\n\ndbExecute(db, \"GRANT ALL PRIVILEGES ON df1 TO analyser\")\n\n[1] 0\n\n\nFinally, the public gets selected access to only some columns in the results table:\n\ndbExecute(db, \"GRANT SELECT (capital_letters) ON df1 TO reader\")\n\n[1] 0"
+  },
+  {
+    "objectID": "05_Scaling_Reporting_and_Database_Software/05_Scaling_Reporting_and_Database_Software.html#user-based-authentication-roles-analyser",
+    "href": "05_Scaling_Reporting_and_Database_Software/05_Scaling_Reporting_and_Database_Software.html#user-based-authentication-roles-analyser",
+    "title": "Session 5: Database Software and Scaling your Analyses",
+    "section": "User-based authentication: roles (analyser)",
+    "text": "User-based authentication: roles (analyser)\nStill logged in as the analyser, let’s try to access the data again:\n\ntbl(db_analyser, \"flights\")\n\n# A query:  ?? x 19\n# Database: postgres  [analyser@localhost:5432/dbintro]\n    year month   day dep_time sched_dep_time dep_delay arr_time sched_arr_time\n   &lt;int&gt; &lt;int&gt; &lt;int&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt;    &lt;int&gt;          &lt;int&gt;\n 1  2013     1     1      517            515         2      830            819\n 2  2013     1     1      533            529         4      850            830\n 3  2013     1     1      542            540         2      923            850\n 4  2013     1     1      544            545        -1     1004           1022\n 5  2013     1     1      554            600        -6      812            837\n 6  2013     1     1      554            558        -4      740            728\n 7  2013     1     1      555            600        -5      913            854\n 8  2013     1     1      557            600        -3      709            723\n 9  2013     1     1      557            600        -3      838            846\n10  2013     1     1      558            600        -2      753            745\n# ℹ more rows\n# ℹ 11 more variables: arr_delay &lt;dbl&gt;, carrier &lt;chr&gt;, flight &lt;int&gt;,\n#   tailnum &lt;chr&gt;, origin &lt;chr&gt;, dest &lt;chr&gt;, air_time &lt;dbl&gt;, distance &lt;dbl&gt;,\n#   hour &lt;dbl&gt;, minute &lt;dbl&gt;, time_hour &lt;dttm&gt;\n\n\nBut we still can’t make changes:\n\ndbExecute(\n  db_analyser,\n  \"INSERT INTO flights (year)\n            VALUES (2013)\"\n)\n\nError:\n! Failed to fetch row : ERROR:  permission denied for table flights\n\n\n\nWe can add data to the tables that we were granted access to though:\n\ndbExecute(\n  db_analyser,\n  \"INSERT INTO df1\n            VALUES (1, 'A', '2025-07-11')\"\n)\n\n[1] 1"
+  },
+  {
+    "objectID": "05_Scaling_Reporting_and_Database_Software/05_Scaling_Reporting_and_Database_Software.html#user-based-authentication-roles-gatherer",
+    "href": "05_Scaling_Reporting_and_Database_Software/05_Scaling_Reporting_and_Database_Software.html#user-based-authentication-roles-gatherer",
+    "title": "Session 5: Database Software and Scaling your Analyses",
+    "section": "User-based authentication: roles (gatherer)",
+    "text": "User-based authentication: roles (gatherer)\nLogging in as the gatherer, we can add new cases:\n\ndb_gatherer &lt;- dbConnect(\n  Postgres(),\n  dbname = \"dbintro\",\n  host = \"localhost\", # Make sure to specify the host\n  port = 5432L,\n  user = \"gatherer\",\n  password = \"supersecret\"\n)\ndbExecute(\n  db_gatherer,\n  \"INSERT INTO flights (year)\n            VALUES (2013)\"\n)\n\n[1] 1"
+  },
+  {
+    "objectID": "05_Scaling_Reporting_and_Database_Software/05_Scaling_Reporting_and_Database_Software.html#user-based-authentication-roles-reader",
+    "href": "05_Scaling_Reporting_and_Database_Software/05_Scaling_Reporting_and_Database_Software.html#user-based-authentication-roles-reader",
+    "title": "Session 5: Database Software and Scaling your Analyses",
+    "section": "User-based authentication: roles (reader)",
+    "text": "User-based authentication: roles (reader)\nLogging in as the reader, we can can’t change anything, but can only read specific columns:\n\ndb_reader &lt;- dbConnect(\n  Postgres(),\n  dbname = \"dbintro\",\n  host = \"localhost\", # Make sure to specify the host\n  port = 5432L,\n  user = \"reader\",\n  password = \"supersecret\"\n)\n\n\ndbGetQuery(db_reader, \"SELECT * FROM df1\")\n\nError:\n! Failed to fetch row : ERROR:  permission denied for table df1\n\n\n\ndbGetQuery(db_reader, \"SELECT capital_letters FROM df1\")\n\n  capital_letters\n1               A\n\n\nNow we could give out this user to the public without the need to worry that they change or read anything they are not supposed to."
+  },
+  {
+    "objectID": "05_Scaling_Reporting_and_Database_Software/05_Scaling_Reporting_and_Database_Software.html#exercises-1",
+    "href": "05_Scaling_Reporting_and_Database_Software/05_Scaling_Reporting_and_Database_Software.html#exercises-1",
+    "title": "Session 5: Database Software and Scaling your Analyses",
+    "section": "Exercises 1",
+    "text": "Exercises 1\nUsing the PostgreSQL database or the SQLite database from session 4:\n\nRight join results_state and facts using dbplyr instead of dbGetQuery\nRecreate the table results_state_time by querying and joining from db (using dbplyr instead of dbGetQuery).\nRecreate results_state_facts using dbplyr. Don’t forget to add total_votes and pct_votes\nExtract the SQL query from your code in 3. and run it with dbGetQuery"
+  },
+  {
+    "objectID": "05_Scaling_Reporting_and_Database_Software/05_Scaling_Reporting_and_Database_Software.html#why-amcat",
+    "href": "05_Scaling_Reporting_and_Database_Software/05_Scaling_Reporting_and_Database_Software.html#why-amcat",
+    "title": "Session 5: Database Software and Scaling your Analyses",
+    "section": "Why AmCAT",
+    "text": "Why AmCAT\n\n\n\nOptimized to store, annotate, preprocess, search, share and present text data collections\nFor teams or individual researchers\nFine-grained access control\nFree and Open Source"
+  },
+  {
+    "objectID": "05_Scaling_Reporting_and_Database_Software/05_Scaling_Reporting_and_Database_Software.html#installation-1",
+    "href": "05_Scaling_Reporting_and_Database_Software/05_Scaling_Reporting_and_Database_Software.html#installation-1",
+    "title": "Session 5: Database Software and Scaling your Analyses",
+    "section": "Installation",
+    "text": "Installation\nSame as with PostgreSQL, we can use Docker.\ndocker-compose -f 05_Scaling_Reporting_and_Database_Software/data/docker-compose-amcat.yml up -d"
+  },
+  {
+    "objectID": "05_Scaling_Reporting_and_Database_Software/05_Scaling_Reporting_and_Database_Software.html#connecting-from-the-terminal-1",
+    "href": "05_Scaling_Reporting_and_Database_Software/05_Scaling_Reporting_and_Database_Software.html#connecting-from-the-terminal-1",
+    "title": "Session 5: Database Software and Scaling your Analyses",
+    "section": "Connecting from the terminal",
+    "text": "Connecting from the terminal\nCreating a test index:\ndocker exec -it amcat4 amcat4 create-test-index\nConfigure the AmCAT server:\ndocker exec -it amcat4 amcat4 config"
+  },
+  {
+    "objectID": "05_Scaling_Reporting_and_Database_Software/05_Scaling_Reporting_and_Database_Software.html#connecting-from-r-1",
+    "href": "05_Scaling_Reporting_and_Database_Software/05_Scaling_Reporting_and_Database_Software.html#connecting-from-r-1",
+    "title": "Session 5: Database Software and Scaling your Analyses",
+    "section": "Connecting from R",
+    "text": "Connecting from R\nWe need to log in, which you can do without a user by default (use 204.168.185.249´ instead oflocalhost` again for a public server):\n\n# remotes::install_github(\"ccs-amsterdam/amcat4r\")\nlibrary(amcat4r)\namcat_login(\"http://localhost/api\")\n\nWe can have a look at the example corpus with:\n\nquery_documents(index = \"state_of_the_union\")\n\n# A tibble: 200 × 3\n   .id      title                   date               \n   &lt;id_col&gt; &lt;chr&gt;                   &lt;dttm&gt;             \n 1 kNR…OM8  1790: George Washington 1790-01-08 00:00:00\n 2 kdR…OM9  1790: George Washington 1790-12-08 00:00:00\n 3 ktR…OM9  1791: George Washington 1791-10-25 00:00:00\n 4 k9R…OM9  1792: George Washington 1792-11-06 00:00:00\n 5 lNR…OM9  1793: George Washington 1793-12-03 00:00:00\n 6 ldR…OM9  1794: George Washington 1794-11-19 00:00:00\n 7 ltR…OM9  1795: George Washington 1795-12-08 00:00:00\n 8 l9R…OM9  1796: George Washington 1796-12-07 00:00:00\n 9 mNR…OM9  1797: John Adams        1797-11-22 00:00:00\n10 mdR…OM9  1798: John Adams        1798-12-08 00:00:00\n# ℹ 190 more rows"
+  },
+  {
+    "objectID": "05_Scaling_Reporting_and_Database_Software/05_Scaling_Reporting_and_Database_Software.html#dataset",
+    "href": "05_Scaling_Reporting_and_Database_Software/05_Scaling_Reporting_and_Database_Software.html#dataset",
+    "title": "Session 5: Database Software and Scaling your Analyses",
+    "section": "Dataset",
+    "text": "Dataset\nLoad data from Rauh and Schwalbach (2020) into AmCAT:\n\nif (!\"houseofcommons\" %in% list_indexes()$id) {\n  corp_hoc_df &lt;- readRDS(\n    \"../03_Working_with_Files/data/Corp_HouseOfCommons_V2.rds\"\n  ) |&gt;\n    mutate(date = as.Date(date)) |&gt;\n    rename(title = agenda) |&gt;\n    filter(!is.na(date)) |&gt;\n    replace_na(list(title = \"\", text = \"\")) |&gt;\n    select(-party.facts.id)\n\n  # speed this up by only using a sample\n  # corp_hoc_df &lt;- corp_hoc_df |&gt;\n  #   sample_n(size = 500)\n\n  # define types of fields\n  fields &lt;- list(\n    date = \"date\",\n    text = \"text\",\n    title = \"text\",\n    speechnumber = \"integer\",\n    speaker = \"keyword\",\n    party = \"keyword\",\n    chair = \"boolean\",\n    terms = \"integer\",\n    parliament = \"keyword\",\n    iso3country = \"keyword\"\n  )\n  # create the index\n  create_index(\n    index = \"houseofcommons\",\n    name = \"House Of Commons\",\n    description = \"HouseOfCommons\",\n    create_fields = fields\n  )\n\n  # upload the data\n  upload_documents(\n    \"houseofcommons\",\n    documents = corp_hoc_df,\n    chunk_size = 1000,\n    verbose = TRUE\n  )\n}"
+  },
+  {
+    "objectID": "05_Scaling_Reporting_and_Database_Software/05_Scaling_Reporting_and_Database_Software.html#amcat-gui",
+    "href": "05_Scaling_Reporting_and_Database_Software/05_Scaling_Reporting_and_Database_Software.html#amcat-gui",
+    "title": "Session 5: Database Software and Scaling your Analyses",
+    "section": "AmCAT GUI",
+    "text": "AmCAT GUI\n\nAccess at: http://localhost/\nSearch and explore data\nQueries are made in Elasticsearch’s “mini-language” for query strings (https://bit.ly/elastic_queries)\nLet’s see some examples!\n\n\n\nTom And Jerry Searching GIFfrom \n\n\n\n\nSummary:\n\nmigration\nmigra*\nmigra\nmigra OR refu*\nmigra OR refu* OR asyl\n(migra OR refu* OR asyl) AND illegal\n(migra OR refu* OR asyl) NOT illegal\nmigra=migra OR refu* OR asyl illegal=(migra OR refu* OR asyl) AND illegal not_illegal=(migra OR refu* OR asyl) NOT illegal\n\nThe queries are made in the elasticsearch query language https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-query-string-query.html#query-string-query-notes"
+  },
+  {
+    "objectID": "05_Scaling_Reporting_and_Database_Software/05_Scaling_Reporting_and_Database_Software.html#amcat-api",
+    "href": "05_Scaling_Reporting_and_Database_Software/05_Scaling_Reporting_and_Database_Software.html#amcat-api",
+    "title": "Session 5: Database Software and Scaling your Analyses",
+    "section": "AmCAT API",
+    "text": "AmCAT API\n\n\n\nR and Python packages\nOpenAPI specifications\nSearch, upload, download, modify data (e.g., add keywords/categories)\nUser and access management\nEasy way to make research reproducible by querying data for analysis\nGreat for larger than memory data sets"
+  },
+  {
+    "objectID": "05_Scaling_Reporting_and_Database_Software/05_Scaling_Reporting_and_Database_Software.html#amcat-api-1",
+    "href": "05_Scaling_Reporting_and_Database_Software/05_Scaling_Reporting_and_Database_Software.html#amcat-api-1",
+    "title": "Session 5: Database Software and Scaling your Analyses",
+    "section": "AmCAT API",
+    "text": "AmCAT API\n\nquery_documents(index = \"houseofcommons\", queries = \"*Europ*\")\n\n# A tibble: 200 × 3\n   .id      date                title                          \n   &lt;id_col&gt; &lt;dttm&gt;              &lt;chr&gt;                          \n 1 VOB…lIp  2002-02-07 00:00:00 \"\"                             \n 2 deB…lIp  2002-02-07 00:00:00 \"\"                             \n 3 g-B…lIp  2002-02-08 00:00:00 \"Disadvantaged Areas [Prayers]\"\n 4 kOB…lIp  2002-02-08 00:00:00 \"Disadvantaged Areas [Prayers]\"\n 5 p-B…lIp  2002-02-08 00:00:00 \"Disadvantaged Areas [Prayers]\"\n 6 qOB…lIp  2002-02-08 00:00:00 \"Disadvantaged Areas [Prayers]\"\n 7 zuB…lIp  2002-02-08 00:00:00 \"Disadvantaged Areas [Prayers]\"\n 8 2OB…lIq  2002-02-08 00:00:00 \"Disadvantaged Areas [Prayers]\"\n 9 3-B…lIq  2002-02-08 00:00:00 \"Disadvantaged Areas [Prayers]\"\n10 4OB…lIq  2002-02-08 00:00:00 \"Disadvantaged Areas [Prayers]\"\n# ℹ 190 more rows\n\nquery_documents(index = \"houseofcommons\", queries = '\"European Union\" OR EU')\n\n# A tibble: 200 × 3\n   .id      date                title                                           \n   &lt;id_col&gt; &lt;dttm&gt;              &lt;chr&gt;                                           \n 1 p-B…lIp  2002-02-08 00:00:00 Disadvantaged Areas [Prayers]                   \n 2 3-B…lIq  2002-02-08 00:00:00 Disadvantaged Areas [Prayers]                   \n 3 7eB…lIq  2002-02-11 00:00:00 Eu Defence Capability [Oral Answers To Question…\n 4 7uB…lIq  2002-02-11 00:00:00 Eu Defence Capability [Oral Answers To Question…\n 5 7-B…lIq  2002-02-11 00:00:00 Eu Defence Capability [Oral Answers To Question…\n 6 8OB…lIq  2002-02-11 00:00:00 Eu Defence Capability [Oral Answers To Question…\n 7 8eB…lIq  2002-02-11 00:00:00 Eu Defence Capability [Oral Answers To Question…\n 8 8uB…lIq  2002-02-11 00:00:00 Eu Defence Capability [Oral Answers To Question…\n 9 8-B…lIq  2002-02-11 00:00:00 Eu Defence Capability [Oral Answers To Question…\n10 9OB…lIq  2002-02-11 00:00:00 Eu Defence Capability [Oral Answers To Question…\n# ℹ 190 more rows\n\n\n\nquery_aggregate(\n  index = \"houseofcommons\",\n  filters = list(party = c(\"Con\", \"Lab\"), date = list(gte = \"2000-01-01\")),\n  axes = list(list(field = \"party\"), list(field = \"date\", interval = \"year\")),\n  queries = '\"European Union\" OR EU'\n)\n\n# A tibble: 40 × 3\n   party date_year      n\n   &lt;chr&gt; &lt;chr&gt;      &lt;int&gt;\n 1 Lab   2000-01-01  1340\n 2 Lab   2001-01-01  1214\n 3 Lab   2002-01-01  1242\n 4 Lab   2003-01-01  1733\n 5 Lab   2004-01-01  1507\n 6 Lab   2005-01-01  1392\n 7 Lab   2006-01-01  1160\n 8 Lab   2007-01-01  1308\n 9 Lab   2008-01-01  2407\n10 Lab   2009-01-01  1051\n# ℹ 30 more rows"
+  },
+  {
+    "objectID": "05_Scaling_Reporting_and_Database_Software/05_Scaling_Reporting_and_Database_Software.html#access-control-in-amcat4-enables-non-consumptive-research",
+    "href": "05_Scaling_Reporting_and_Database_Software/05_Scaling_Reporting_and_Database_Software.html#access-control-in-amcat4-enables-non-consumptive-research",
+    "title": "Session 5: Database Software and Scaling your Analyses",
+    "section": "Access Control in Amcat4 enables Non-Consumptive Research",
+    "text": "Access Control in Amcat4 enables Non-Consumptive Research\n\nSharing data helps scientific progress!\nCopyright and/or (privacy-)sensitive material can not be easily shared\nDefinition: non-consumptive research involves the use of computational methods to analyze data without giving access to the data itself\n\n\n\n\n\n\nIn practice, you already know this from Google Books\nshow in browser y setting metareader"
+  },
+  {
+    "objectID": "05_Scaling_Reporting_and_Database_Software/05_Scaling_Reporting_and_Database_Software.html#exercises-2",
+    "href": "05_Scaling_Reporting_and_Database_Software/05_Scaling_Reporting_and_Database_Software.html#exercises-2",
+    "title": "Session 5: Database Software and Scaling your Analyses",
+    "section": "Exercises 2",
+    "text": "Exercises 2\n\nConnect to your own AmCAT server (alternatively, connect to mine)\nCreate a new index and add some toy data to it that has: a date, a title, and a text field\nQuery all documents from your index\nquery the documents from the “houseofcommons” index that have:\n\nmentions of protest, protesters, protester, or protesting\nno mentions of protestant, in addition to 4.1\ncontain speeches by the Conservative Party, in addition to 4.1 and 4.2 (hint: use a filter)\n\nCount (hint: aggregate) how often the Conservatives mention protest words each month after 2000"
+  },
+  {
+    "objectID": "05_Scaling_Reporting_and_Database_Software/05_Scaling_Reporting_and_Database_Software.html#benchmarking",
+    "href": "05_Scaling_Reporting_and_Database_Software/05_Scaling_Reporting_and_Database_Software.html#benchmarking",
+    "title": "Session 5: Database Software and Scaling your Analyses",
+    "section": "Benchmarking",
+    "text": "Benchmarking\n\nwhen your data grows, it becomes important that your code is fast, since it is applied to many cases\nbenchmarking helps you identify bottlenecks\nit can make the difference between minutes and days whether your code is optimized for speed"
+  },
+  {
+    "objectID": "05_Scaling_Reporting_and_Database_Software/05_Scaling_Reporting_and_Database_Software.html#benchmarking-with-bench",
+    "href": "05_Scaling_Reporting_and_Database_Software/05_Scaling_Reporting_and_Database_Software.html#benchmarking-with-bench",
+    "title": "Session 5: Database Software and Scaling your Analyses",
+    "section": "Benchmarking with bench",
+    "text": "Benchmarking with bench\nBasic syntax:\n\ndefine functions that wrap your code\n\n\nlibrary(bench)\nfun1 &lt;- function() {\n  1 + 1\n}\nfun2 &lt;- function() {\n  a &lt;- 1\n  b &lt;- 1\n  sum(c(a, b))\n}\n\n\nrun mark\n\n\nres &lt;- mark(simple = fun1(), complex = fun2())\n\n\ncheck summary\n\n\nsummary(res)\n\n# A tibble: 2 × 6\n  expression      min   median `itr/sec` mem_alloc `gc/sec`\n  &lt;bch:expr&gt; &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;\n1 simple     244.94ns 296.98ns  1916501.        0B        0\n2 complex      1.16µs   1.19µs   630715.        0B        0\n\nsummary(res, relative = TRUE)\n\n# A tibble: 2 × 6\n  expression   min median `itr/sec` mem_alloc `gc/sec`\n  &lt;bch:expr&gt; &lt;dbl&gt;  &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;\n1 simple      1      1         3.04       NaN      NaN\n2 complex     4.72   4.01      1          NaN      NaN"
+  },
+  {
+    "objectID": "05_Scaling_Reporting_and_Database_Software/05_Scaling_Reporting_and_Database_Software.html#benchmarking-in-memory-vs-in-database",
+    "href": "05_Scaling_Reporting_and_Database_Software/05_Scaling_Reporting_and_Database_Software.html#benchmarking-in-memory-vs-in-database",
+    "title": "Session 5: Database Software and Scaling your Analyses",
+    "section": "Benchmarking: in memory vs in database",
+    "text": "Benchmarking: in memory vs in database\n\ndefine functions that wrap your code\n\n\nin_memory &lt;- function() {\n  nycflights13::flights |&gt;\n    inner_join(nycflights13::weather, by = c(\"time_hour\", \"origin\")) |&gt;\n    filter(time_hour &lt; \"2013-03-01\")\n}\n\nin_db &lt;- function() {\n  tbl(db, \"flights\") |&gt;\n    inner_join(tbl(db, \"weather\"), by = c(\"time_hour\", \"origin\")) |&gt;\n    filter(time_hour &lt; \"2013-03-01\") |&gt;\n    collect()\n}\n\n\nrun mark\n\n\nres &lt;- mark(\n  in_memory = in_memory(),\n  in_db = in_db(),\n  check = FALSE,\n  iterations = 15\n)\n\n\ncheck summary\n\n\nsummary(res)\n\n# A tibble: 2 × 6\n  expression      min   median `itr/sec` mem_alloc `gc/sec`\n  &lt;bch:expr&gt; &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;\n1 in_memory    85.5ms    103ms      5.78   117.3MB     9.63\n2 in_db       388.1ms    415ms      2.33    31.1MB     1.09\n\nsummary(res, relative = TRUE)\n\n# A tibble: 2 × 6\n  expression   min median `itr/sec` mem_alloc `gc/sec`\n  &lt;bch:expr&gt; &lt;dbl&gt;  &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;\n1 in_memory   1      1         2.48      3.77     8.87\n2 in_db       4.54   4.03      1         1        1"
+  },
+  {
+    "objectID": "05_Scaling_Reporting_and_Database_Software/05_Scaling_Reporting_and_Database_Software.html#fix-bottlenecks",
+    "href": "05_Scaling_Reporting_and_Database_Software/05_Scaling_Reporting_and_Database_Software.html#fix-bottlenecks",
+    "title": "Session 5: Database Software and Scaling your Analyses",
+    "section": "Fix bottlenecks",
+    "text": "Fix bottlenecks\nWithout an index, the search in the database takes longer. You can create it automatically with copy_to() (see this)\n\ndbWriteTable(db, \"flights_w_index\", flights, overwrite = TRUE)\ndbWriteTable(db, \"weather_w_index\", weather, overwrite = TRUE)\ndbExecute(db, \"CREATE INDEX ON flights_w_index (time_hour)\")\n\n[1] 0\n\ndbExecute(db, \"CREATE INDEX ON weather_w_index (time_hour)\")\n\n[1] 0\n\n\n\ndefine functions that wrap your code\n\n\nin_memory &lt;- function() {\n  nycflights13::flights |&gt;\n    inner_join(nycflights13::weather, by = c(\"time_hour\", \"origin\")) |&gt;\n    filter(time_hour &lt; \"2013-03-01\")\n}\n\nin_db &lt;- function() {\n  tbl(db, \"flights\") |&gt;\n    inner_join(tbl(db, \"weather\"), by = c(\"time_hour\", \"origin\")) |&gt;\n    filter(time_hour &lt; \"2013-03-01\") |&gt;\n    collect()\n}\n\nin_db_w_index &lt;- function() {\n  tbl(db, \"flights_w_index\") |&gt;\n    inner_join(tbl(db, \"weather_w_index\"), by = c(\"time_hour\", \"origin\")) |&gt;\n    filter(time_hour &lt; \"2013-03-01\") |&gt;\n    collect()\n}\n\n\nrun mark\n\n\nres &lt;- mark(\n  in_memory = in_memory(),\n  in_db = in_db(),\n  in_db_w_index = in_db_w_index(),\n  check = FALSE,\n  iterations = 25\n)\n\n\ncheck summary\n\n\nsummary(res)\n\n# A tibble: 3 × 6\n  expression         min   median `itr/sec` mem_alloc `gc/sec`\n  &lt;bch:expr&gt;    &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;\n1 in_memory       76.5ms    106ms      6.46   116.9MB   11.4  \n2 in_db          401.3ms    469ms      2.06    31.1MB    0.824\n3 in_db_w_index  415.5ms    477ms      2.04    31.1MB    0.817\n\nsummary(res, relative = TRUE)\n\n# A tibble: 3 × 6\n  expression      min median `itr/sec` mem_alloc `gc/sec`\n  &lt;bch:expr&gt;    &lt;dbl&gt;  &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;\n1 in_memory      1      1         3.16      3.76    13.9 \n2 in_db          5.25   4.43      1.01      1        1.01\n3 in_db_w_index  5.43   4.51      1         1.00     1"
+  },
+  {
+    "objectID": "05_Scaling_Reporting_and_Database_Software/05_Scaling_Reporting_and_Database_Software.html#what-for",
+    "href": "05_Scaling_Reporting_and_Database_Software/05_Scaling_Reporting_and_Database_Software.html#what-for",
+    "title": "Session 5: Database Software and Scaling your Analyses",
+    "section": "What for?",
+    "text": "What for?\n\nenables new research questions by being able to combine and clean new data\nlet’s you sleep easy at night\nmakes your work transparent to others and yourself\nthinking about reproducibility from the start"
+  },
+  {
+    "objectID": "05_Scaling_Reporting_and_Database_Software/05_Scaling_Reporting_and_Database_Software.html#when-to-use-files-vs.-databases",
+    "href": "05_Scaling_Reporting_and_Database_Software/05_Scaling_Reporting_and_Database_Software.html#when-to-use-files-vs.-databases",
+    "title": "Session 5: Database Software and Scaling your Analyses",
+    "section": "When to use files vs. databases",
+    "text": "When to use files vs. databases\n\noften not clear from the start\nworking with files is easier as a solo researchers (who keeps a clean project directory)\nwhen data changes regularly it makes sense to not add to the same file again and again\nwhen several researchers collaborate, a database solves many issues\nwhen you have text data, vectors, or complex elements, NoSQL databases like AmCAT or MongoDB can make sense"
+  },
+  {
+    "objectID": "05_Scaling_Reporting_and_Database_Software/05_Scaling_Reporting_and_Database_Software.html#using-adminer-web-gui",
+    "href": "05_Scaling_Reporting_and_Database_Software/05_Scaling_Reporting_and_Database_Software.html#using-adminer-web-gui",
+    "title": "Session 5: Database Software and Scaling your Analyses",
+    "section": "Using Adminer Web-GUI",
+    "text": "Using Adminer Web-GUI\nAccess by typing localhost:8080 in your browser\n\n\n\n\n\n\n\nNote\n\n\nAdminer is only one of several Web-GUIs. pgAdmin would be another popular alternative with more features."
+  },
+  {
+    "objectID": "04_Linking_and_joining_data_SQL/04_solutions.html",
+    "href": "04_Linking_and_joining_data_SQL/04_solutions.html",
+    "title": "solutions session 4",
+    "section": "",
+    "text": "See if some of the other variables influence support for Sanders or Clinton\n\nAll you need to do to solve this is to replace the x aesthetical mapping with a different variable:\n\nresults_state_facts |&gt;\n  filter(\n    party == \"Democrat\",\n    candidate %in% c(\"Bernie Sanders\", \"Hillary Clinton\")\n  ) |&gt;\n  ggplot(aes(x = white, y = pct_votes, colour = candidate)) +\n  geom_point() +\n  geom_smooth(method = \"lm\", formula = y ~ x)\n\n\nresults_state_facts |&gt;\n  filter(\n    party == \"Democrat\",\n    candidate %in% c(\"Bernie Sanders\", \"Hillary Clinton\")\n  ) |&gt;\n  ggplot(aes(x = college, y = pct_votes, colour = candidate)) +\n  geom_point() +\n  geom_smooth(method = \"lm\", formula = y ~ x)\n\n\nresults_state_facts |&gt;\n  filter(\n    party == \"Democrat\",\n    candidate %in% c(\"Bernie Sanders\", \"Hillary Clinton\")\n  ) |&gt;\n  ggplot(aes(x = female, y = pct_votes, colour = candidate)) +\n  geom_point() +\n  geom_smooth(method = \"lm\", formula = y ~ x)\n\n\nBelow I prepared code that loads data from the nycflights13 package which is about flights departing NYC in 2013:\n\n\nlibrary(nycflights13)\ndata(airports)\ndata(flights)\ndata(weather)\ndata(planes)\ndata(airlines)\n\nThe dataset is perfect for practising joining data, as the set is split into tables that relate to each other. You can see the realtion in the diagram below:\n\nImagine you wanted to draw (approximately) the route each plane flies from its origin to its destination. What variables would you need? What data frames would you need to combine?\n\nflights contains an origin and a destination airport. Looking at airports with View(airports) we see a longitude and a latitude coordinate. By joining flights and airports, we could calculate the differences in longitude and latitude.\n\n\nAdd the location of the origin and destination (i.e. the lat and lon) to flights.\n\n\nfor this, we need to join the tables two times. Once we join origin with faa, and once dest with faa\nsince we are only interested in the lat and lon variables, we could first select a subset from the airports table (this is optional)\n\n\nairports_loc &lt;- airports |&gt;\n  select(faa, lat, lon)\n\n\nflights |&gt;\n  left_join(airports_loc, by = c(\"origin\" = \"faa\")) |&gt;\n  left_join(\n    airports_loc,\n    by = c(\"dest\" = \"faa\"),\n    # using the suffix produces cleaner variable names\n    suffix = c(\"_origin\", \"_dest\")\n  )\n\n\nWhich airlines departed most often from the NYC airports (i.e. JFK, LGA or EWR). Use their real names not the abbreviation\n\n\nflights |&gt;\n  filter(origin %in% c(\"JFK\", \"LGA\", \"EWR\")) |&gt;\n  left_join(airlines, by = \"carrier\") |&gt;\n  count(name, sort = TRUE)\n\n\nHow could you calculate the average age of the planes departing from NYC? (hint: you can calculate averages with mean(), you might want to use na.rm = TRUE)\n\n\nfirst, we need to join flights with planes to see which planes depart from NYC and how often.\nlooking at View(flights) and View(planes), we see that a common key is tailnum\nif we decide to calculate the mean age of the plane for every departure we would use left_join:\n\n\nairplanes_deps &lt;- flights |&gt;\n  filter(origin %in% c(\"JFK\", \"LGA\", \"EWR\")) |&gt;\n  left_join(planes, by = \"tailnum\", suffix = c(\"\", \"_plane\"))\n\n\nalternatively, you might want to check which of the planes started from NYC and then calculate the mean age of these planes. In this case, you need to right_join, as you do not want duplicated planes\n\n\nairplanes_deps &lt;- flights |&gt;\n  filter(origin %in% c(\"JFK\", \"LGA\", \"EWR\")) |&gt;\n  right_join(planes, by = \"tailnum\", suffix = c(\"\", \"_plane\"))\n\n\nnow you can calculate the mean age:\n\n\nmean(airplanes_deps$year_plane, na.rm = TRUE)\n# or as tidy code\nairplanes_deps |&gt;\n  summarise(year_plane = mean(year_plane, na.rm = TRUE))\n\n\nyou have to add na.rm = TRUE or the result will always be NA"
+  },
+  {
+    "objectID": "04_Linking_and_joining_data_SQL/04_solutions.html#exercises-1",
+    "href": "04_Linking_and_joining_data_SQL/04_solutions.html#exercises-1",
+    "title": "solutions session 4",
+    "section": "",
+    "text": "See if some of the other variables influence support for Sanders or Clinton\n\nAll you need to do to solve this is to replace the x aesthetical mapping with a different variable:\n\nresults_state_facts |&gt;\n  filter(\n    party == \"Democrat\",\n    candidate %in% c(\"Bernie Sanders\", \"Hillary Clinton\")\n  ) |&gt;\n  ggplot(aes(x = white, y = pct_votes, colour = candidate)) +\n  geom_point() +\n  geom_smooth(method = \"lm\", formula = y ~ x)\n\n\nresults_state_facts |&gt;\n  filter(\n    party == \"Democrat\",\n    candidate %in% c(\"Bernie Sanders\", \"Hillary Clinton\")\n  ) |&gt;\n  ggplot(aes(x = college, y = pct_votes, colour = candidate)) +\n  geom_point() +\n  geom_smooth(method = \"lm\", formula = y ~ x)\n\n\nresults_state_facts |&gt;\n  filter(\n    party == \"Democrat\",\n    candidate %in% c(\"Bernie Sanders\", \"Hillary Clinton\")\n  ) |&gt;\n  ggplot(aes(x = female, y = pct_votes, colour = candidate)) +\n  geom_point() +\n  geom_smooth(method = \"lm\", formula = y ~ x)\n\n\nBelow I prepared code that loads data from the nycflights13 package which is about flights departing NYC in 2013:\n\n\nlibrary(nycflights13)\ndata(airports)\ndata(flights)\ndata(weather)\ndata(planes)\ndata(airlines)\n\nThe dataset is perfect for practising joining data, as the set is split into tables that relate to each other. You can see the realtion in the diagram below:\n\nImagine you wanted to draw (approximately) the route each plane flies from its origin to its destination. What variables would you need? What data frames would you need to combine?\n\nflights contains an origin and a destination airport. Looking at airports with View(airports) we see a longitude and a latitude coordinate. By joining flights and airports, we could calculate the differences in longitude and latitude.\n\n\nAdd the location of the origin and destination (i.e. the lat and lon) to flights.\n\n\nfor this, we need to join the tables two times. Once we join origin with faa, and once dest with faa\nsince we are only interested in the lat and lon variables, we could first select a subset from the airports table (this is optional)\n\n\nairports_loc &lt;- airports |&gt;\n  select(faa, lat, lon)\n\n\nflights |&gt;\n  left_join(airports_loc, by = c(\"origin\" = \"faa\")) |&gt;\n  left_join(\n    airports_loc,\n    by = c(\"dest\" = \"faa\"),\n    # using the suffix produces cleaner variable names\n    suffix = c(\"_origin\", \"_dest\")\n  )\n\n\nWhich airlines departed most often from the NYC airports (i.e. JFK, LGA or EWR). Use their real names not the abbreviation\n\n\nflights |&gt;\n  filter(origin %in% c(\"JFK\", \"LGA\", \"EWR\")) |&gt;\n  left_join(airlines, by = \"carrier\") |&gt;\n  count(name, sort = TRUE)\n\n\nHow could you calculate the average age of the planes departing from NYC? (hint: you can calculate averages with mean(), you might want to use na.rm = TRUE)\n\n\nfirst, we need to join flights with planes to see which planes depart from NYC and how often.\nlooking at View(flights) and View(planes), we see that a common key is tailnum\nif we decide to calculate the mean age of the plane for every departure we would use left_join:\n\n\nairplanes_deps &lt;- flights |&gt;\n  filter(origin %in% c(\"JFK\", \"LGA\", \"EWR\")) |&gt;\n  left_join(planes, by = \"tailnum\", suffix = c(\"\", \"_plane\"))\n\n\nalternatively, you might want to check which of the planes started from NYC and then calculate the mean age of these planes. In this case, you need to right_join, as you do not want duplicated planes\n\n\nairplanes_deps &lt;- flights |&gt;\n  filter(origin %in% c(\"JFK\", \"LGA\", \"EWR\")) |&gt;\n  right_join(planes, by = \"tailnum\", suffix = c(\"\", \"_plane\"))\n\n\nnow you can calculate the mean age:\n\n\nmean(airplanes_deps$year_plane, na.rm = TRUE)\n# or as tidy code\nairplanes_deps |&gt;\n  summarise(year_plane = mean(year_plane, na.rm = TRUE))\n\n\nyou have to add na.rm = TRUE or the result will always be NA"
+  },
+  {
+    "objectID": "04_Linking_and_joining_data_SQL/04_solutions.html#exercises-2",
+    "href": "04_Linking_and_joining_data_SQL/04_solutions.html#exercises-2",
+    "title": "solutions session 4",
+    "section": "Exercises 2",
+    "text": "Exercises 2\n\ncreate a new table in db called elections with the fields: election_id, country_name, election_date, party_id, vote_share, seats, and seats_total. Choose appropriate data types for the fields (maybe peak ahead to the next exercise).\nUsing SQL syntax, add this data to the elections table:\n\n\n\n\n\n\n\n\n\n\n\n\n\nelection_id\ncountry_name\nelection_date\nparty_id\nvote_share\nseats\nseats_total\n\n\n\n\n1030\nAustria\n1919-02-16\n97\n40.75\n72\n170\n\n\n\n\nUsing SQL syntax, add this data to the elections table:\n\n\n\n\nelection_id\ncountry_name\nelection_date\nvote_share\nparty_id\n\n\n\n\n872\nBelgium\n1908-05-24\n22.6\n2422\n\n\n\n\nQuerying data from elections, create an R object that has the election_id, party_id and vote_share fields for elections after 1910.\nQuerying data from elections, get election_id, party_id, vote_share fields and just the year of the election.\nAdd a new field vote_share_prop to the elections database which shows the vote share as proportion rather than a percentage."
+  },
+  {
+    "objectID": "04_Linking_and_joining_data_SQL/04_solutions.html#exercises-3",
+    "href": "04_Linking_and_joining_data_SQL/04_solutions.html#exercises-3",
+    "title": "solutions session 4",
+    "section": "Exercises 3",
+    "text": "Exercises 3\n\nAdd the three data.frames from the 2016 primaries case study to the database (schedule, results_state, and facts)\nRight join results_state and facts\nRecreate the table results_state_time by querying and joining from db. Hint: multiple keys can be used by putting AND between them, e.g., ON df1.id = df2.id AND df1.id2 = df2.id2."
   }
 ]

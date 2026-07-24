@@ -1,13 +1,13 @@
 ---
-title: "Session 5:	Scaling, Reporting and Database Software"
+title: "Session 5:	Database Software and Scaling your Analyses"
 subtitle: "Introduction to Web Scraping and Data Management for Social Scientists"
 author: "Johannes B. Gruber"
 date: 2026-07-24
 format:
   revealjs:
     smaller: true
-    width: 1600
-    height: 900
+    width: 1920
+    height: 1080
     scrollable: true
     code-line-numbers: true
     slide-number: c/t
@@ -32,17 +32,17 @@ highlight-style: nord
 library(tinytable)
 library(tidyverse)
 tibble::tribble(
-  ~Day , ~Session                                    ,
-     1 , "Introduction"                              ,
-     2 , "Data Structures and Wrangling"             ,
-     3 , "Working with Files"                        ,
-     4 , "Linking and joining data & SQL"            ,
-     5 , "Scaling, Reporting and Database Software"  ,
-     6 , "Introduction to the Web"                   ,
-     7 , "Static Web Pages"                          ,
-     8 , "Application Programming Interface (APIs) " ,
-     9 , "Interactive Web Pages"                     ,
-    10 , "Building a Reproducible Research Project"  ,
+  ~Day , ~Session                                      ,
+     1 , "Introduction"                                ,
+     2 , "Data Structures and Wrangling"               ,
+     3 , "Working with Files"                          ,
+     4 , "Linking and joining data & SQL"              ,
+     5 , "Database Software and Scaling your Analyses" ,
+     6 , "Introduction to the Web"                     ,
+     7 , "Static Web Pages"                            ,
+     8 , "Application Programming Interface (APIs) "   ,
+     9 , "Interactive Web Pages"                       ,
+    10 , "Building a Reproducible Research Project"    ,
 ) |>
   tt() |>
   style_tt() |>
@@ -207,11 +207,11 @@ Let's fill this database with the `nycflights13` flights data:
 
 ```{r}
 library(nycflights13)
-dbWriteTable(db, "airports", airports, overwrite = TRUE)
-dbWriteTable(db, "flights", flights, overwrite = TRUE)
-dbWriteTable(db, "weather", weather, overwrite = TRUE)
-dbWriteTable(db, "planes", planes, overwrite = TRUE)
-dbWriteTable(db, "airlines", airlines, overwrite = TRUE)
+dbWriteTable(db, name = "airports", value = airports, overwrite = TRUE)
+dbWriteTable(db, name = "flights", value = flights, overwrite = TRUE)
+dbWriteTable(db, name = "weather", value = weather, overwrite = TRUE)
+dbWriteTable(db, name = "planes", value = planes, overwrite = TRUE)
+dbWriteTable(db, name = "airlines", value = airlines, overwrite = TRUE)
 ```
 
 ## Connecting from the terminal
@@ -246,12 +246,23 @@ Note that commands are only executed when `SQL` encounters a `;`!
 :::
 ::::
 
+## Using Adminer Web-GUI
+
+Access by typing `localhost:8080` in your browser
+
+![](media/adminer)
+
+::: {.callout-note}
+Adminer is only one of several Web-GUIs. pgAdmin would be another popular alternative with more features.
+:::
+
 ## Working with `PostgreSQL`: pretty similar to SQLite...
 
 But not the same...
 
 ```{r}
 #| echo: false
+#| output: false
 # just to make sure the tables do not exist already
 try(dbExecute(db, "DROP TABLE df1"))
 try(dbExecute(db, "DROP TABLE df2"))
@@ -479,17 +490,6 @@ Using the `PostgreSQL` database or the `SQLite` database from session 4:
 
 Same as with `PostgreSQL`, we can use Docker.
 
-1. Download the compose file:
-
-```{r}
-curl::curl_download(
-  url = "https://raw.githubusercontent.com/ccs-amsterdam/amcat4/refs/heads/master/deploy/docker-compose.yml",
-  destfile = "data/docker-compose-amcat.yml"
-)
-```
-
-2. Spin it up via the Terminal
-
 ```sh
 docker-compose -f 05_Scaling_Reporting_and_Database_Software/data/docker-compose-amcat.yml up -d
 ```
@@ -511,7 +511,7 @@ docker exec -it amcat4 amcat4 config
 
 ## Connecting from `R`
 
-We need to log in, which you can do without a user by default:
+We need to log in, which you can do without a user by default (use `204.168.185.249´ instead of `localhost` again for a public server):
 
 ```{r connect_amcat}
 # remotes::install_github("ccs-amsterdam/amcat4r")
@@ -661,7 +661,7 @@ query_aggregate(
 
 ## Exercises 2
 
-1. Connect to your own AmCAT server (alternatively,  connect to mine)
+1. Connect to your own AmCAT server (alternatively, connect to mine)
 2. Create a new index and add some toy data to it that has: a date, a title, and a text field
 3. Query all documents from your index
 4. query the documents from the "houseofcommons" index that have:
@@ -699,7 +699,7 @@ fun2 <- function() {
 2. run `mark`
 
 ```{r}
-res <- mark(simple = fun1, complex = fun1)
+res <- mark(simple = fun1(), complex = fun2())
 ```
 
 3. check summary
@@ -733,8 +733,8 @@ in_db <- function() {
 
 ```{r}
 res <- mark(
-  in_memory = in_memory,
-  in_db = in_db,
+  in_memory = in_memory(),
+  in_db = in_db(),
   check = FALSE,
   iterations = 15
 )
@@ -787,9 +787,9 @@ in_db_w_index <- function() {
 
 ```{r}
 res <- mark(
-  in_memory = in_memory,
-  in_db = in_db,
-  in_db_w_index = in_db_w_index,
+  in_memory = in_memory(),
+  in_db = in_db(),
+  in_db_w_index = in_db_w_index(),
   check = FALSE,
   iterations = 25
 )
