@@ -18,7 +18,7 @@
     "href": "index.html#schedule",
     "title": "Introduction to Web Scraping and Data Management for Social Scientists",
     "section": "Schedule",
-    "text": "Schedule\nSlides are uploaded here as the course progresses.\n\n\n\n\n\nDay\nDate\nSession\nMaterials\nExercises\n\n\n\n\n1\nMon, 20 July\nIntroduction\nSlides\nExercises\n\n\n2\nTue, 21 July\nData Structures and Wrangling\nSlides\nExercises\n\n\n3\nWed, 22 July\nWorking with Files\nSlides\nExercises\n\n\n4\nThu, 23 July\nLinking and Joining Data & SQL\nSlides\nExercises\n\n\n5\nFri, 24 July\nScaling, Reporting and Database Software\nSlides\nnot yet available\n\n\n6\nMon, 27 July\nIntroduction to the Web\nnot yet available\nnot yet available\n\n\n7\nTue, 28 July\nStatic Web Pages\nnot yet available\nnot yet available\n\n\n8\nWed, 29 July\nApplication Programming Interfaces (APIs)\nnot yet available\nnot yet available\n\n\n9\nThu, 30 July\nInteractive Web Pages\nnot yet available\n–\n\n\n10\nFri, 31 July\nBuilding a Reproducible Research Project\nnot yet available\n–"
+    "text": "Schedule\nSlides are uploaded here as the course progresses.\n\n\n\n\n\nDay\nDate\nSession\nMaterials\nExercises\n\n\n\n\n1\nMon, 20 July\nIntroduction\nSlides\nExercises\n\n\n2\nTue, 21 July\nData Structures and Wrangling\nSlides\nExercises\n\n\n3\nWed, 22 July\nWorking with Files\nSlides\nExercises\n\n\n4\nThu, 23 July\nLinking and Joining Data & SQL\nSlides\nExercises\n\n\n5\nFri, 24 July\nScaling, Reporting and Database Software\nSlides\nExercises\n\n\n6\nMon, 27 July\nIntroduction to the Web\nSlides\nnot yet available\n\n\n7\nTue, 28 July\nStatic Web Pages\nnot yet available\nnot yet available\n\n\n8\nWed, 29 July\nApplication Programming Interfaces (APIs)\nnot yet available\nnot yet available\n\n\n9\nThu, 30 July\nInteractive Web Pages\nnot yet available\n–\n\n\n10\nFri, 31 July\nBuilding a Reproducible Research Project\nnot yet available\n–"
   },
   {
     "objectID": "index.html#required-software",
@@ -1859,7 +1859,7 @@
     "href": "04_Linking_and_joining_data_SQL/04_solutions.html#exercises-2",
     "title": "solutions session 4",
     "section": "Exercises 2",
-    "text": "Exercises 2\n\ncreate a new table in db called elections with the fields: election_id, country_name, election_date, party_id, vote_share, seats, and seats_total. Choose appropriate data types for the fields (maybe peak ahead to the next exercise).\nUsing SQL syntax, add this data to the elections table:\n\n\n\n\n\n\n\n\n\n\n\n\n\nelection_id\ncountry_name\nelection_date\nparty_id\nvote_share\nseats\nseats_total\n\n\n\n\n1030\nAustria\n1919-02-16\n97\n40.75\n72\n170\n\n\n\n\nUsing SQL syntax, add this data to the elections table:\n\n\n\n\nelection_id\ncountry_name\nelection_date\nvote_share\nparty_id\n\n\n\n\n872\nBelgium\n1908-05-24\n22.6\n2422\n\n\n\n\nQuerying data from elections, create an R object that has the election_id, party_id and vote_share fields for elections after 1910.\nQuerying data from elections, get election_id, party_id, vote_share fields and just the year of the election.\nAdd a new field vote_share_prop to the elections database which shows the vote share as proportion rather than a percentage."
+    "text": "Exercises 2\n\ncreate a new table in db called elections with the fields: election_id, country_name, election_date, party_id, vote_share, seats, and seats_total. Choose appropriate data types for the fields (maybe peak ahead to the next exercise).\n\n\nlibrary(DBI)\nlibrary(RSQLite)\ndb &lt;- dbConnect(SQLite(), \"data/db.sql\")\ndbExecute(\n  db,\n  \"CREATE TABLE elections (\n            election_id integer,\n            country_name varchar,\n            election_date date,\n            party_id integer,\n            vote_share real,\n            seats integer,\n            seats_total integer\n          )\"\n)\ndbListTables(db)\ndbGetQuery(db, \"SELECT * FROM elections\")\n\n\nUsing SQL syntax, add this data to the elections table:\n\n\n\n\n\n\n\n\n\n\n\n\n\nelection_id\ncountry_name\nelection_date\nparty_id\nvote_share\nseats\nseats_total\n\n\n\n\n1030\nAustria\n1919-02-16\n97\n40.75\n72\n170\n\n\n\n\ndbExecute(\n  db,\n  \"INSERT INTO elections\n            VALUES (1030, 'Austria', '1919-02-16', 97, 40.75, 72, 170)\"\n)\ndbGetQuery(db, \"SELECT * FROM elections\")\n\n\nUsing SQL syntax, add this data to the elections table:\n\n\n\n\nelection_id\ncountry_name\nelection_date\nvote_share\nparty_id\n\n\n\n\n872\nBelgium\n1908-05-24\n22.6\n2422\n\n\n\n\ndbExecute(\n  db,\n  \"INSERT INTO elections (election_id, country_name, election_date, vote_share, party_id)\n            VALUES (872, 'Belgium', '1908-05-24', 22.6, 2422)\"\n)\ndbGetQuery(db, \"SELECT * FROM elections\")\n\n\nQuerying data from elections, create an R object that has the election_id, party_id and vote_share fields for elections after 1910.\n\n\ndf &lt;- dbGetQuery(db, \"SELECT election_id, party_id, vote_share FROM elections\")\ndf\n\n\nQuerying data from elections, get election_id, party_id, vote_share fields and just the year of the election.\n\n\ndbGetQuery(\n  db,\n  \"SELECT election_id, party_id, vote_share, strftime('%Y', election_date) FROM elections\"\n)\n\n\nAdd a new field vote_share_prop to the elections database which shows the vote share as proportion rather than a percentage.\n\n\ndbExecute(db, \"ALTER TABLE elections ADD vote_share_prop real\")\ndbExecute(\n  db,\n  \"UPDATE elections\n               SET vote_share_prop = vote_share / 100\"\n)\ndbGetQuery(db, \"SELECT * FROM elections\")"
   },
   {
     "objectID": "04_Linking_and_joining_data_SQL/04_solutions.html#exercises-3",
@@ -1867,5 +1867,306 @@
     "title": "solutions session 4",
     "section": "Exercises 3",
     "text": "Exercises 3\n\nAdd the three data.frames from the 2016 primaries case study to the database (schedule, results_state, and facts)\nRight join results_state and facts\nRecreate the table results_state_time by querying and joining from db. Hint: multiple keys can be used by putting AND between them, e.g., ON df1.id = df2.id AND df1.id2 = df2.id2."
+  },
+  {
+    "objectID": "06_Introduction_to_the_Web/06_Introduction_to_the_Web.html#this-course",
+    "href": "06_Introduction_to_the_Web/06_Introduction_to_the_Web.html#this-course",
+    "title": "Session 6: Introduction to the Web",
+    "section": "This Course",
+    "text": "This Course\n\n\n\n\n\n    \n\n    \n\n    \n    \n    \n      \n        \n        \n              \n                Day\n                Session\n              \n        \n        \n        \n                \n                  1\n                  Introduction\n                \n                \n                  2\n                  Data Structures and Wrangling\n                \n                \n                  3\n                  Working with Files\n                \n                \n                  4\n                  Linking and joining data & SQL\n                \n                \n                  5\n                  Scaling, Reporting and Database Software\n                \n                \n                  6\n                  Introduction to the Web\n                \n                \n                  7\n                  Static Web Pages\n                \n                \n                  8\n                  Application Programming Interface (APIs)\n                \n                \n                  9\n                  Interactive Web Pages\n                \n                \n                  10\n                  Building a Reproducible Research Project"
+  },
+  {
+    "objectID": "06_Introduction_to_the_Web/06_Introduction_to_the_Web.html#the-plan-for-today",
+    "href": "06_Introduction_to_the_Web/06_Introduction_to_the_Web.html#the-plan-for-today",
+    "title": "Session 6: Introduction to the Web",
+    "section": "The Plan for Today",
+    "text": "The Plan for Today\n\n\nIn this session, we learn how to scout data in the wild. We will:\n\ndiscuss web scraping from a theoretical point of view:\n\nWhat is web scraping?\nWhy should you learn it?\nWhat legal, ethical, institutional and scientific implications should you keep in mind?\n\nlearn a bit more about how the Internet works\n\nWhat is HTML\nWhat is CSS\n\n\n\n Angie Gade via unsplash.com"
+  },
+  {
+    "objectID": "06_Introduction_to_the_Web/06_Introduction_to_the_Web.html#forms-to-get-data-from-the-web",
+    "href": "06_Introduction_to_the_Web/06_Introduction_to_the_Web.html#forms-to-get-data-from-the-web",
+    "title": "Session 6: Introduction to the Web",
+    "section": "Forms to get data from the web",
+    "text": "Forms to get data from the web\n\n\n\nDownload data from a website\nRetrieve data via an API\nScrape the (unstructured) Data"
+  },
+  {
+    "objectID": "06_Introduction_to_the_Web/06_Introduction_to_the_Web.html#web-scraping",
+    "href": "06_Introduction_to_the_Web/06_Introduction_to_the_Web.html#web-scraping",
+    "title": "Session 6: Introduction to the Web",
+    "section": "Web Scraping",
+    "text": "Web Scraping\n\n\n\nUsed when other means are unavailable\nScrape the (unstructured) Data from a website\n\nE.g: get the author, title, date and body of an online news article\nE.g: get a table from a website (like Wikipedia)\nE.g: get all entries from a blog\nE.g: get all press statements from a political party website\nE.g: get all hyperlinks to files on a website\n\nA web-scraper is a program (or robot) that:\n\ngoes to a web page\ndownloads its content\nextracts data from the content\nthen saves the data to a file or a database"
+  },
+  {
+    "objectID": "06_Introduction_to_the_Web/06_Introduction_to_the_Web.html#web-scraping-a-three-step-process",
+    "href": "06_Introduction_to_the_Web/06_Introduction_to_the_Web.html#web-scraping-a-three-step-process",
+    "title": "Session 6: Introduction to the Web",
+    "section": "Web Scraping: A Three-Step Process",
+    "text": "Web Scraping: A Three-Step Process\n\n\n\nRequest & Collect:\n\nyou send an HTTP request to the webpage\nserver responds to the request by returning HTML content\n\nParse the HTML content\n\nextract the information you want from the nested structure of HTML code\n\nWrangle the data into a useful format\n\nusually a tidy table"
+  },
+  {
+    "objectID": "06_Introduction_to_the_Web/06_Introduction_to_the_Web.html#hurdles",
+    "href": "06_Introduction_to_the_Web/06_Introduction_to_the_Web.html#hurdles",
+    "title": "Session 6: Introduction to the Web",
+    "section": "Hurdles",
+    "text": "Hurdles\n\n\n\nUnfortunately no one-size-fits-all solution\n\nLots of different techniques, tools, tricks\nWebsites change (some more frequently than others)\n\nSome web pages are easier to scrape than others (by accident or on purpose!):\n\nDifficulty levels\n\nWell behaved static HTML with recurring patterns\nHaphazard HTML not clearly differentiating between different types of information\nInteractive web sites loading content by executing code (usually JavaScript or PHP)\nInteractive web sites with mechanisms against data extraction (rate limits, captchas etc.)\nServer requests fail without the correct (frequently changing) token"
+  },
+  {
+    "objectID": "06_Introduction_to_the_Web/06_Introduction_to_the_Web.html#why-should-you-learn-web-scraping",
+    "href": "06_Introduction_to_the_Web/06_Introduction_to_the_Web.html#why-should-you-learn-web-scraping",
+    "title": "Session 6: Introduction to the Web",
+    "section": "Why Should You Learn Web Scraping?",
+    "text": "Why Should You Learn Web Scraping?\n\n\n\nThe internet is a data gold mine!\nData was not created for research, but are often traces of what people are actually doing on the internet\nReproducible and renewable data collection (e.g., rehydrate data that is copyrighted)\nWeb Scraping let’s you automate data retrieval (as opposed to using tedious copy & paste on some web site)\nIt’s one of the most fun tasks to learn R and programming!\n\nIt’s engaging and satisfying to find repeating patterns that you can employ to structure data (every website becomes a little puzzle)\nIt touches on many important computational skills\nThe return is good data to further your career (unlike sudokus or video games)"
+  },
+  {
+    "objectID": "06_Introduction_to_the_Web/06_Introduction_to_the_Web.html#found-vs-designed-data",
+    "href": "06_Introduction_to_the_Web/06_Introduction_to_the_Web.html#found-vs-designed-data",
+    "title": "Session 6: Introduction to the Web",
+    "section": "Found vs Designed Data",
+    "text": "Found vs Designed Data\n\n\nDesigned Data\n\nCollected for research\nFull control of shape and form\nProblems of validity due to social desirability and imperfect estimation problems\n\n\nFound Data\n\nTraces of human behavior\nComes in all shapes and forms\nProblems of validity as not representative and incomplete access"
+  },
+  {
+    "objectID": "06_Introduction_to_the_Web/06_Introduction_to_the_Web.html#legal",
+    "href": "06_Introduction_to_the_Web/06_Introduction_to_the_Web.html#legal",
+    "title": "Session 6: Introduction to the Web",
+    "section": "Legal",
+    "text": "Legal\nWeb Scraping is not a shady or illegal activity, but not all web scraping is unproblematic and the data does not become yours.\n\nCollecting copyrighted data\n\nComplicated legal situation\nPublic facing content is probably okay (9th circuit ruling)\n“research organisations and cultural heritage institutions” can collect copyrighted data through “text and data mining” if “they they have lawful access” it Digital Single Market Directive Article 3\nYou will probably get in trouble if you distribute the material\n“there have been no lawsuits in […] major western democratic countries stemming from a researcher scraping publicly accessible data from a website for personal or academic use.” (Luscombe et al. 2022)\n\nCollecting personal data of people in the EU might violate GDPR (General Data Protection Regulation)\n\nThe GDPR defines personal data as “any information relating to an identified or identifiable natural person.” (Art. 4 GDPR)\nExceptions\n\nif you get consent from the people whose data it is\npersonal data processing is legitimate when “necessary for the performance of a task carried out in the public interest” (Art. 6 GDPR)\nUnder DSA Article 40 Very Large Online Platforms/Search Engines (VLOPs/VLOSEs) must provide access to publicly accessible data for vetted researchers upon request. If they don’t there is a court ruling you can scrape\n\n\nHonoring Terms of Service and robots.txt\n\nMany companies have ToS that might prohibit you from scraping (these are not laws, might not be binding and whether they can be enforced is a separate question)\n/robots.txt is often where guidelines are communicated to automated crawlers (these are not legally binding either)"
+  },
+  {
+    "objectID": "06_Introduction_to_the_Web/06_Introduction_to_the_Web.html#tos-and-robots.txt",
+    "href": "06_Introduction_to_the_Web/06_Introduction_to_the_Web.html#tos-and-robots.txt",
+    "title": "Session 6: Introduction to the Web",
+    "section": "ToS and Robots.txt",
+    "text": "ToS and Robots.txt\n\nTwitter ToS\nUser-agent: *                         # the rules apply to all user agents\nDisallow: /EPiServer/CMS/             # do not crawl any URLs that start with /EPiServer/CMS/\nDisallow: /Util/                      # do not crawl any URLs that start with /Util/\nDisallow: /about/art-in-parliament/   # do not crawl any URLs that start with /about/art-in-parliament/\nhttps://www.parliament.uk/robots.txt\n\nMany companies have ToS that might prohibit you from scraping (see above: these are not laws, might not be binding and whether they can be enforced is a separate question)\n/robots.txt is often where guidelines are communicated to automated crawlers (these are not legally binding either)"
+  },
+  {
+    "objectID": "06_Introduction_to_the_Web/06_Introduction_to_the_Web.html#ethical",
+    "href": "06_Introduction_to_the_Web/06_Introduction_to_the_Web.html#ethical",
+    "title": "Session 6: Introduction to the Web",
+    "section": "Ethical",
+    "text": "Ethical\nWhat is legal and what is decent are two different questions.\n\nAre there other means available to get to the data (e.g., via an API)?\nrobots.txt might not be legally binding, but it is not nice to ignore it\nScraping can put a heavy load on a website (if you make 1000s of requests) which costs the hosts money and might bring down a site (DDoS attack)\n\nbe a polite scraper: rate limit yourself, cache what you already downloaded so you don’t request it twice, and identify yourself in the user agent\n\nThink twice before scraping personal data. You should ask yourself:\n\nis it necessary for your research?\nare you harming anyone by obtaining (or distributing) the data?\ndo you really need everything or are parts of the data sufficient (e.g., can you preselect cases or ignore variables)"
+  },
+  {
+    "objectID": "06_Introduction_to_the_Web/06_Introduction_to_the_Web.html#advice",
+    "href": "06_Introduction_to_the_Web/06_Introduction_to_the_Web.html#advice",
+    "title": "Session 6: Introduction to the Web",
+    "section": "Advice?",
+    "text": "Advice?\nLegal and ethical advice is rare and complicated to give. A good opinion piece about it is Freelon (2018). It is worth reading, but can be summarised in three general pieces of advice\n\nUse authorized methods whenever possible\nDo not confuse terms of service compliance with data protection\nUnderstand the risks of violating terms of service\n\n\nBrown et al. (2025) add a checklist logic: write down, before you start, your answers to\n\nhow you access the data\nwhat exactly you collect and why you need it\nhow you secure, minimise and eventually delete it\nwho you talked to about it\nwhat you would say publicly if someone objected to your project"
+  },
+  {
+    "objectID": "06_Introduction_to_the_Web/06_Introduction_to_the_Web.html#exercises-1",
+    "href": "06_Introduction_to_the_Web/06_Introduction_to_the_Web.html#exercises-1",
+    "title": "Session 6: Introduction to the Web",
+    "section": "Exercises 1",
+    "text": "Exercises 1\nTwitter made access to their API punishingly expensive and stopped free academic access for research in 2023. If you wanted to do research on Twitter data through web-scraping anyway what implications would that have:\n\nLegally\nEthically\nInstitutionally (who at your institution would you talk to, and in what order?)\nScientifically (what would you not be able to claim with the data you get?)\nPractical\n\nDiscuss!"
+  },
+  {
+    "objectID": "06_Introduction_to_the_Web/06_Introduction_to_the_Web.html#what-is-html",
+    "href": "06_Introduction_to_the_Web/06_Introduction_to_the_Web.html#what-is-html",
+    "title": "Session 6: Introduction to the Web",
+    "section": "What is HTML",
+    "text": "What is HTML\n\nHTML (HyperText Markup Language) is the standard markup language for documents designed to be displayed in a web browser\nContains the raw data (text, URLs to pictures and videos) plus defines the layout and some of the styling of text\n\n\nImage Source: Wikipedia.org"
+  },
+  {
+    "objectID": "06_Introduction_to_the_Web/06_Introduction_to_the_Web.html#example-simple",
+    "href": "06_Introduction_to_the_Web/06_Introduction_to_the_Web.html#example-simple",
+    "title": "Session 6: Introduction to the Web",
+    "section": "Example: Simple",
+    "text": "Example: Simple\n\n\nCode:\n&lt;!DOCTYPE html&gt;\n&lt;html&gt;\n&lt;head&gt;\n    &lt;title&gt;My Simple HTML Page&lt;/title&gt;\n&lt;/head&gt;\n&lt;body&gt;\n    &lt;p&gt;This is the body of the text.&lt;/p&gt;\n&lt;/body&gt;\n&lt;/html&gt;\n\nBrowser View:"
+  },
+  {
+    "objectID": "06_Introduction_to_the_Web/06_Introduction_to_the_Web.html#example-with-headline-and-author",
+    "href": "06_Introduction_to_the_Web/06_Introduction_to_the_Web.html#example-with-headline-and-author",
+    "title": "Session 6: Introduction to the Web",
+    "section": "Example: With headline and author",
+    "text": "Example: With headline and author\n\n\nCode:\n&lt;!DOCTYPE html&gt;\n&lt;html&gt;\n&lt;head&gt;\n    &lt;title&gt;My Simple HTML Page&lt;/title&gt;\n&lt;/head&gt;\n&lt;body&gt;\n    &lt;h1&gt;My Headline&lt;/h1&gt;\n    &lt;p class=\"author\" href=\"https://www.johannesbgruber.eu/\"&gt;Me&lt;/p&gt;\n    &lt;p&gt;This is the body of the text.&lt;/p&gt;\n&lt;/body&gt;\n&lt;/html&gt;\n\nBrowser View:"
+  },
+  {
+    "objectID": "06_Introduction_to_the_Web/06_Introduction_to_the_Web.html#example-with-some-data",
+    "href": "06_Introduction_to_the_Web/06_Introduction_to_the_Web.html#example-with-some-data",
+    "title": "Session 6: Introduction to the Web",
+    "section": "Example: With some data",
+    "text": "Example: With some data\n\n\nCode:\n\n&lt;!DOCTYPE html&gt;\n&lt;html&gt;\n&lt;head&gt;\n    &lt;title&gt;My Simple HTML Page&lt;/title&gt;\n&lt;/head&gt;\n&lt;body&gt;\n    &lt;h1&gt;My Headline&lt;/h1&gt;\n    &lt;p class=\"author\"&gt;Me&lt;/p&gt;\n    &lt;p&gt;This is the body of the text.&lt;/p&gt;\n    &lt;p&gt;Consider this data:&lt;/p&gt;\n    &lt;table&gt;\n        &lt;tr&gt;\n            &lt;th&gt;Name&lt;/th&gt;\n            &lt;th&gt;Age&lt;/th&gt;\n        &lt;/tr&gt;\n        &lt;tr&gt;\n            &lt;td&gt;John&lt;/td&gt;\n            &lt;td&gt;25&lt;/td&gt;\n        &lt;/tr&gt;\n        &lt;tr&gt;\n            &lt;td&gt;Mary&lt;/td&gt;\n            &lt;td&gt;26&lt;/td&gt;\n        &lt;/tr&gt;\n    &lt;/table&gt;\n&lt;/body&gt;\n&lt;/html&gt;\n\n\nBrowser View:"
+  },
+  {
+    "objectID": "06_Introduction_to_the_Web/06_Introduction_to_the_Web.html#example-with-an-image",
+    "href": "06_Introduction_to_the_Web/06_Introduction_to_the_Web.html#example-with-an-image",
+    "title": "Session 6: Introduction to the Web",
+    "section": "Example: With an image",
+    "text": "Example: With an image\n\n\nCode:\n&lt;!DOCTYPE html&gt;\n&lt;html&gt;\n&lt;head&gt;\n    &lt;title&gt;My Simple HTML Page&lt;/title&gt;\n&lt;/head&gt;\n&lt;body&gt;\n    &lt;h1&gt;My Headline&lt;/h1&gt;\n    &lt;p class=\"author\"&gt;Me&lt;/p&gt;\n    &lt;p&gt;This is the body of the text.&lt;/p&gt;\n    &lt;p&gt;Consider this image:&lt;/p&gt;\n    &lt;img src=\"https://upload.wikimedia.org/wikipedia/commons/thumb/1/11/3_month_old_Corgi_puppy.jpg/960px-3_month_old_Corgi_puppy.jpg\" alt=\"About The Dog.\"&gt;\n&lt;/body&gt;\n&lt;/html&gt;\n\nBrowser View:"
+  },
+  {
+    "objectID": "06_Introduction_to_the_Web/06_Introduction_to_the_Web.html#example-with-a-link",
+    "href": "06_Introduction_to_the_Web/06_Introduction_to_the_Web.html#example-with-a-link",
+    "title": "Session 6: Introduction to the Web",
+    "section": "Example: With a link",
+    "text": "Example: With a link\n\n\nCode:\n&lt;!DOCTYPE html&gt;\n&lt;html&gt;\n&lt;head&gt;\n    &lt;title&gt;My Simple HTML Page&lt;/title&gt;\n&lt;/head&gt;\n&lt;body&gt;\n    &lt;h1&gt;My Headline&lt;/h1&gt;\n    &lt;a href=\"https://www.johannesbgruber.eu/\"&gt;\n      &lt;p class=\"author\"&gt;Me&lt;/p&gt;\n    &lt;/a&gt;\n    &lt;p&gt;This is the body of the text.&lt;/p&gt;\n&lt;/body&gt;\n&lt;/html&gt;\n\nBrowser View:"
+  },
+  {
+    "objectID": "06_Introduction_to_the_Web/06_Introduction_to_the_Web.html#what-is-css",
+    "href": "06_Introduction_to_the_Web/06_Introduction_to_the_Web.html#what-is-css",
+    "title": "Session 6: Introduction to the Web",
+    "section": "What is CSS",
+    "text": "What is CSS\n\nCSS (Cascading Style Sheets) is very often used in addition to HTML to control the presentation of a document\nDesigned to enable the separation of content from things concerning the look, such as layout, colours, and fonts.\nThe reason it is interesting for web scraping is that certain information often get the same styling"
+  },
+  {
+    "objectID": "06_Introduction_to_the_Web/06_Introduction_to_the_Web.html#example-css",
+    "href": "06_Introduction_to_the_Web/06_Introduction_to_the_Web.html#example-css",
+    "title": "Session 6: Introduction to the Web",
+    "section": "Example: CSS",
+    "text": "Example: CSS\n\n\nHTML:\n&lt;!DOCTYPE html&gt;\n&lt;html&gt;\n&lt;head&gt;\n    &lt;title&gt;My Simple HTML Page&lt;/title&gt;\n    &lt;link rel=\"stylesheet\" type=\"text/css\" href=\"example.css\"&gt;\n&lt;/head&gt;\n&lt;body&gt;\n  &lt;h1 class=\"headline\"&gt;My Headline&lt;/h1&gt;\n  &lt;p class=\"author\"&gt;Me&lt;/p&gt;\n  &lt;div class=\"content\"&gt;\n    &lt;p&gt;This is the body of the text.&lt;/p&gt;\n    &lt;img src=\"https://upload.wikimedia.org/wikipedia/commons/thumb/1/11/3_month_old_Corgi_puppy.jpg/960px-3_month_old_Corgi_puppy.jpg\" alt=\"About The Dog.\"&gt;\n    &lt;p&gt;Consider this data:&lt;/p&gt;\n    &lt;table&gt;\n      &lt;tr class=\"top-row\"&gt;\n          &lt;th&gt;Name&lt;/th&gt;\n          &lt;th&gt;Age&lt;/th&gt;\n      &lt;/tr&gt;\n      &lt;tr&gt;\n          &lt;td&gt;John&lt;/td&gt;\n          &lt;td&gt;25&lt;/td&gt;\n      &lt;/tr&gt;\n      &lt;tr&gt;\n          &lt;td&gt;Mary&lt;/td&gt;\n          &lt;td&gt;26&lt;/td&gt;\n      &lt;/tr&gt;\n    &lt;/table&gt;\n  &lt;/div&gt;\n&lt;/body&gt;\n&lt;/body&gt;\n&lt;/html&gt;\nCSS:\n/* CSS file */\n\n.headline {\n  color: red;\n}\n\n.author {\n  color: grey;\n  font-style: italic;\n  font-weight: bold;\n}\n\n.top-row {\n  background-color: lightgrey;\n}\n\n.content img {\n  border: 2px solid black;\n}\n\ntable, th, td {\n  border: 1px solid black;\n}\n\nBrowser View:"
+  },
+  {
+    "objectID": "06_Introduction_to_the_Web/06_Introduction_to_the_Web.html#exercises-2",
+    "href": "06_Introduction_to_the_Web/06_Introduction_to_the_Web.html#exercises-2",
+    "title": "Session 6: Introduction to the Web",
+    "section": "Exercises 2",
+    "text": "Exercises 2\n\nAdd another paragraph to data/example.html and display it in your browser\nAdd a second level headline to the page\nAdd another image to the page\nManipulate the files data/example.html and/or data/example.css so that “content” is displayed in italics"
+  },
+  {
+    "objectID": "06_Introduction_to_the_Web/06_Introduction_to_the_Web.html#using-html-tags",
+    "href": "06_Introduction_to_the_Web/06_Introduction_to_the_Web.html#using-html-tags",
+    "title": "Session 6: Introduction to the Web",
+    "section": "Using HTML tags:",
+    "text": "Using HTML tags:\nYou can select HTML elements by their tags\n\nlibrary(rvest)\nread_html(\"data/example.html\") |&gt;\n  html_elements(\"p\") |&gt;\n  html_text2()\n\n[1] \"Me\"                            \"This is the body of the text.\"\n[3] \"Consider this image:\"          \"Consider this data:\"          \n\n\n\nto select them, tags are written without the &lt;&gt;\nin theory, arbitrary tags are possible, but commonly people use &lt;p&gt; (paragraph), &lt;br&gt; (line break), &lt;h1&gt;, &lt;h2&gt;, &lt;h3&gt;, … (first, second, third, … level headline), &lt;b&gt; (bold), &lt;i&gt; (italic), &lt;img&gt; (image), &lt;a&gt; (hyperlink), and a couple more."
+  },
+  {
+    "objectID": "06_Introduction_to_the_Web/06_Introduction_to_the_Web.html#using-attributes",
+    "href": "06_Introduction_to_the_Web/06_Introduction_to_the_Web.html#using-attributes",
+    "title": "Session 6: Introduction to the Web",
+    "section": "Using attributes",
+    "text": "Using attributes\nYou can select elements by an attribute, including the class:\n\nread_html(\"data/example.html\") |&gt;\n  html_element(\"[class=\\\"headline\\\"]\") |&gt;\n  html_text()\n\n[1] \"My Headline\"\n\n\nFor class, there is also a shorthand:\n\nread_html(\"data/example.html\") |&gt;\n  html_element(\".headline\") |&gt;\n  html_text()\n\n[1] \"My Headline\"\n\n\nAnother important shorthand is #, which selects the id attribute:\n\nread_html(\"data/example.html\") |&gt;\n  html_element(\"#table-1\") |&gt;\n  html_table()\n\n# A tibble: 2 × 2\n  Name    Age\n  &lt;chr&gt; &lt;int&gt;\n1 John     25\n2 Mary     26\n\nread_html(\"data/example.html\") |&gt;\n  html_element(\"#table-1 &gt; tr\")\n\n{html_node}\n&lt;tr class=\"top-row\"&gt;\n[1] &lt;th&gt;Name&lt;/th&gt;\n[2] &lt;th&gt;Age&lt;/th&gt;"
+  },
+  {
+    "objectID": "06_Introduction_to_the_Web/06_Introduction_to_the_Web.html#extracting-attributes",
+    "href": "06_Introduction_to_the_Web/06_Introduction_to_the_Web.html#extracting-attributes",
+    "title": "Session 6: Introduction to the Web",
+    "section": "Extracting attributes",
+    "text": "Extracting attributes\nInstead of selecting by attribute, you can also extract one or all attributes:\n\nread_html(\"data/example.html\") |&gt;\n  html_elements(\"a\") |&gt;\n  html_attr(\"href\")\n\n[1] \"https://www.johannesbgruber.eu/\"   \"https://en.wikipedia.org/wiki/Dog\"\n\n\n\nread_html(\"data/example.html\") |&gt;\n  html_elements(\"a\") |&gt;\n  html_attrs()\n\n[[1]]\n                             href \n\"https://www.johannesbgruber.eu/\" \n\n[[2]]\n                               href \n\"https://en.wikipedia.org/wiki/Dog\""
+  },
+  {
+    "objectID": "06_Introduction_to_the_Web/06_Introduction_to_the_Web.html#chaining-selectors",
+    "href": "06_Introduction_to_the_Web/06_Introduction_to_the_Web.html#chaining-selectors",
+    "title": "Session 6: Introduction to the Web",
+    "section": "Chaining selectors",
+    "text": "Chaining selectors\nIf there is more than one element that fits your selector, but you only want one of them, see if you can make your selection more specific by chaining selectors with &gt; (for the immediate children) or an empty space (for any children and descendants of an element):\n\nread_html(\"data/example.html\") |&gt;\n  html_elements(\".author&gt;a\") |&gt;\n  html_attr(\"href\")\n\n[1] \"https://www.johannesbgruber.eu/\"\n\n\n\nread_html(\"data/example.html\") |&gt;\n  html_elements(\".author a\") |&gt;\n  html_attr(\"href\")\n\n[1] \"https://www.johannesbgruber.eu/\"\n\n\nTip: there is also no rule against doing this instead:\n\nread_html(\"data/example.html\") |&gt;\n  html_elements(\".author\") |&gt;\n  html_elements(\"a\") |&gt;\n  html_attr(\"href\")\n\n[1] \"https://www.johannesbgruber.eu/\""
+  },
+  {
+    "objectID": "06_Introduction_to_the_Web/06_Introduction_to_the_Web.html#common-selectors",
+    "href": "06_Introduction_to_the_Web/06_Introduction_to_the_Web.html#common-selectors",
+    "title": "Session 6: Introduction to the Web",
+    "section": "Common Selectors",
+    "text": "Common Selectors\nThere are quite a lot of CSS selectors, but often you can stick to just a few:\n\n\n\n\n\n\n\n\nselector\nexample\nSelects\n\n\n\n\nelement/tag\ntable\nall &lt;table&gt; elements\n\n\nclass\n.someTable\nall elements with class=\"someTable\"\n\n\nid\n#table-1\nunique element with id=\"table-1\"\n\n\nelement.class\ntr.headerRow\nall &lt;tr&gt; elements with the headerRow class\n\n\nclass1.class2\n.someTable.blue\nall elements with the someTable AND blue class\n\n\nelement,element\ntr,p\nall &lt;tr&gt; elements AND all &lt;p&gt; elements\n\n\nclass1 tag\n.table-1 tr\nall &lt;tr&gt; elements that are descendants of .table-1\n\n\nclass1 &gt; tag\n.table-1 &gt; tr\nall &lt;tr&gt; elements that are direct children of .table-1\n\n\nclass1 + tag\n.table-1 + a\nthe &lt;a&gt; element directly following an element .table-1\n\n\n[attribute]\n[required]\nall elements with a required attribute\n\n\n[attr=value]\n[type=\"text\"]\nall elements with type attribute equal to “text”\n\n\n[attr^=value]\n[class^=\"btn\"]\nall elements with class attribute starting with “btn”\n\n\n[attr$=value]\n[src$=“.jpg”]\nall elements with src attribute ending with “.jpg”\n\n\n[attr*=value]\n[class*=\"nav\"]\nall elements with class attribute containing “nav”\n\n\n:first-child\ntr:first-child\nall &lt;tr&gt; elements that are the first child of their parent\n\n\n:last-child\ntr:last-child\nall &lt;tr&gt; elements that are the last child of their parent\n\n\n:nth-child(n)\ntr:nth-child(2)\nall &lt;tr&gt; elements that are the 2nd child of their parent"
+  },
+  {
+    "objectID": "06_Introduction_to_the_Web/06_Introduction_to_the_Web.html#family-relations",
+    "href": "06_Introduction_to_the_Web/06_Introduction_to_the_Web.html#family-relations",
+    "title": "Session 6: Introduction to the Web",
+    "section": "Family Relations",
+    "text": "Family Relations\nEach html tag can contain other tags. To keep track of the relations we speak of ancestors, descendants, parents, children and siblings.\n\n&lt;book&gt;\n  &lt;chapter&gt;\n    &lt;section&gt;\n      &lt;subsection&gt;\n        This is a subsection.\n      &lt;/subsection&gt;\n      &lt;subsection&gt;\n        This is another subsection.\n      &lt;/subsection&gt;\n    &lt;/section&gt;\n    &lt;section&gt;\n      This is a section.\n    &lt;/section&gt;\n  &lt;/chapter&gt;\n  &lt;chapter&gt;\n    &lt;section&gt;\n      This is a section.\n    &lt;/section&gt;\n    &lt;section&gt;\n      This is a section.\n    &lt;/section&gt;\n  &lt;/chapter&gt;\n  &lt;chapter&gt;\n    This is a chapter without sections.\n  &lt;/chapter&gt;\n&lt;/book&gt;"
+  },
+  {
+    "objectID": "06_Introduction_to_the_Web/06_Introduction_to_the_Web.html#exercises-3",
+    "href": "06_Introduction_to_the_Web/06_Introduction_to_the_Web.html#exercises-3",
+    "title": "Session 6: Introduction to the Web",
+    "section": "Exercises 3",
+    "text": "Exercises 3\n\nPractice finding the right selector with the CSS Diner game (level 1-16 and 27-32): https://flukeout.github.io/\nConsider the toy HTML example below. Which selectors do you need to put into html_elements() (which extracts all elements matching the selector) to extract the information\n\n\nlibrary(rvest)\nwebpage &lt;- \"&lt;html&gt;\n&lt;body&gt;\n  &lt;h1&gt;Computational Research in the Post-API Age&lt;/h1&gt;\n  &lt;div class='author'&gt;Deen Freelon&lt;/div&gt;\n  &lt;div&gt;Keywords:\n    &lt;ul&gt;\n      &lt;li&gt;API&lt;/li&gt;\n      &lt;li&gt;computational&lt;/li&gt;\n      &lt;li&gt;Facebook&lt;/li&gt;\n    &lt;/ul&gt;\n  &lt;/div&gt;\n  &lt;div class='text'&gt;\n    &lt;p&gt;Three pieces of advice on whether and how to scrape from Dan Freelon&lt;/p&gt;\n  &lt;/div&gt;\n  \n  &lt;ol class='advice'&gt;\n    &lt;li id='one'&gt; use authorized methods whenever possible &lt;/li&gt;\n    &lt;li id='two'&gt; do not confuse terms of service compliance with data protection &lt;/li&gt;\n    &lt;li id='three'&gt; understand the risks of violating terms of service &lt;/li&gt;\n  &lt;/ol&gt;\n\n&lt;/body&gt;\n&lt;/html&gt;\" |&gt;\n  read_html()\n\n\n# the headline\nheadline &lt;- html_elements(webpage, \"\")\nheadline\n# the author\nauthor &lt;- html_elements(webpage, \"\")\nauthor\n# the ordered list\nordered_list &lt;- html_elements(webpage, \"\")\nordered_list\n# all bullet points\nbullet_points &lt;- html_elements(webpage, \"\")\nbullet_points\n# bullet points in unordered list\nbullet_points_unordered &lt;- html_elements(webpage, \"\")\nbullet_points_unordered\n# elements in ordered list\nbullet_points_ordered &lt;- html_elements(webpage, \"\")\nbullet_points_ordered\n# third bullet point in ordered list\nbullet_point_three_ordered &lt;- html_elements(webpage, \"\")\nbullet_point_three_ordered"
+  },
+  {
+    "objectID": "06_Introduction_to_the_Web/06_Introduction_to_the_Web.html#four-sets-of-considerations",
+    "href": "06_Introduction_to_the_Web/06_Introduction_to_the_Web.html#four-sets-of-considerations",
+    "title": "Session 6: Introduction to the Web",
+    "section": "Four Sets of Considerations",
+    "text": "Four Sets of Considerations\nBefore starting a scraping project, Brown et al. (2025) suggest working through four sets of questions:\n\nLegal: what am I allowed to access, collect, store and share?\nEthical: what should I access, collect, store and share?\nInstitutional: who do I need to talk to – and who has my back if something goes wrong?\nScientific: is the data I end up with good enough to answer my question?\n\n\nThe legal and institutional answers are jurisdiction-specific (Brown et al. write for a US audience, we mostly look at the EU). The ethical and scientific ones travel everywhere."
+  },
+  {
+    "objectID": "06_Introduction_to_the_Web/06_Introduction_to_the_Web.html#legal-copyright",
+    "href": "06_Introduction_to_the_Web/06_Introduction_to_the_Web.html#legal-copyright",
+    "title": "Session 6: Introduction to the Web",
+    "section": "Legal: Copyright",
+    "text": "Legal: Copyright\nWeb Scraping is not a shady or illegal activity, but not all web scraping is unproblematic and the data does not become yours.\n\nCopyright protects original works of authorship – not facts and not raw data\n\nbut an original selection, arrangement or presentation of data can be protected\n\nAccessing a work is not an infringement, copying and (re)distributing protected parts of it can be\nPublic facing content is probably okay to collect (9th circuit ruling)\n\ncareful: that ruling was about hacking law – it did not shield the scraper from LinkedIn’s contract claims, which is a separate question\n\n“research organisations and cultural heritage institutions” can collect copyrighted data through “text and data mining” if “they they have lawful access” it Digital Single Market Directive Article 3\n\nthis also covers the EU sui generis database right, which protects substantial extractions from a database even when the content itself is not copyrighted\n\nThe US equivalent question is fair use: (1) the purpose (scholarly/non-commercial helps), (2) the nature of the work, (3) how much of it you use, and (4) the effect on the market for the original\nYou will probably get in trouble if you distribute the material\n“there have been no lawsuits in […] major western democratic countries stemming from a researcher scraping publicly accessible data from a website for personal or academic use.” (Luscombe et al. 2022)"
+  },
+  {
+    "objectID": "06_Introduction_to_the_Web/06_Introduction_to_the_Web.html#legal-personal-data",
+    "href": "06_Introduction_to_the_Web/06_Introduction_to_the_Web.html#legal-personal-data",
+    "title": "Session 6: Introduction to the Web",
+    "section": "Legal: Personal Data",
+    "text": "Legal: Personal Data\nCollecting personal data of people in the EU might violate GDPR (General Data Protection Regulation)\n\nThe GDPR defines personal data as “any information relating to an identified or identifiable natural person.” (Art. 4 GDPR)\nIt applies if you are based in the EU or if you “monitor the behaviour” of people in the EU (Art. 3) – so it reaches researchers outside Europe as well\nYou need a legal basis (Art. 6 GDPR):\n\nlegitimate interests (Art. 6(1)(f)): the usual route for academic scraping – the benefit of your research has to outweigh the risks for the people in the data\npublic interest task: processing is legitimate when “necessary for the performance of a task carried out in the public interest” (Art. 6(1)(e))\nconsent from the people whose data it is – the cleanest option, but almost never feasible at scale\n\nSpecial categories of data (Art. 9) – health, sexuality, religion, ethnicity, political opinions – get extra protection, though scientific research is privileged if the safeguards of Art. 89(1) are in place"
+  },
+  {
+    "objectID": "06_Introduction_to_the_Web/06_Introduction_to_the_Web.html#legal-personal-data-continued",
+    "href": "06_Introduction_to_the_Web/06_Introduction_to_the_Web.html#legal-personal-data-continued",
+    "title": "Session 6: Introduction to the Web",
+    "section": "Legal: Personal Data (continued)",
+    "text": "Legal: Personal Data (continued)\nResearch is privileged under the GDPR – but the privileges come with homework (Brown et al. 2025)\n\nYou usually do not have to inform every single person whose data you scraped, if that would take “disproportionate effort” or undermine the research aims (Art. 14(5)(b))\nData subject rights can be limited where they would make the research impossible – e.g., where opt-outs would systematically skew the results (Art. 89)\nBut the burden of proof is on you: you have to be able to show appropriate technical and organisational measures\n\nData minimisation: only collect the fields you actually need\nPseudonymisation: strip or hash identifiers as early in the pipeline as you can\nSecurity: encrypted, access-controlled storage – not a folder in your Dropbox\nA deletion plan: when does the raw data go away?\n\nFor larger projects, a Data Protection Impact Assessment (Art. 35) is a good way to write all of this down (and your data protection officer will ask for it anyway)"
+  },
+  {
+    "objectID": "06_Introduction_to_the_Web/06_Introduction_to_the_Web.html#legal-terms-of-service",
+    "href": "06_Introduction_to_the_Web/06_Introduction_to_the_Web.html#legal-terms-of-service",
+    "title": "Session 6: Introduction to the Web",
+    "section": "Legal: Terms of Service",
+    "text": "Legal: Terms of Service\nTerms of Service are contracts, not laws – a clause forbidding scraping does not by itself make scraping illegal.\n\nTo win a breach-of-contract claim, a website operator has to show three things (Brown et al. 2025):\n\nthere was a valid agreement\nyou violated its terms\nthe violation caused harm\n\nNot all agreements bind you equally:\n\nBrowsewrap (“by using this site you agree…”) – courts have become increasingly reluctant to enforce these\nClickwrap (you actively ticked “I agree”) – usually enforceable\nSign-in-wrap (you agreed by creating an account or logging in) – somewhere in between\n\nConsequence: scraping publicly accessible pages while logged out is a very different situation from scraping from behind a login\nHarm is hard to show against non-commercial research – courts have found no harm where a non-profit scraped public data for advocacy purposes\nBut “hard to sue” is not “no consequences”: you can still be rate-limited, IP-blocked, sent a cease-and-desist letter, or have your account terminated"
+  },
+  {
+    "objectID": "06_Introduction_to_the_Web/06_Introduction_to_the_Web.html#legal-hacking-laws",
+    "href": "06_Introduction_to_the_Web/06_Introduction_to_the_Web.html#legal-hacking-laws",
+    "title": "Session 6: Introduction to the Web",
+    "section": "Legal: Hacking Laws",
+    "text": "Legal: Hacking Laws\n\nThe US Computer Fraud and Abuse Act (CFAA) is the law companies reach for when they want scraping stopped\n\nviolating a website’s terms of service alone is not “unauthorised access” (Sandvig v. Barr, 2020)\nbreaking technical controls can be: bypassing a login, evading IP blocks, or carrying on after a cease-and-desist letter\n\nThe rule of thumb generalises well beyond the US – the more a site does to keep you out, the riskier it is to get in:\n\nfreely accessible page, no account needed → low risk\naccount needed → grey zone\ntechnical barrier you had to defeat → high risk"
+  },
+  {
+    "objectID": "06_Introduction_to_the_Web/06_Introduction_to_the_Web.html#legal-data-access-rights",
+    "href": "06_Introduction_to_the_Web/06_Introduction_to_the_Web.html#legal-data-access-rights",
+    "title": "Session 6: Introduction to the Web",
+    "section": "Legal: Data Access Rights",
+    "text": "Legal: Data Access Rights\nSometimes the law is on your side: the EU Digital Services Act (DSA) creates data access rights for researchers.\n\nDSA Article 40(12): Very Large Online Platforms/Search Engines (VLOPs/VLOSEs) must give access to data that is publicly accessible in their interface\n\nrequested directly from the platform, no regulator involved\nopen to researchers affiliated with not-for-profit bodies as well, not just universities\n\nDSA Article 40(4) and 40(8): non-public platform data is available to vetted researchers\n\nvetting is done by a national Digital Services Coordinator\nconditions include institutional affiliation, independence from commercial interests, data protection safeguards, research on systemic risks in the EU, and a commitment to publish the results\n\nNeither is limited to EU-based researchers, though EU-based applicants may be prioritised\nIf a platform refuses, this is enforceable: a Berlin court ordered X to hand over election data\nThere is no US equivalent – proposals like the Platform Accountability and Transparency Act have not passed"
+  },
+  {
+    "objectID": "06_Introduction_to_the_Web/06_Introduction_to_the_Web.html#summary-managing-legal-risk",
+    "href": "06_Introduction_to_the_Web/06_Introduction_to_the_Web.html#summary-managing-legal-risk",
+    "title": "Session 6: Introduction to the Web",
+    "section": "Summary: Managing Legal Risk",
+    "text": "Summary: Managing Legal Risk\n\nThere is no one-size-fits-all answer – it depends on where you are, where the server is, and whose data you collect\nPublicly accessible and unauthenticated is much safer than logged-in and paywalled\nCollect the minimum, secure it properly, and write down what you did\nThe goal is to manage legal risk, not to eliminate it – zero risk is not on the menu\nBrown et al. (2025) make an interesting point here: commercial scrapers (including AI companies) decided long ago to live with this uncertainty. If researchers are systematically more cautious than that, research falls behind the very companies it wants to study"
+  },
+  {
+    "objectID": "06_Introduction_to_the_Web/06_Introduction_to_the_Web.html#ethical-but-its-public",
+    "href": "06_Introduction_to_the_Web/06_Introduction_to_the_Web.html#ethical-but-its-public",
+    "title": "Session 6: Introduction to the Web",
+    "section": "Ethical: “But it’s Public!”",
+    "text": "Ethical: “But it’s Public!”\nPublic availability is where the ethical question starts, not where it ends (Brown et al. 2025)\n\nPeople do not expect it: few users are aware that their public posts are used in research, and most think researchers should ask first (Fiesler and Proferes 2018)\nContext matters: data was shared in one context (a support forum, a local Facebook group) – is your use appropriate to that context? (Zimmer 2018)\nThird parties: replies, social graphs, images and tags drag in people who never posted anything themselves and cannot consent\nVulnerable groups and sensitive topics deserve extra care – minors in particular are unlikely to understand that their data is used for research\nThe whole lifecycle: your dataset can be repurposed for things you never intended (facial recognition, predictive policing, profiling)\n\nlimit what you share, document the intended use, add licence restrictions, and do not publish raw data when the risk of misuse is high\n\n\n\nTwo resources worth knowing: the AoIR Internet Research Ethics guidelines and the PERVADE data ethics tool"
+  },
+  {
+    "objectID": "06_Introduction_to_the_Web/06_Introduction_to_the_Web.html#institutional-who-to-talk-to",
+    "href": "06_Introduction_to_the_Web/06_Introduction_to_the_Web.html#institutional-who-to-talk-to",
+    "title": "Session 6: Introduction to the Web",
+    "section": "Institutional: Who to Talk To",
+    "text": "Institutional: Who to Talk To\nYou are not supposed to figure all of this out on your own – but the support structures are scattered and often do not talk to each other (Brown et al. 2025)\n\nEthics committee / IRB: engage them early and often, as a partner rather than as a gatekeeper\n\nmost treat publicly available online data as “not human subjects research” or exempt it\nbut boards differ enormously between institutions, and few have scraping-specific expertise\n\nLegal counsel: your university’s legal office exists to protect the university, not you personally\n\nfor genuinely risky projects, external organisations (e.g., the Knight First Amendment Institute) can be the better address\n\nResearch IT and data stewards: secure storage, access control, deletion protocols\n\ntechnical rigour is what actually lowers your ethical and legal risk\n\nData archives (e.g., GESIS, the Social Media Archive at ICPSR) can host data and advise on sharing\n\n\n\n\n\n\n\n\nWarning\n\n\nEarly career researchers “experience heightened precarity… but can carry the bulk of the research labour” (Brown et al. 2025). If you are the PhD student or research assistant who actually runs the scraper, find out before you start what protection your institution offers you."
+  },
+  {
+    "objectID": "06_Introduction_to_the_Web/06_Introduction_to_the_Web.html#scientific-is-the-data-any-good",
+    "href": "06_Introduction_to_the_Web/06_Introduction_to_the_Web.html#scientific-is-the-data-any-good",
+    "title": "Session 6: Introduction to the Web",
+    "section": "Scientific: Is the Data Any Good?",
+    "text": "Scientific: Is the Data Any Good?\nThe most under-discussed set of considerations – scraped data has systematic quality problems (Brown et al. 2025)\n\nSampling frame: you usually cannot draw a random sample, and you often cannot tell what your sample represents\n\nwhat a search box or a feed returns is ranked, filtered and moderated by the platform – not by you\n“everything with the hashtag #x” is not a population, it is whatever the platform decided to show you\n\nMissing data, missing non-randomly: rate limits and timeouts create gaps, and results usually arrive in the order they were created – so gaps cluster in time\n\nplatform metrics (“views”, “impressions”) are often estimated or sampled by the platform itself\n\nTemporal instability: sites change layout, algorithms and A/B tests without notice\n\nbest case your scraper breaks, worst case it keeps running and silently collects something else\n\nConstruct validity: can you measure what you actually mean?\n\nan impression is not a “read”; logged-out search results are not what a logged-in user sees\n\nReproducibility: posts get deleted, accounts get banned, sites get redesigned – your study may not be repeatable a year later"
+  },
+  {
+    "objectID": "06_Introduction_to_the_Web/06_Introduction_to_the_Web.html#scientific-what-to-do-about-it",
+    "href": "06_Introduction_to_the_Web/06_Introduction_to_the_Web.html#scientific-what-to-do-about-it",
+    "title": "Session 6: Introduction to the Web",
+    "section": "Scientific: What to Do About It",
+    "text": "Scientific: What to Do About It\n\nAsk first whether scraping is the right way to answer your question, or whether a better source exists\nDefine the population you can actually describe up front and sample from it – avoid convenience and snowball samples\n\na complete, well-defined subsample (all MPs, all national newspapers, all municipalities) often beats a “random” sample of everything\n\nTest your pipeline: look for duplicates, missing pages and silent errors, scrape a few pages twice, and compare against something you can verify by hand\nCaveat your claims to what the data can support – “posts we could retrieve through X’s search interface in March 2026” is a very different population from “public discourse”\nDocument everything: version control the scraper, publish code and metadata, and archive the raw responses where you are allowed to\nWork with someone who has scraped before (which is part of what this course is for)"
+  },
+  {
+    "objectID": "05_Scaling_Reporting_and_Database_Software/05_solutions.html",
+    "href": "05_Scaling_Reporting_and_Database_Software/05_solutions.html",
+    "title": "solutions session 5",
+    "section": "",
+    "text": "Using the PostgreSQL database or the SQLite database from session 4:\n\nRight join results_state and facts using dbplyr instead of dbGetQuery\n\n\nIf you wanted to use the SQLite database from session 4, you first need to establish the connection\n\n\nlibrary(DBI)\nlibrary(RSQLite)\nlibrary(tidyverse)\ndb &lt;- dbConnect(SQLite(), \"../04_Linking_and_joining_data_SQL/data/db.sql\")\n\n\nNote that this will only work if you have previously completed Exercise 3.1 from session 4 (Add the three data.frames from the 2016 primaries case study to the database (schedule, results_state, and facts))\n\n\n# this part is from session 4 where we loaded the data\nlibrary(rio)\ncsv_folder_url &lt;- \"https://raw.githubusercontent.com/houstondatavis/data-jam-august-2016/master/csv\"\nresults &lt;- import(paste(csv_folder_url, \"primary_results.csv\", sep = \"/\"))\nschedule &lt;- import(paste(csv_folder_url, \"primary_schedule.csv\", sep = \"/\"))\nfacts &lt;- import(paste(csv_folder_url, \"county_facts.csv\", sep = \"/\")) |&gt;\n  select(\n    area_name,\n    population = Pop_2014_count,\n    pop_change = Pop_change_pct,\n    over65 = Age_over_65_pct,\n    female = Sex_female_pct,\n    white = Race_white_pct,\n    college = Pop_college_grad_pct,\n    income = Income_per_capita\n  )\nresults_state &lt;- results %&gt;%\n  group_by(state, party, candidate) %&gt;%\n  summarize(votes = sum(votes))\n\n# this is the solution from 3.1 in session 4\ndbWriteTable(conn = db, name = \"schedule\", value = schedule)\ndbWriteTable(conn = db, name = \"results_state\", value = results_state)\ndbWriteTable(conn = db, name = \"facts\", value = facts)\n\n\ntbl(db, \"results_state\") |&gt;\n  right_join(tbl(db, \"facts\"), by = c(\"state\" = \"area_name\"))\n\n\nRecreate the table results_state_time by querying and joining from db (using dbplyr instead of dbGetQuery).\n\n\nresults_state_time &lt;- tbl(db, \"results_state\") |&gt;\n  inner_join(tbl(db, \"schedule\"), by = c(\"state\", \"party\"))\nresults_state_time\n\n\nRecreate results_state_facts using dbplyr. Don’t forget to add total_votes and pct_votes\n\n\nresults_state_facts &lt;- tbl(db, \"results_state\") |&gt;\n  inner_join(tbl(db, \"schedule\"), by = c(\"state\", \"party\")) |&gt;\n  group_by(state, party) |&gt;\n  mutate(total_votes = sum(votes), pct_votes = votes / total_votes) |&gt;\n  ungroup() |&gt;\n  collect()\n\n\nExtract the SQL query from your code in 3. and run it with dbGetQuery\n\n\nresults_state_query &lt;- tbl(db, \"results_state\") |&gt;\n  inner_join(tbl(db, \"schedule\"), by = c(\"state\", \"party\")) |&gt;\n  group_by(state, party) |&gt;\n  mutate(total_votes = sum(votes), pct_votes = votes / total_votes) |&gt;\n  ungroup() |&gt;\n  show_query()\n\n\nquery &lt;- \"SELECT\n  `state`,\n  `party`,\n  `candidate`,\n  `votes`,\n  `total_votes`,\n  `votes` / `total_votes` AS `pct_votes`,\n  `date`,\n  `type`\nFROM (\n  SELECT\n    `state`,\n    `party`,\n    `candidate`,\n    `votes`,\n    SUM(`votes`) OVER (PARTITION BY `state`, `party`) AS `total_votes`,\n    `pct_votes`,\n    `date`,\n    `type`\n  FROM (\n    SELECT `results_state`.*, `date`, `type`\n    FROM `results_state`\n    INNER JOIN `schedule`\n      ON (\n        `results_state`.`state` = `schedule`.`state` AND\n        `results_state`.`party` = `schedule`.`party`\n      )\n  ) AS `q01`\n) AS `q01`\"\n\ndbGetQuery(db, query)"
+  },
+  {
+    "objectID": "05_Scaling_Reporting_and_Database_Software/05_solutions.html#exercises-1",
+    "href": "05_Scaling_Reporting_and_Database_Software/05_solutions.html#exercises-1",
+    "title": "solutions session 5",
+    "section": "",
+    "text": "Using the PostgreSQL database or the SQLite database from session 4:\n\nRight join results_state and facts using dbplyr instead of dbGetQuery\n\n\nIf you wanted to use the SQLite database from session 4, you first need to establish the connection\n\n\nlibrary(DBI)\nlibrary(RSQLite)\nlibrary(tidyverse)\ndb &lt;- dbConnect(SQLite(), \"../04_Linking_and_joining_data_SQL/data/db.sql\")\n\n\nNote that this will only work if you have previously completed Exercise 3.1 from session 4 (Add the three data.frames from the 2016 primaries case study to the database (schedule, results_state, and facts))\n\n\n# this part is from session 4 where we loaded the data\nlibrary(rio)\ncsv_folder_url &lt;- \"https://raw.githubusercontent.com/houstondatavis/data-jam-august-2016/master/csv\"\nresults &lt;- import(paste(csv_folder_url, \"primary_results.csv\", sep = \"/\"))\nschedule &lt;- import(paste(csv_folder_url, \"primary_schedule.csv\", sep = \"/\"))\nfacts &lt;- import(paste(csv_folder_url, \"county_facts.csv\", sep = \"/\")) |&gt;\n  select(\n    area_name,\n    population = Pop_2014_count,\n    pop_change = Pop_change_pct,\n    over65 = Age_over_65_pct,\n    female = Sex_female_pct,\n    white = Race_white_pct,\n    college = Pop_college_grad_pct,\n    income = Income_per_capita\n  )\nresults_state &lt;- results %&gt;%\n  group_by(state, party, candidate) %&gt;%\n  summarize(votes = sum(votes))\n\n# this is the solution from 3.1 in session 4\ndbWriteTable(conn = db, name = \"schedule\", value = schedule)\ndbWriteTable(conn = db, name = \"results_state\", value = results_state)\ndbWriteTable(conn = db, name = \"facts\", value = facts)\n\n\ntbl(db, \"results_state\") |&gt;\n  right_join(tbl(db, \"facts\"), by = c(\"state\" = \"area_name\"))\n\n\nRecreate the table results_state_time by querying and joining from db (using dbplyr instead of dbGetQuery).\n\n\nresults_state_time &lt;- tbl(db, \"results_state\") |&gt;\n  inner_join(tbl(db, \"schedule\"), by = c(\"state\", \"party\"))\nresults_state_time\n\n\nRecreate results_state_facts using dbplyr. Don’t forget to add total_votes and pct_votes\n\n\nresults_state_facts &lt;- tbl(db, \"results_state\") |&gt;\n  inner_join(tbl(db, \"schedule\"), by = c(\"state\", \"party\")) |&gt;\n  group_by(state, party) |&gt;\n  mutate(total_votes = sum(votes), pct_votes = votes / total_votes) |&gt;\n  ungroup() |&gt;\n  collect()\n\n\nExtract the SQL query from your code in 3. and run it with dbGetQuery\n\n\nresults_state_query &lt;- tbl(db, \"results_state\") |&gt;\n  inner_join(tbl(db, \"schedule\"), by = c(\"state\", \"party\")) |&gt;\n  group_by(state, party) |&gt;\n  mutate(total_votes = sum(votes), pct_votes = votes / total_votes) |&gt;\n  ungroup() |&gt;\n  show_query()\n\n\nquery &lt;- \"SELECT\n  `state`,\n  `party`,\n  `candidate`,\n  `votes`,\n  `total_votes`,\n  `votes` / `total_votes` AS `pct_votes`,\n  `date`,\n  `type`\nFROM (\n  SELECT\n    `state`,\n    `party`,\n    `candidate`,\n    `votes`,\n    SUM(`votes`) OVER (PARTITION BY `state`, `party`) AS `total_votes`,\n    `pct_votes`,\n    `date`,\n    `type`\n  FROM (\n    SELECT `results_state`.*, `date`, `type`\n    FROM `results_state`\n    INNER JOIN `schedule`\n      ON (\n        `results_state`.`state` = `schedule`.`state` AND\n        `results_state`.`party` = `schedule`.`party`\n      )\n  ) AS `q01`\n) AS `q01`\"\n\ndbGetQuery(db, query)"
   }
 ]

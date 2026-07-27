@@ -130,15 +130,47 @@ airplanes_deps |>
 - you have to add `na.rm = TRUE` or the result will always be `NA`
 
 
-
 ## Exercises 2
 
 1. create a new table in `db` called `elections` with the fields: `election_id`, `country_name`, `election_date`, `party_id`, `vote_share`, `seats`, and  `seats_total`. Choose appropriate data types for the fields (maybe peak ahead to the next exercise).
+
+```{r}
+library(DBI)
+library(RSQLite)
+db <- dbConnect(SQLite(), "data/db.sql")
+dbExecute(
+  db,
+  "CREATE TABLE elections (
+            election_id integer,
+            country_name varchar,
+            election_date date,
+            party_id integer,
+            vote_share real,
+            seats integer,
+            seats_total integer
+          )"
+)
+dbListTables(db)
+dbGetQuery(db, "SELECT * FROM elections")
+```
+
+
 2. Using SQL syntax, add this data to the `elections` table:
 
 | election_id | country_name | election_date | party_id | vote_share | seats | seats_total |
 |-------------|--------------|---------------|----------|------------|-------|-------------|
 | 1030        | Austria      | 1919-02-16    | 97       | 40.75      | 72    | 170         |
+
+```{r}
+dbExecute(
+  db,
+  "INSERT INTO elections
+            VALUES (1030, 'Austria', '1919-02-16', 97, 40.75, 72, 170)"
+)
+dbGetQuery(db, "SELECT * FROM elections")
+```
+
+
 
 3. Using SQL syntax, add this data to the `elections` table:
 
@@ -146,9 +178,43 @@ airplanes_deps |>
 |-------------|--------------|---------------|------------|----------|
 | 872         | Belgium      | 1908-05-24    | 22.6       | 2422     |
 
+```{r}
+dbExecute(
+  db,
+  "INSERT INTO elections (election_id, country_name, election_date, vote_share, party_id)
+            VALUES (872, 'Belgium', '1908-05-24', 22.6, 2422)"
+)
+dbGetQuery(db, "SELECT * FROM elections")
+```
+
 4. Querying data from `elections`, create an `R` object that has the `election_id`, `party_id` and `vote_share` fields for elections after 1910.
+
+```{r}
+df <- dbGetQuery(db, "SELECT election_id, party_id, vote_share FROM elections")
+df
+```
+
+
 5. Querying data from `elections`, get `election_id`, `party_id`,  `vote_share` fields and just the year of the election.
+
+```{r}
+dbGetQuery(
+  db,
+  "SELECT election_id, party_id, vote_share, strftime('%Y', election_date) FROM elections"
+)
+```
+
 6. Add a new field `vote_share_prop` to the `elections` database which shows the vote share as proportion rather than a percentage.
+
+```{r}
+dbExecute(db, "ALTER TABLE elections ADD vote_share_prop real")
+dbExecute(
+  db,
+  "UPDATE elections
+               SET vote_share_prop = vote_share / 100"
+)
+dbGetQuery(db, "SELECT * FROM elections")
+```
 
 
 ## Exercises 3
