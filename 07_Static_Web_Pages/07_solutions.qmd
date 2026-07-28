@@ -5,7 +5,7 @@ format: html
 
 ## Exercises 1
 
-1. Get the table with 2023 opinion polling for the next United Kingdom general election from <https://en.wikipedia.org/w/index.php?title=Opinion_polling_for_the_2024_United_Kingdom_general_election&oldid=1232596394>
+1. Get the table with 2025 opinion polling for the next United Kingdom general election from <https://en.wikipedia.org/w/index.php?title=Opinion_polling_for_the_next_United_Kingdom_general_election&oldid=1366502041>
 2. Wrangle and plot the data opinion polls
 
 ## Exercises 2

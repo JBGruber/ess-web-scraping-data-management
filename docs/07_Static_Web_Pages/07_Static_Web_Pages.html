@@ -1734,7 +1734,7 @@ font-size: smaller;
 <section id="exercises-1" class="slide level2 scrollable">
 <h2>Exercises 1</h2>
 <ol type="1">
-<li>Get the table with 2023 opinion polling for the next United Kingdom general election from <a href="https://en.wikipedia.org/w/index.php?title=Opinion_polling_for_the_2024_United_Kingdom_general_election&amp;oldid=1232596394" class="uri">https://en.wikipedia.org/w/index.php?title=Opinion_polling_for_the_2024_United_Kingdom_general_election&amp;oldid=1232596394</a></li>
+<li>Get the table with 2025 opinion polling for the next United Kingdom general election from <a href="https://en.wikipedia.org/w/index.php?title=Opinion_polling_for_the_next_United_Kingdom_general_election&amp;oldid=1366502041" class="uri">https://en.wikipedia.org/w/index.php?title=Opinion_polling_for_the_next_United_Kingdom_general_election&amp;oldid=1366502041</a></li>
 <li>Wrangle and plot the data opinion polls</li>
 </ol>
 </section></section>
@@ -1952,7 +1952,7 @@ font-size: smaller;
 <div class="columns">
 <div class="column" style="width:50%;">
 <ol type="1">
-<li>Collect all reviews from a given Amazon page</li>
+<li>Collect all reviews from a given Thomann page</li>
 <li>Identify and extract relevant variables for each review</li>
 </ol>
 </div><div class="column" style="width:50%;">
@@ -1980,10 +1980,10 @@ font-size: smaller;
 <ul>
 <li>We can spot two things:
 <ul>
-<li>there are 2715 reviews for this product (441 in English)</li>
+<li>there are 2906 reviews for this product (478 in English)</li>
 <li>there are 45 pages with reviews</li>
 </ul></li>
-<li>(here you can get all reviews. E.g., Amazon limits results to 10 pages per query)</li>
+<li>(here you can get all reviews. E.g., Thomann limits results to 10 pages per query)</li>
 </ul>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a></a>pages <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">45</span></span>
@@ -2056,30 +2056,34 @@ font-size: smaller;
 <span id="cb17-6"><a></a>  <span class="fu">html_elements</span>(<span class="st">&quot;.customer-review&quot;</span>)</span>
 <span id="cb17-7"><a></a></span>
 <span id="cb17-8"><a></a><span class="co"># then extract the information from these reviews</span></span>
-<span id="cb17-9"><a></a>star_ratings <span class="ot">&lt;-</span> <span class="cf">function</span>(pct) {</span>
-<span id="cb17-10"><a></a>  <span class="fu">as.integer</span>(pct) <span class="sc">/</span> <span class="dv">100</span> <span class="sc">*</span> <span class="dv">5</span></span>
-<span id="cb17-11"><a></a>}</span>
-<span id="cb17-12"><a></a>rating <span class="ot">&lt;-</span> reviews <span class="sc">|&gt;</span></span>
-<span id="cb17-13"><a></a>  <span class="fu">html_elements</span>(<span class="st">&quot;.fx-rating-stars__filler&quot;</span>) <span class="sc">|&gt;</span></span>
-<span id="cb17-14"><a></a>  <span class="fu">html_attr</span>(<span class="st">&quot;style&quot;</span>) <span class="sc">|&gt;</span></span>
-<span id="cb17-15"><a></a>  <span class="fu">str_extract</span>(<span class="st">&quot;(?&lt;=width: )</span><span class="sc">\\</span><span class="st">d+?(?=%)&quot;</span>) <span class="sc">|&gt;</span></span>
-<span id="cb17-16"><a></a>  <span class="fu">star_ratings</span>()</span>
-<span id="cb17-17"><a></a></span>
-<span id="cb17-18"><a></a>title <span class="ot">&lt;-</span> reviews <span class="sc">|&gt;</span></span>
-<span id="cb17-19"><a></a>  <span class="fu">html_elements</span>(<span class="st">&quot;.review-intro__headline.js-headline-original&quot;</span>) <span class="sc">|&gt;</span></span>
-<span id="cb17-20"><a></a>  <span class="fu">html_text2</span>()</span>
-<span id="cb17-21"><a></a></span>
-<span id="cb17-22"><a></a>date <span class="ot">&lt;-</span> reviews <span class="sc">|&gt;</span></span>
-<span id="cb17-23"><a></a>  <span class="fu">html_elements</span>(<span class="st">&quot;.review-intro__author&quot;</span>) <span class="sc">|&gt;</span></span>
-<span id="cb17-24"><a></a>  <span class="fu">html_text2</span>() <span class="sc">|&gt;</span></span>
-<span id="cb17-25"><a></a>  <span class="fu">str_extract</span>(<span class="st">&quot;</span><span class="sc">\\</span><span class="st">d{2}.</span><span class="sc">\\</span><span class="st">d{2}.</span><span class="sc">\\</span><span class="st">d{4}&quot;</span>) <span class="sc">|&gt;</span></span>
-<span id="cb17-26"><a></a>  lubridate<span class="sc">::</span><span class="fu">dmy</span>()</span>
-<span id="cb17-27"><a></a></span>
-<span id="cb17-28"><a></a>text <span class="ot">&lt;-</span> reviews <span class="sc">|&gt;</span></span>
-<span id="cb17-29"><a></a>  <span class="fu">html_elements</span>(<span class="st">&quot;.review-text .fx-text-collapsible__fallback&quot;</span>) <span class="sc">|&gt;</span></span>
-<span id="cb17-30"><a></a>  <span class="fu">html_text2</span>()</span>
-<span id="cb17-31"><a></a></span>
-<span id="cb17-32"><a></a><span class="fu">tibble</span>(date, rating, title, text)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb17-9"><a></a>title <span class="ot">&lt;-</span> reviews <span class="sc">|&gt;</span></span>
+<span id="cb17-10"><a></a>  <span class="fu">html_elements</span>(<span class="st">&quot;.review-intro__headline.js-headline-original&quot;</span>) <span class="sc">|&gt;</span></span>
+<span id="cb17-11"><a></a>  <span class="fu">html_text2</span>()</span>
+<span id="cb17-12"><a></a></span>
+<span id="cb17-13"><a></a>date <span class="ot">&lt;-</span> reviews <span class="sc">|&gt;</span></span>
+<span id="cb17-14"><a></a>  <span class="fu">html_elements</span>(<span class="st">&quot;.review-intro__author&quot;</span>) <span class="sc">|&gt;</span></span>
+<span id="cb17-15"><a></a>  <span class="fu">html_text2</span>() <span class="sc">|&gt;</span></span>
+<span id="cb17-16"><a></a>  <span class="fu">str_extract</span>(<span class="st">&quot;</span><span class="sc">\\</span><span class="st">d{2}.</span><span class="sc">\\</span><span class="st">d{2}.</span><span class="sc">\\</span><span class="st">d{4}&quot;</span>) <span class="sc">|&gt;</span></span>
+<span id="cb17-17"><a></a>  lubridate<span class="sc">::</span><span class="fu">dmy</span>()</span>
+<span id="cb17-18"><a></a></span>
+<span id="cb17-19"><a></a>text <span class="ot">&lt;-</span> reviews <span class="sc">|&gt;</span></span>
+<span id="cb17-20"><a></a>  <span class="fu">html_elements</span>(<span class="st">&quot;.review-text .fx-text-collapsible__fallback&quot;</span>) <span class="sc">|&gt;</span></span>
+<span id="cb17-21"><a></a>  <span class="fu">html_text2</span>()</span>
+<span id="cb17-22"><a></a></span>
+<span id="cb17-23"><a></a><span class="co"># the rating system on this page is very interesting, instead of showing you</span></span>
+<span id="cb17-24"><a></a><span class="co"># a number of stars, it overlays greyed out stars with a colour and sets a</span></span>
+<span id="cb17-25"><a></a><span class="co"># width. 60% width of filled stars means 3/5 stars</span></span>
+<span id="cb17-26"><a></a>star_ratings <span class="ot">&lt;-</span> <span class="cf">function</span>(pct) {</span>
+<span id="cb17-27"><a></a>  <span class="fu">as.integer</span>(pct) <span class="sc">/</span> <span class="dv">100</span> <span class="sc">*</span> <span class="dv">5</span></span>
+<span id="cb17-28"><a></a>}</span>
+<span id="cb17-29"><a></a>rating <span class="ot">&lt;-</span> reviews <span class="sc">|&gt;</span></span>
+<span id="cb17-30"><a></a>  <span class="fu">html_elements</span>(<span class="st">&quot;.fx-rating-stars__filler&quot;</span>) <span class="sc">|&gt;</span></span>
+<span id="cb17-31"><a></a>  <span class="fu">html_attr</span>(<span class="st">&quot;style&quot;</span>) <span class="sc">|&gt;</span></span>
+<span id="cb17-32"><a></a>  <span class="fu">str_extract</span>(<span class="st">&quot;(?&lt;=width: )</span><span class="sc">\\</span><span class="st">d+?(?=%)&quot;</span>) <span class="sc">|&gt;</span></span>
+<span id="cb17-33"><a></a>  <span class="fu">star_ratings</span>()</span>
+<span id="cb17-34"><a></a></span>
+<span id="cb17-35"><a></a></span>
+<span id="cb17-36"><a></a><span class="fu">tibble</span>(date, rating, title, text)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 10 × 4
    date       rating title                                                 text 

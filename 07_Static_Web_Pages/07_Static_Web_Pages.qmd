@@ -167,7 +167,7 @@ ggplot(happy_table, aes(x = `GDP per capita`, y = `Healthy life expectancy`)) +
 
 ## Exercises 1
 
-1. Get the table with 2023 opinion polling for the next United Kingdom general election from <https://en.wikipedia.org/w/index.php?title=Opinion_polling_for_the_2024_United_Kingdom_general_election&oldid=1232596394>
+1. Get the table with 2025 opinion polling for the next United Kingdom general election from <https://en.wikipedia.org/w/index.php?title=Opinion_polling_for_the_next_United_Kingdom_general_election&oldid=1366502041>
 2. Wrangle and plot the data opinion polls
 
 # Example: UK prime ministers on Wikipedia
@@ -349,7 +349,7 @@ How could you convert the `links` object above so that it contains actual URLs?
 
 :::: {.columns}
 ::: {.column width="50%"}
-1. Collect all reviews from a given Amazon page
+1. Collect all reviews from a given Thomann page
 2. Identify and extract relevant variables for each review
 :::
 ::: {.column width="50%" }
@@ -375,9 +375,9 @@ After clicking on reviews, then "Read all reviews", these are the links to the f
 ## Getting all URLs to product reviews
 
 - We can spot two things:
-  - there are 2715 reviews for this product (441 in English)
+  - there are 2906 reviews for this product (478 in English)
   - there are 45 pages with reviews
-- (here you can get all reviews. E.g., Amazon limits results to 10 pages per query)
+- (here you can get all reviews. E.g., Thomann limits results to 10 pages per query)
 
 ```{r}
 pages <- 1:45
@@ -403,15 +403,6 @@ reviews <- html |>
   html_elements(".customer-review")
 
 # then extract the information from these reviews
-star_ratings <- function(pct) {
-  as.integer(pct) / 100 * 5
-}
-rating <- reviews |>
-  html_elements(".fx-rating-stars__filler") |>
-  html_attr("style") |>
-  str_extract("(?<=width: )\\d+?(?=%)") |>
-  star_ratings()
-
 title <- reviews |>
   html_elements(".review-intro__headline.js-headline-original") |>
   html_text2()
@@ -425,6 +416,19 @@ date <- reviews |>
 text <- reviews |>
   html_elements(".review-text .fx-text-collapsible__fallback") |>
   html_text2()
+
+# the rating system on this page is very interesting, instead of showing you
+# a number of stars, it overlays greyed out stars with a colour and sets a
+# width. 60% width of filled stars means 3/5 stars
+star_ratings <- function(pct) {
+  as.integer(pct) / 100 * 5
+}
+rating <- reviews |>
+  html_elements(".fx-rating-stars__filler") |>
+  html_attr("style") |>
+  str_extract("(?<=width: )\\d+?(?=%)") |>
+  star_ratings()
+
 
 tibble(date, rating, title, text)
 ```
