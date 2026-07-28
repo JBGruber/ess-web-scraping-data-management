@@ -35,26 +35,32 @@ link_md <- function(paths, labels) {
 }
 
 fmt_links <- function(paths_str) {
-  if (is.na(paths_str)) return("–")
+  if (is.na(paths_str)) {
+    return("–")
+  }
   paths <- strsplit(paths_str, ";")[[1]]
   labels <- if (length(paths) > 1) paste("Part", seq_along(paths)) else "Slides"
   links <- link_md(paths, labels)
   links <- links[!is.na(links)]
-  if (length(links) == 0) "*not yet available*" else paste(links, collapse = " / ")
+  if (length(links) == 0) {
+    "*not yet available*"
+  } else {
+    paste(links, collapse = " / ")
+  }
 }
 
 sessions <- tribble(
-  ~Day, ~Date, ~Session, ~slides, ~solutions,
-  1, "Mon, 20 July", "Introduction", "01_Introduction/01_Introduction", "01_Introduction/01_solutions",
-  2, "Tue, 21 July", "Data Structures and Wrangling", "02_Data_Structures_Wrangling/02_Data_Structures_Wrangling", "02_Data_Structures_Wrangling/02_solutions",
-  3, "Wed, 22 July", "Working with Files", "03_Working_with_Files/03_Working_with_Files", "03_Working_with_Files/03_solutions",
-  4, "Thu, 23 July", "Linking and Joining Data & SQL", "04_Linking_and_joining_data_SQL/04_Linking_and_joining_data_SQL", "04_Linking_and_joining_data_SQL/04_solutions",
-  5, "Fri, 24 July", "Scaling, Reporting and Database Software", "05_Scaling_Reporting_and_Database_Software/05_Scaling_Reporting_and_Database_Software", "05_Scaling_Reporting_and_Database_Software/05_solutions",
-  6, "Mon, 27 July", "Introduction to the Web", "06_Introduction_to_the_Web/06_Introduction_to_the_Web", "06_Introduction_to_the_Web/06_solutions",
-  7, "Tue, 28 July", "Static Web Pages", "07_Static_Web_Pages/07_Static_Web_Pages", "07_Static_Web_Pages/07_solutions",
-  8, "Wed, 29 July", "Application Programming Interfaces (APIs)", "08_APIs/08_APIs", "08_APIs/08_solutions",
-  9, "Thu, 30 July", "Interactive Web Pages", "09_Interactive_Web_Pages/09_Interactive_Web_Pages_1;09_Interactive_Web_Pages/09_Interactive_Web_Pages_2", NA,
-  10, "Fri, 31 July", "Building a Reproducible Research Project", "10_Conclusion/10_Conclusion", NA
+  ~Day , ~Date          , ~Session                                      , ~slides                                                                                                   , ~solutions                                                ,
+     1 , "Mon, 20 July" , "Introduction"                                , "01_Introduction/01_Introduction"                                                                         , "01_Introduction/01_solutions"                            ,
+     2 , "Tue, 21 July" , "Data Structures and Wrangling"               , "02_Data_Structures_Wrangling/02_Data_Structures_Wrangling"                                               , "02_Data_Structures_Wrangling/02_solutions"               ,
+     3 , "Wed, 22 July" , "Working with Files"                          , "03_Working_with_Files/03_Working_with_Files"                                                             , "03_Working_with_Files/03_solutions"                      ,
+     4 , "Thu, 23 July" , "Linking and Joining Data & SQL"              , "04_Linking_and_joining_data_SQL/04_Linking_and_joining_data_SQL"                                         , "04_Linking_and_joining_data_SQL/04_solutions"            ,
+     5 , "Fri, 24 July" , "Database Software and Scaling your Analyses" , "05_Scaling_Reporting_and_Database_Software/05_Scaling_Reporting_and_Database_Software"                   , "05_Scaling_Reporting_and_Database_Software/05_solutions" ,
+     6 , "Mon, 27 July" , "Introduction to the Web"                     , "06_Introduction_to_the_Web/06_Introduction_to_the_Web"                                                   , "06_Introduction_to_the_Web/06_solutions"                 ,
+     7 , "Tue, 28 July" , "Static Web Pages"                            , "07_Static_Web_Pages/07_Static_Web_Pages"                                                                 , "07_Static_Web_Pages/07_solutions"                        ,
+     8 , "Wed, 29 July" , "Application Programming Interfaces (APIs)"   , "08_APIs/08_APIs"                                                                                         , "08_APIs/08_solutions"                                    ,
+     9 , "Thu, 30 July" , "Interactive Web Pages"                       , "09_Interactive_Web_Pages/09_Interactive_Web_Pages_1;09_Interactive_Web_Pages/09_Interactive_Web_Pages_2" , NA                                                        ,
+    10 , "Fri, 31 July" , "Building a Reproducible Research Project"    , "10_Conclusion/10_Conclusion"                                                                             , NA
 )
 
 sessions$Materials <- vapply(sessions$slides, fmt_links, character(1))
@@ -94,11 +100,13 @@ rlang::check_installed("remotes")
 if (!requireNamespace("jbgtemplates", quietly = TRUE)) {
   remotes::install_github("JBGruber/jbgtemplates")
 }
-jbgtemplates::install_deps(gh_packages = c(
-  "JBGruber/paperboy",
-  "JBGruber/playwrightr",
-  "ccs-amsterdam/amcat4r"
-))
+jbgtemplates::install_deps(
+  gh_packages = c(
+    "JBGruber/paperboy",
+    "JBGruber/playwrightr",
+    "ccs-amsterdam/amcat4r"
+  )
+)
 ```
 
 ---

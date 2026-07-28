@@ -39,7 +39,7 @@ tibble::tribble(
      2 , "Data Structures and Wrangling"             ,
      3 , "Working with Files"                        ,
      4 , "Linking and joining data & SQL"            ,
-     5 , "Scaling, Reporting and Database Software"  ,
+     5 , "Database Software and Scaling your Analyses"  ,
      6 , "Introduction to the Web"                   ,
      7 , "Static Web Pages"                          ,
      8 , "Application Programming Interface (APIs) " ,

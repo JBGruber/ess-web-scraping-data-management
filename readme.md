@@ -14,7 +14,7 @@ This is the course material for the Essex Summer School in Social Science Data A
 | Day 2  | Data Structures and Wrangling            |
 | Day 3  | Working with Files                       |
 | Day 4  | Linking and joining data & SQL           |
-| Day 5  | Scaling, Reporting and Database Software |
+| Day 5  | Database Software and Scaling your Analyses |
 | Day 6  | Introduction to the Web                  |
 | Day 7  | Static Web Pages                         |
 | Day 8  | Application Programming Interface (APIs) |
