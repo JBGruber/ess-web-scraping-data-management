@@ -17,7 +17,7 @@ format:
 bibliography: ../references.bib
 execute:
   eval: true
-  cache: false
+  cache: true
   echo: true
 engine: knitr
 highlight-style: nord
@@ -33,17 +33,17 @@ highlight-style: nord
 library(tinytable)
 library(tidyverse)
 tibble::tribble(
-  ~Day , ~Session                                    ,
-     1 , "Introduction"                              ,
-     2 , "Data Structures and Wrangling"             ,
-     3 , "Working with Files"                        ,
-     4 , "Linking and joining data & SQL"            ,
-     5 , "Scaling, Reporting and Database Software"  ,
-     6 , "Introduction to the Web"                   ,
-     7 , "Static Web Pages"                          ,
-     8 , "Application Programming Interface (APIs) " ,
-     9 , "Interactive Web Pages"                     ,
-    10 , "Building a Reproducible Research Project"  ,
+  ~Day , ~Session                                      ,
+     1 , "Introduction"                                ,
+     2 , "Data Structures and Wrangling"               ,
+     3 , "Working with Files"                          ,
+     4 , "Linking and joining data & SQL"              ,
+     5 , "Database Software and Scaling your Analyses" ,
+     6 , "Introduction to the Web"                     ,
+     7 , "Static Web Pages"                            ,
+     8 , "Application Programming Interface (APIs) "   ,
+     9 , "Interactive Web Pages"                       ,
+    10 , "Building a Reproducible Research Project"    ,
 ) |>
   tt() |>
   style_tt() |>
@@ -82,6 +82,28 @@ We will:
 }
 
 ```
+
+# Correction: xpaths {.incremental}
+
+- When I told you it's not worth learning xpath, I was thinking about static xpaths like this:
+
+```{xml}
+/html/body/div[3]/div/div[3]/main/div[3]/div[3]/div[2]/section[4]/section/table/tbody/tr[1]/td[3]/div[1]/a
+```
+
+- However, I forgot that dynmic xpath also exists, which looks like this:
+
+```{xml}
+"descendant-or-self::table/descendant::a"
+```
+
+- Which is actually what `rvest` always uses under the hood by translating CSS to xpath with the `selectr` package:
+
+```{r}
+selectr::css_to_xpath("table a")
+```
+
+- This dynamic xpath can be very useful and contains more functionality than CSS selectors, but it's harder to learn and only useful in special cases
 
 # Example: World Happiness Report
 ## Use your Browser to Scout
@@ -163,15 +185,17 @@ ggplot(happy_table, aes(x = `GDP per capita`, y = `Healthy life expectancy`)) +
 ```{r}
 # 1. Request & collect raw html
 html <- read_html(
-  "https://en.wikipedia.org/w/index.php?title=List_of_prime_ministers_of_the_United_Kingdom&oldid=1166167337"
-) # I'm using an older version of the site since some just changed it
+  "https://en.wikipedia.org/w/index.php?title=List_of_prime_ministers_of_the_United_Kingdom&oldid=1366130861"
+) # I pinned this to the version 13:01, 26 July 2026 so that it still works, even if the site is updated
 
 # 2. Parse
 pm_table <- html |>
-  html_element(".wikitable:contains('List of prime ministers')") |>
-  html_table() |>
+  html_elements(".wikitable") |>
+  keep(function(x) str_detect(html_text(x), "List of prime ministers")) |>
+  map(function(x) as_tibble(html_table(x), .name_repair = "unique")) |>
+  bind_rows() |>
   as_tibble(.name_repair = "unique") |>
-  filter(!duplicated(`Prime ministerOffice(Lifespan)`))
+  filter(!duplicated(`Prime ministerOffice(lifespan)`))
 
 # 3. No wrangling necessary
 pm_table
@@ -198,15 +222,17 @@ pm_table
 
 ```{r}
 links <- html |>
-  html_elements(".wikitable:contains('List of prime ministers') b a") |>
+  html_elements(".wikitable") |>
+  keep(function(x) str_detect(html_text(x), "List of prime ministers")) |>
+  html_elements("td [style=\"font-size:100%;\"] a[title]") |>
   html_attr("href")
 title <- html |>
-  html_elements(".wikitable:contains('List of prime ministers') b a") |>
+  html_elements(".wikitable") |>
+  keep(function(x) str_detect(html_text(x), "List of prime ministers")) |>
+  html_elements("td [style=\"font-size:100%;\"] a[title]") |>
   html_text()
 tibble(name = title, link = links)
 ```
-
-Note: these are relative links that need to be combined with *https://en.wikipedia.org/* to work
 :::
 ::::
 
@@ -226,7 +252,96 @@ html <- "<p>This is some text
   read_html()
 ```
 
-2. How could you convert the `links` objects so that it contains actual URLs?
+2. Wikipedia recently started using absolute links. Before that, they used relative links, such as many other websites still do. Relative links look like this:
+
+```{r}
+links <- c(
+  "/wiki/Robert_Walpole",
+  "/wiki/Spencer_Compton,_1st_Earl_of_Wilmington",
+  "/wiki/Henry_Pelham",
+  "/wiki/Thomas_Pelham-Holles",
+  "/wiki/William_Cavendish,_4th_Duke_of_Devonshire",
+  "/wiki/Thomas_Pelham-Holles",
+  "/wiki/John_Stuart,_3rd_Earl_of_Bute",
+  "/wiki/George_Grenville",
+  "/wiki/Charles_Watson-Wentworth",
+  "/wiki/William_Pitt_the_Elder",
+  "/wiki/Augustus_FitzRoy,_3rd_Duke_of_Grafton",
+  "/wiki/Frederick_North,_Lord_North",
+  "/wiki/Charles_Watson-Wentworth",
+  "/wiki/William_Petty,_2nd_Earl_of_Shelburne",
+  "/wiki/William_Cavendish-Bentinck,_3rd_Duke_of_Portland",
+  "/wiki/William_Pitt_the_Younger",
+  "/wiki/Henry_Addington",
+  "/wiki/William_Pitt_the_Younger",
+  "/wiki/William_Grenville",
+  "/wiki/William_Cavendish-Bentinck,_3rd_Duke_of_Portland",
+  "/wiki/Spencer_Perceval",
+  "/wiki/Robert_Jenkinson,_2nd_Earl_of_Liverpool",
+  "/wiki/George_Canning",
+  "/wiki/Frederick_John_Robinson",
+  "/wiki/Arthur_Wellesley,_1st_Duke_of_Wellington",
+  "/wiki/Charles_Grey,_2nd_Earl_Grey",
+  "/wiki/William_Lamb,_2nd_Viscount_Melbourne",
+  "/wiki/Arthur_Wellesley,_1st_Duke_of_Wellington",
+  "/wiki/Robert_Peel",
+  "/wiki/William_Lamb,_2nd_Viscount_Melbourne",
+  "/wiki/Robert_Peel",
+  "/wiki/Lord_John_Russell",
+  "/wiki/Edward_Smith-Stanley,_14th_Earl_of_Derby",
+  "/wiki/George_Hamilton-Gordon,_4th_Earl_of_Aberdeen",
+  "/wiki/Henry_John_Temple",
+  "/wiki/Edward_Smith-Stanley,_14th_Earl_of_Derby",
+  "/wiki/Henry_John_Temple",
+  "/wiki/John_Russell,_1st_Earl_Russell",
+  "/wiki/Edward_Smith-Stanley,_14th_Earl_of_Derby",
+  "/wiki/Benjamin_Disraeli",
+  "/wiki/William_Ewart_Gladstone",
+  "/wiki/Benjamin_Disraeli",
+  "/wiki/William_Ewart_Gladstone",
+  "/wiki/Robert_Gascoyne-Cecil,_3rd_Marquess_of_Salisbury",
+  "/wiki/William_Ewart_Gladstone",
+  "/wiki/Robert_Gascoyne-Cecil,_3rd_Marquess_of_Salisbury",
+  "/wiki/William_Ewart_Gladstone",
+  "/wiki/Archibald_Primrose,_5th_Earl_of_Rosebery",
+  "/wiki/Robert_Gascoyne-Cecil,_3rd_Marquess_of_Salisbury",
+  "/wiki/Arthur_Balfour",
+  "/wiki/Henry_Campbell-Bannerman",
+  "/wiki/H._H._Asquith",
+  "/wiki/David_Lloyd_George",
+  "/wiki/Bonar_Law",
+  "/wiki/Stanley_Baldwin",
+  "/wiki/Ramsay_MacDonald",
+  "/wiki/Stanley_Baldwin",
+  "/wiki/Ramsay_MacDonald",
+  "/wiki/Stanley_Baldwin",
+  "/wiki/Neville_Chamberlain",
+  "/wiki/Winston_Churchill",
+  "/wiki/Clement_Attlee",
+  "/wiki/Winston_Churchill",
+  "/wiki/Anthony_Eden",
+  "/wiki/Harold_Macmillan",
+  "/wiki/Alec_Douglas-Home",
+  "/wiki/Harold_Wilson",
+  "/wiki/Edward_Heath",
+  "/wiki/Harold_Wilson",
+  "/wiki/James_Callaghan",
+  "/wiki/Margaret_Thatcher",
+  "/wiki/John_Major",
+  "/wiki/Tony_Blair",
+  "/wiki/Gordon_Brown",
+  "/wiki/David_Cameron",
+  "/wiki/Theresa_May",
+  "/wiki/Boris_Johnson",
+  "/wiki/Liz_Truss",
+  "/wiki/Rishi_Sunak",
+  "/wiki/Keir_Starmer",
+  "/wiki/Andy_Burnham"
+)
+```
+
+How could you convert the `links` object above so that it contains actual URLs?
+
 3. How could you add the links we extracted above to the `pm_table` to keep everything together?
 
 # Example: thomann customer reviews
@@ -413,7 +528,12 @@ map(reviews, parse_review) |>
 
 ```{r thomann}
 get_reviews_from_page <- function(link) {
-  html <- read_html(link)
+  html <- try(read_html(link))
+
+  while (is(html, "try-error")) {
+    Sys.sleep(3)
+    html <- try(read_html(link))
+  }
 
   reviews <- html |>
     html_elements(".customer-review")
@@ -422,7 +542,11 @@ get_reviews_from_page <- function(link) {
     bind_rows()
 }
 
-all_reviews <- map(links, get_reviews_from_page) |>
+all_reviews <- map(
+  links[1:3],
+  get_reviews_from_page,
+  .progress = interactive()
+) |>
   bind_rows()
 glimpse(all_reviews)
 ```
@@ -485,7 +609,7 @@ fromJSON(json_string)
 ```{r}
 # 1. Request & collect raw html
 html <- read_html(
-  "https://news.sky.com/story/crowdstrike-company-that-caused-global-techno-meltdown-offers-partners-10-vouchers-to-say-sorry-and-they-dont-work-13184488"
+  "https://web.archive.org/web/20250819084103/https://news.sky.com/story/crowdstrike-company-that-caused-global-techno-meltdown-offers-partners-10-vouchers-to-say-sorry-and-they-dont-work-13184488"
 )
 
 # 2. Parse
@@ -496,6 +620,20 @@ json_string <- html |>
 # 3. wrangling (part 1)
 data <- jsonlite::fromJSON(json_string)
 ```
+
+
+:::{.fragment}
+
+Why I use the *Internet Archive*'s version:
+
+```{r}
+#| error: true
+#| classes: "fragment"
+html <- read_html(
+  "https://news.sky.com/story/crowdstrike-company-that-caused-global-techno-meltdown-offers-partners-10-vouchers-to-say-sorry-and-they-dont-work-13184488"
+)
+```
+:::
 
 ## Wrangling part 2
 
@@ -597,6 +735,8 @@ text <- html |>
   html_text2()
 length(text)
 ```
+
+
 
 
 # Example: South African Parliament (a special case)

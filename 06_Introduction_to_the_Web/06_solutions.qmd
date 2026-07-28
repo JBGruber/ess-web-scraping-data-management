@@ -5,7 +5,7 @@ format: html
 
 ## Exercises 3
 
-1. Practice finding the right selector with the CSS Diner game (level 1-16 and 27-32): <https://flukeout.github.io/>
+1. Practice finding the right selector with the CSS Diner game: <https://flukeout.github.io/>
 2. Consider the toy HTML example below. Which selectors do you need to put into `html_elements()` (which extracts all elements matching the selector) to extract the information
 
 
@@ -41,24 +41,27 @@ webpage <- "<html>
 ```{r}
 #| eval: false
 # the headline
-headline <- html_elements(webpage, "")
+headline <- html_elements(webpage, "h1")
 headline
 # the author
-author <- html_elements(webpage, "")
+author <- html_elements(webpage, ".author")
 author
 # the ordered list
-ordered_list <- html_elements(webpage, "")
+ordered_list <- html_elements(webpage, "ol")
 ordered_list
 # all bullet points
-bullet_points <- html_elements(webpage, "")
+bullet_points <- html_elements(webpage, "li")
 bullet_points
 # bullet points in unordered list
-bullet_points_unordered <- html_elements(webpage, "")
+bullet_points_unordered <- html_elements(webpage, "ul li")
 bullet_points_unordered
 # elements in ordered list
-bullet_points_ordered <- html_elements(webpage, "")
+bullet_points_ordered <- html_elements(webpage, "ol *")
 bullet_points_ordered
 # third bullet point in ordered list
-bullet_point_three_ordered <- html_elements(webpage, "")
+bullet_point_three_ordered <- html_elements(webpage, "#three")
+bullet_point_three_ordered
+# alternativ
+bullet_point_three_ordered <- html_elements(webpage, "ol li:nth-child(3)")
 bullet_point_three_ordered
 ```
