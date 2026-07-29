@@ -6,9 +6,10 @@ date: 2026-07-29
 from: markdown+emoji
 format:
   revealjs:
-    smaller: true
-    width: 1600
-    height: 900
+    smaller: false
+    width: 1920
+    height: 1080
+    code-block-height: 900px
     scrollable: true
     code-line-numbers: true
     slide-number: c/t
@@ -17,7 +18,7 @@ format:
 bibliography: ../references.bib
 execute:
   eval: true
-  cache: false
+  cache: true
   echo: true
 engine: knitr
 highlight-style: nord
@@ -34,17 +35,17 @@ library(tinytable)
 library(tidyverse)
 library(httr2)
 tibble::tribble(
-  ~Day , ~Session                                    ,
-     1 , "Introduction"                              ,
-     2 , "Data Structures and Wrangling"             ,
-     3 , "Working with Files"                        ,
-     4 , "Linking and joining data & SQL"            ,
-     5 , "Database Software and Scaling your Analyses"  ,
-     6 , "Introduction to the Web"                   ,
-     7 , "Static Web Pages"                          ,
-     8 , "Application Programming Interface (APIs) " ,
-     9 , "Interactive Web Pages"                     ,
-    10 , "Building a Reproducible Research Project"  ,
+  ~Day , ~Session                                      ,
+     1 , "Introduction"                                ,
+     2 , "Data Structures and Wrangling"               ,
+     3 , "Working with Files"                          ,
+     4 , "Linking and joining data & SQL"              ,
+     5 , "Database Software and Scaling your Analyses" ,
+     6 , "Introduction to the Web"                     ,
+     7 , "Static Web Pages"                            ,
+     8 , "Application Programming Interface (APIs) "   ,
+     9 , "Interactive Web Pages"                       ,
+    10 , "Building a Reproducible Research Project"    ,
 ) |>
   tt() |>
   style_tt() |>
@@ -101,7 +102,7 @@ API calls usually combine several elements:
 
 - a **base URL** of the service (e.g., `https://api.openai.com/`)
 - an **endpoint** for a specific service, usually accessed through a sub-directory (e.g., `/v1/completions`)
-- an API **method**: `GET`, `POST`, `PUT`, `DELETE`, etc. (only `GET` and sometimes `POST` are important for us )
+- an API **method**: `GET`, `POST`, `PUT`, `DELETE`, `PATCH` `QUERY`^[Only since June 2026] (only `GET` and sometimes `POST` are important for us )
 - **headers** containing some settings, e.g., what format you want to receive the data in (JSON, XML, HTML etc.), and communicating who you are through user-agent, cookies, device and software information that is usually used for debugging
 - **query parameters**, i.e., your search term, filters, what fields/columns you want to access, how many results you want to receive, how results are ordered etc (`?q=parliament%20AND%20debate`)
 - a **body** if your request contains some more complicated instructions (not for `GET` requests)
@@ -113,7 +114,7 @@ APIs respond to a call. The response usually also contains several elements:
 
 - a **status code**: 200s mean success, 300s mean success with some caveat, 400+ are request errors (not found, forbidden), 500 is a server error
 - **headers** provide additional information about the response (e.g., type of data returned, size of the data, time stamp)
-- **body**: the main response containing the requested data
+- **body**: the main response containing the requested data (e.g., as JSON or HTML)
 - **response metadata**: more information about the response (e.g., pagination information, version numbers, remaining rate limit allowance, link to next page)
 - **error messages**: when unsuccessful, the API might include an error message on top of the status code
 
@@ -880,7 +881,7 @@ You can easily add roxygen code to a function using the Code menu in RStudio and
 #' @param gender Members with the gender specified
 #' @param membershipstartedsince Members who started on or after the date given
 #' @param membershipended_membershipendedsince Members who left the House on or after the date given
-#' @param membershipended_membershipendreasonids
+#' @param membershipended_membershipendreasonids Members who left the House on or after the date given
 #' @param membershipindaterange_wasmemberonorafter Members who were active on or after the date specified
 #' @param membershipindaterange_wasmemberonorbefore Members who were active on or before the date specified
 #' @param membershipindaterange_wasmemberofhouse Members who were active in the house specified (1 for Commons, 2 for Lords)
@@ -889,11 +890,13 @@ You can easily add roxygen code to a function using the Code menu in RStudio and
 #' @param policyinterestid Members with specified policy interest
 #' @param experience Members with specified experience
 #'
-#' @return
-#' @export
-#'
+#' @return a tibble
+#' @export#'
 #'
 #' @examples
+#' # example code
+#' search_members(name = \"Smith\")
+#'
 search_members <- function(
   name = NULL,
   location = NULL,
@@ -918,6 +921,26 @@ search_members <- function(
 }
 ```
 
+
+:::{.fragment}
+
+You could look at this documentation using this little helper function.
+Usually inside an R package, you just use `devtools::document()`.
+
+```{r}
+render_roxygen <- function(text) {
+  # 1. roxygen block -> Rd topic object -> .Rd source
+  rd <- roxygen2::roc_proc_text(roxygen2::rd_roclet(), text)[[1]]
+  rd_file <- tempfile(fileext = ".Rd")
+  writeLines(format(rd), rd_file)
+  # 2. render and display in browser
+  html <- tempfile(fileext = ".html")
+  tools::Rd2HTML(rd_file, out = html)
+  browseURL(html)
+}
+```
+
+:::
 
 ## Exercises 2
 
@@ -977,8 +1000,13 @@ We can use one of the examples and convert it into `httr2`:
 
 ```{r}
 res <- request(
-  "https://api.semanticscholar.org/graph/v1/author/search?query=adam+smith"
+  "https://api.semanticscholar.org/graph/v1/author/search?offset=0&limit=100&query=adam+smith"
 ) |>
+  req_retry(
+    is_transient = function(resp) resp_status(resp) == 429,
+    max_tries = 50,
+    backoff = function(tries) tries^2
+  ) |>
   req_perform() |>
   resp_body_json()
 ```
@@ -1015,7 +1043,12 @@ First we wrap this in a function and add pagination to get all results:
 find_scholar <- function(name, verbose = TRUE) {
   # make initial request
   res <- request("https://api.semanticscholar.org/graph/v1/author/search") |>
-    req_url_query(query = name) |>
+    req_url_query(query = name, limit = 100) |>
+    req_retry(
+      is_transient = function(resp) resp_status(resp) == 429,
+      max_tries = 50,
+      backoff = function(tries) tries^2
+    ) |>
     req_perform() |>
     resp_body_json()
 
@@ -1040,8 +1073,13 @@ find_scholar <- function(name, verbose = TRUE) {
     page <- page + 1
     message("\t...fetching page ", page)
     res <- request("https://api.semanticscholar.org/graph/v1/author/search") |>
-      req_url_query(query = name, offset = nxt) |>
+      req_url_query(query = name, limit = 100, offset = nxt) |>
       req_throttle(rate = 30 / 60) |> # make only 30 requests per minute
+      req_retry(
+        is_transient = function(resp) resp_status(resp) == 429,
+        max_tries = 50,
+        backoff = function(tries) tries^2
+      ) |>
       req_perform() |>
       resp_body_json()
 
@@ -1079,6 +1117,11 @@ resp <- request("https://api.semanticscholar.org/graph/v1/author/search") |>
     limit = 10
   ) |>
   req_headers(accept = "application/json") |>
+  req_retry(
+    is_transient = function(resp) resp_status(resp) == 429,
+    max_tries = 50,
+    backoff = function(tries) tries^2
+  ) |>
   req_perform() |>
   resp_body_json()
 ```
@@ -1128,6 +1171,11 @@ find_scholar <- function(
     req_url_query(query = name) |>
     req_url_query(fields = fields, limit = limit) |>
     req_headers(accept = "application/json") |>
+    req_retry(
+      is_transient = function(resp) resp_status(resp) == 429,
+      max_tries = 50,
+      backoff = function(tries) tries^2
+    ) |>
     req_perform() |>
     resp_body_json()
 
@@ -1156,6 +1204,11 @@ find_scholar <- function(
       ) |>
       req_throttle(rate = 30 / 60) |> # make only 30 requests per minute
       req_headers(accept = "application/json") |>
+      req_retry(
+        is_transient = function(resp) resp_status(resp) == 429,
+        max_tries = 50,
+        backoff = function(tries) tries^2
+      ) |>
       req_perform() |>
       resp_body_json()
 
@@ -1193,10 +1246,10 @@ parse_response <- function(resp) {
 }
 ```
 
-Let's test it with Royce:
+Let's test it with Carolina (director of the summer school):
 
 ```{r}
-find_scholar("Royce Carroll")
+find_scholar("Carolina Garriga")
 ```
 
 
@@ -1215,6 +1268,10 @@ First, review the material. This example is pretty similar to the last one. But:
 Bonus:
 
 4. Write a function that wraps "/author/{author_id}"
+
+Bonus 2:
+
+5. <
 
 
 # Wrap Up
