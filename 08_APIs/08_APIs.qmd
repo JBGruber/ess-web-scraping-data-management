@@ -1271,8 +1271,7 @@ Bonus:
 
 Bonus 2:
 
-5. <
-
+5. Look at https://github.com/public-apis/public-apis and wrap one of the free APIs that looks interesting to you
 
 # Wrap Up
 
