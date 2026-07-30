@@ -6,9 +6,9 @@ date: 2026-07-30
 from: markdown+emoji
 format:
   revealjs:
-    smaller: true
-    width: 1600
-    height: 900
+    smaller: false
+    width: 1920
+    height: 1080
     scrollable: true
     code-line-numbers: true
     slide-number: c/t
@@ -34,17 +34,17 @@ library(tinytable)
 library(tidyverse)
 library(httr2)
 tibble::tribble(
-  ~Day , ~Session                                    ,
-     1 , "Introduction"                              ,
-     2 , "Data Structures and Wrangling"             ,
-     3 , "Working with Files"                        ,
-     4 , "Linking and joining data & SQL"            ,
-     5 , "Database Software and Scaling your Analyses"  ,
-     6 , "Introduction to the Web"                   ,
-     7 , "Static Web Pages"                          ,
-     8 , "Application Programming Interface (APIs) " ,
-     9 , "Interactive Web Pages"                     ,
-    10 , "Building a Reproducible Research Project"  ,
+  ~Day , ~Session                                      ,
+     1 , "Introduction"                                ,
+     2 , "Data Structures and Wrangling"               ,
+     3 , "Working with Files"                          ,
+     4 , "Linking and joining data & SQL"              ,
+     5 , "Database Software and Scaling your Analyses" ,
+     6 , "Introduction to the Web"                     ,
+     7 , "Static Web Pages"                            ,
+     8 , "Application Programming Interface (APIs) "   ,
+     9 , "Interactive Web Pages"                       ,
+    10 , "Building a Reproducible Research Project"    ,
 ) |>
   tt() |>
   style_tt() |>
@@ -177,7 +177,7 @@ curl 'https://www.researchgate.net/profile/Johannes-Gruber-2' \
 ## `httr2::curl_translate()` 
 
 - We have seen `httr2::curl_translate()` in action yesterday (and the alternative <https://curlconverter.com/r-httr2/>)
-- It can also convert more complicated API calls that make look `R` no diffrent from a regular browser
+- It can also convert more complicated API calls that make look `R` no different from a regular browser
 - (Remember: you need to escape all `"` in the call, press `ctrl` + `F` to open the Find & Replace tool and put `"` in the find `\"` in the replace field and go through all matches except the first and last):
 
 ```{r}
@@ -313,9 +313,9 @@ read_html("https://anyflip.com/ogboc/rozd/") |>
 How I got here:
 
 1. open network tab
-2. select JS filter
-3. order by size
-4. went from the top down
+2. tap search
+3. look for a known value `ae105d2ec767250c5e9a4e2b0a48efaf.webp`
+4. copy URL
 :::
 ::: {.column width="60%" }
 ![](media/anyflip_config.png)
@@ -409,271 +409,10 @@ To summarise the steps:
 ```{r}
 #| cache: true
 pdftools::pdf_ocr_text(
-  "anyflip/002_ca317b05c3eeca7309063ce966b4b933.webp.pdf",
+  "data/anyflip/002_ca317b05c3eeca7309063ce966b4b933.webp.pdf",
   language = "tha"
 )
 ```
-
-
-# Example: ICA (International Communication Association) 2023 Conference
-## Goal
-
-:::: {.columns}
-
-::: {.column width="45%"}
-- Let's say we want to build a database of conference attendance
-- So for each conference website we want to get:
-  - Speakers
-  - (Co-)authors
-  - Paper/talk titles
-  - Panel (to see who was in the same ones)
-:::
-
-::: {.column width="50%" }
-[
-  ![](media/ica.png)
-](https://www.icahdq.org/mpage/ICA23-Program)
-:::
-
-::::
-
-## Trying to scrape the programme
-
-- The page looks straightforward enough!
-- There is a "Conference Schedule" with links to the individual panels
-- The table has a pretty nice class by which we can select it: `class="agenda-content"`
-
-```{r}
-#| error: true
-#| class: fragment
-html <- read_html("https://www.icahdq.org/mpage/ICA23-Program")
-```
-
-:::{.fragment}
-![](https://media.tenor.com/zlai3JBCvVsAAAAM/mindblown-jonstewart.gif)
-:::
-
-## Let's Check our Network Tab
-
-![](media/ica-json.png)
-
-:::{.incremental}
-- I noticed a request that takes quite long and retrieves a relatively large object (500kB)
-- Clicking on it opens another window showing the response
-- Wait, is this a json with the entire conference schedule?
-:::
-
-## Translating the `cURL` call
-
-```{r}
-curl_translate(
-  "curl 'https://whova.com/xems/apis/event_webpage/agenda/public/get_agendas/?event_id=JcQAdK91J0qLUtNxOYUVWFMTUuQgIg3Xj6VIeeyXVR4%3D' \
-  -H 'Accept: application/json, text/plain, */*' \
-  -H 'Accept-Language: en-GB,en-US;q=0.9,en;q=0.8' \
-  -H 'Cache-Control: no-cache' \
-  -H 'Connection: keep-alive' \
-  -H 'Pragma: no-cache' \
-  -H 'Referer: https://whova.com/embedded/event/JcQAdK91J0qLUtNxOYUVWFMTUuQgIg3Xj6VIeeyXVR4%3D/' \
-  -H 'Sec-Fetch-Dest: empty' \
-  -H 'Sec-Fetch-Mode: cors' \
-  -H 'Sec-Fetch-Site: same-origin' \
-  -H 'User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36' \
-  -H 'sec-ch-ua: \"Chromium\";v=\"115\", \"Not/A)Brand\";v=\"99\"' \
-  -H 'sec-ch-ua-mobile: ?0' \
-  -H 'sec-ch-ua-platform: \"Linux\"' \
-  --compressed"
-)
-```
-
-## Requesting the json (?)
-
-```{r}
-ica_data <- request(
-  "https://whova.com/xems/apis/event_webpage/agenda/public/get_agendas/"
-) |>
-  req_url_query(
-    event_id = "JcQAdK91J0qLUtNxOYUVWFMTUuQgIg3Xj6VIeeyXVR4=",
-  ) |>
-  req_headers(
-    Accept = "application/json, text/plain, */*",
-    `Accept-Language` = "en-GB,en-US;q=0.9,en;q=0.8",
-    `Cache-Control` = "no-cache",
-    `User-Agent` = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36",
-  ) |>
-  req_perform() |>
-  resp_body_json()
-```
-
-:::{.fragment}
-```{r}
-object.size(ica_data) |>
-  format("MB")
-```
-
-
-It worked!
-
-![](https://media2.giphy.com/media/Q8IYWnnogTYM5T6Yo0/giphy.gif?cid=ecf05e47a37ontzij6ljf2ztej9d9bytu5qlvgxt8xm74ywq&ep=v1_gifs_search&rid=giphy.gif&ct=g)
-:::
-
-## Wrangling with Json
-
-:::: {.columns}
-
-::: {.column width="60%"}
-- This json file or the R object it produces is quite intimidating.
-- To get to a certain panel on the fourth day, for example, we have to enter this insane path:
-
-```{r}
-ica_data[["data"]][["agenda"]][[4]][["time_ranges"]][[3]][[2]][[65]][[1]][[
-  "sessions"
-]][[1]] |>
-  lobstr::tree(max_length = 30)
-```
-
-- Essentially, someone pressed a relational database into a list format and we now have to scramble to cope with this monstrosity
-:::
-
-::: {.column width="40%" }
-![](https://upload.wikimedia.org/wikipedia/en/thumb/f/f7/Jason_Voorhees_%28Ken_Kirzinger%29.jpg/250px-Jason_Voorhees_%28Ken_Kirzinger%29.jpg)
-:::
-
-::::
-
-
-## Parsing the Json
-
-I could not come up with a better method so far.
-The only way to extract the data is with a nested `for` loop going through all days and all entries in the object and looking for elements called "sessions".
-
-```{r}
-library(tidyverse, warn.conflicts = FALSE)
-sessions <- list()
-
-for (day in 1:5) {
-  times <- ica_data[["data"]][["agenda"]][[day]][["time_ranges"]]
-
-  for (l_one in seq_along(pluck(times))) {
-    for (l_two in seq_along(pluck(times, l_one))) {
-      for (l_three in seq_along(pluck(times, l_one, l_two))) {
-        for (l_four in seq_along(pluck(times, l_one, l_two, l_three))) {
-          session <- pluck(times, l_one, l_two, l_three, l_four, "sessions", 1)
-          id <- pluck(session, "id")
-          if (!is.null(id)) {
-            id <- as.character(id)
-            sessions[[id]] <- session
-          }
-        }
-      }
-    }
-  }
-}
-```
-
-## Parsing the Json data
-
-```{r}
-ica_data_df <- tibble(
-  panel_id = map_int(sessions, "id"),
-  panel_name = map_chr(sessions, "name"),
-  time = map_chr(sessions, "calendar_stime"),
-  desc = map_chr(sessions, function(s) pluck(s, "desc", .default = NA))
-)
-ica_data_df
-```
-
-## Extracting paper title and authors
-
-Finally we want to parse the HTML in the description column.
-
-```{r}
-ica_data_df$desc[100]
-```
-
-We can inspect HTML content by writing it to a temporary file and opening it in the browser.
-Below is a function that does this automatically for you:
-
-```{r}
-#| eval: false
-check_in_browser <- function(html) {
-  tmp <- tempfile(fileext = ".html")
-  writeLines(as.character(html), tmp)
-  browseURL(tmp)
-}
-check_in_browser(ica_data_df$desc[100])
-```
-
-![](media/ica_panel.png)
-
-## Extracting paper title and authors using a function
-
-I wrote another function for this.
-You can check some of the panels using the browser: `check_in_browser(ica_data_df$desc[100])`.
-
-```{r}
-pull_papers <- function(desc) {
-  # we extract the html code starting with the papers line
-  papers <- str_extract(desc, "<b>Papers: </b>.+$") |>
-    str_remove("<b>Papers: </b><br />") |>
-    # we split the html by double line breaks, since it is not properly formatted as paragraphs
-    strsplit("<br /><br />", fixed = TRUE) |>
-    pluck(1)
-
-  # if there is no html code left, just return NAs
-  if (all(is.na(papers))) {
-    return(list(list(paper_title = NA, authors = NA)))
-  } else {
-    # otherwise we loop through each paper
-    map(papers, function(t) {
-      html <- read_html(t)
-
-      # first line is the title
-      title <- html |>
-        html_text2() |>
-        str_extract("^.+\n")
-
-      # at least authors are formatted italice
-      authors <- html_elements(html, "i") |>
-        html_text2()
-
-      list(paper_title = title, authors = authors)
-    })
-  }
-}
-```
-
-Now we have all the information we wanted:
-
-```{r}
-ica_data_df_tidy <- ica_data_df |>
-  slice(-613) |>
-  mutate(papers = map(desc, pull_papers)) |>
-  unnest(papers) |>
-  unnest_wider(papers) |>
-  unnest(authors) |>
-  select(-desc) |>
-  filter(!is.na(authors))
-ica_data_df_tidy
-```
-
-```{r}
-ica_data_df_tidy |>
-  filter(!duplicated(paper_title))
-```
-
-
-
-## Exercises 1
-
-First, review the material and make sure you have a broad understanding how to:
-
-- look at the requests the browser makes
-- understand how you can copy a curl call
-- practice how you can translate it into R code
-- why we go this route and do not simply use `read_html`
-
-1. Open the ICA site in your browser and inspect the network traffic. Can you identify the call to the programme json?
-2. Copy the curl code to R and translate it to get the same 
 
 # Example: X-Twitter
 ## Goal
@@ -698,6 +437,15 @@ xhtml <- read_html("https://x.com/elonmusk")
 
 At least one of these elements should be here!
 
+```{r}
+xhtml |>
+  html_text() |>
+  str_detect("Harold Clarke Speaker Series")
+```
+
+:::{.fragment}
+![](https://media.tenor.com/zlai3JBCvVsAAAAM/mindblown-jonstewart.gif)
+:::
 
 ## Probing the hidden/internal API
 
@@ -710,28 +458,28 @@ At least one of these elements should be here!
 ::: {.column width="50%"}
 ```{r}
 curl_translate(
-  "curl 'https://api.x.com/graphql/Le1DChzkS7ioJH_yEPMi3w/UserTweets?variables=%7B%22userId%22%3A%2244196397%22%2C%22count%22%3A20%2C%22includePromotedContent%22%3Atrue%2C%22withQuickPromoteEligibilityTweetFields%22%3Atrue%2C%22withVoice%22%3Atrue%7D^&features=%7B%22rweb_video_screen_enabled%22%3Afalse%2C%22payments_enabled%22%3Afalse%2C%22profile_label_improvements_pcf_label_in_post_enabled%22%3Atrue%2C%22rweb_tipjar_consumption_enabled%22%3Atrue%2C%22verified_phone_label_enabled%22%3Afalse%2C%22creator_subscriptions_tweet_preview_api_enabled%22%3Atrue%2C%22responsive_web_graphql_timeline_navigation_enabled%22%3Atrue%2C%22responsive_web_graphql_skip_user_profile_image_extensions_enabled%22%3Afalse%2C%22premium_content_api_read_enabled%22%3Afalse%2C%22communities_web_enable_tweet_community_results_fetch%22%3Atrue%2C%22c9s_tweet_anatomy_moderator_badge_enabled%22%3Atrue%2C%22responsive_web_grok_analyze_button_fetch_trends_enabled%22%3Afalse%2C%22responsive_web_grok_analyze_post_followups_enabled%22%3Afalse%2C%22responsive_web_jetfuel_frame%22%3Atrue%2C%22responsive_web_grok_share_attachment_enabled%22%3Atrue%2C%22articles_preview_enabled%22%3Atrue%2C%22responsive_web_edit_tweet_api_enabled%22%3Atrue%2C%22graphql_is_translatable_rweb_tweet_is_translatable_enabled%22%3Atrue%2C%22view_counts_everywhere_api_enabled%22%3Atrue%2C%22longform_notetweets_consumption_enabled%22%3Atrue%2C%22responsive_web_twitter_article_tweet_consumption_enabled%22%3Atrue%2C%22tweet_awards_web_tipping_enabled%22%3Afalse%2C%22responsive_web_grok_show_grok_translated_post%22%3Afalse%2C%22responsive_web_grok_analysis_button_from_backend%22%3Atrue%2C%22creator_subscriptions_quote_tweet_preview_enabled%22%3Afalse%2C%22freedom_of_speech_not_reach_fetch_enabled%22%3Atrue%2C%22standardized_nudges_misinfo%22%3Atrue%2C%22tweet_with_visibility_results_prefer_gql_limited_actions_policy_enabled%22%3Atrue%2C%22longform_notetweets_rich_text_read_enabled%22%3Atrue%2C%22longform_notetweets_inline_media_enabled%22%3Atrue%2C%22responsive_web_grok_image_annotation_enabled%22%3Atrue%2C%22responsive_web_grok_community_note_auto_translation_is_enabled%22%3Afalse%2C%22responsive_web_enhance_cards_enabled%22%3Afalse%7D^&fieldToggles=%7B%22withArticlePlainText%22%3Afalse%7D' \
-  --compressed \
-  -H 'User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:140.0) Gecko/20100101 Firefox/140.0' \
-  -H 'Accept: */*' \
-  -H 'Accept-Language: en-US,en;q=0.5' \
-  -H 'Accept-Encoding: gzip, deflate, br, zstd' \
-  -H 'content-type: application/json' \
+  "curl 'https://x.com/i/api/graphql/eoJ5zbv51Z_KVl81v9PmLQ/UserTweets?variables=%7B%22userId%22%3A%221525016244%22%2C%22count%22%3A20%2C%22includePromotedContent%22%3Atrue%2C%22withQuickPromoteEligibilityTweetFields%22%3Atrue%2C%22withVoice%22%3Atrue%7D&features=%7B%22rweb_video_screen_enabled%22%3Afalse%2C%22rweb_cashtags_enabled%22%3Atrue%2C%22profile_label_improvements_pcf_label_in_post_enabled%22%3Atrue%2C%22responsive_web_profile_redirect_enabled%22%3Atrue%2C%22rweb_tipjar_consumption_enabled%22%3Afalse%2C%22verified_phone_label_enabled%22%3Afalse%2C%22creator_subscriptions_tweet_preview_api_enabled%22%3Atrue%2C%22responsive_web_graphql_timeline_navigation_enabled%22%3Atrue%2C%22premium_content_api_read_enabled%22%3Afalse%2C%22communities_web_enable_tweet_community_results_fetch%22%3Atrue%2C%22c9s_tweet_anatomy_moderator_badge_enabled%22%3Atrue%2C%22responsive_web_grok_analyze_button_fetch_trends_enabled%22%3Afalse%2C%22responsive_web_grok_analyze_post_followups_enabled%22%3Atrue%2C%22rweb_cashtags_composer_attachment_enabled%22%3Atrue%2C%22responsive_web_jetfuel_frame%22%3Atrue%2C%22responsive_web_grok_share_attachment_enabled%22%3Atrue%2C%22responsive_web_grok_annotations_enabled%22%3Atrue%2C%22articles_preview_enabled%22%3Atrue%2C%22responsive_web_edit_tweet_api_enabled%22%3Atrue%2C%22rweb_conversational_replies_downvote_enabled%22%3Afalse%2C%22graphql_is_translatable_rweb_tweet_is_translatable_enabled%22%3Atrue%2C%22view_counts_everywhere_api_enabled%22%3Atrue%2C%22longform_notetweets_consumption_enabled%22%3Atrue%2C%22responsive_web_twitter_article_tweet_consumption_enabled%22%3Atrue%2C%22content_disclosure_indicator_enabled%22%3Atrue%2C%22content_disclosure_ai_generated_indicator_enabled%22%3Atrue%2C%22responsive_web_grok_show_grok_translated_post%22%3Afalse%2C%22responsive_web_grok_analysis_button_from_backend%22%3Atrue%2C%22post_ctas_fetch_enabled%22%3Afalse%2C%22freedom_of_speech_not_reach_fetch_enabled%22%3Atrue%2C%22standardized_nudges_misinfo%22%3Atrue%2C%22tweet_with_visibility_results_prefer_gql_limited_actions_policy_enabled%22%3Atrue%2C%22longform_notetweets_rich_text_read_enabled%22%3Atrue%2C%22longform_notetweets_inline_media_enabled%22%3Afalse%2C%22responsive_web_grok_image_annotation_enabled%22%3Atrue%2C%22responsive_web_grok_imagine_annotation_enabled%22%3Atrue%2C%22responsive_web_grok_community_note_auto_translation_is_enabled%22%3Afalse%2C%22responsive_web_enhance_cards_enabled%22%3Afalse%7D&fieldToggles=%7B%22withArticlePlainText%22%3Afalse%7D' \
+  -H 'accept: */*' \
+  -H 'accept-language: en-GB,en-US;q=0.9,en;q=0.8' \
   -H 'authorization: Bearer AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs%3D1Zv7ttfk8LF81IUq16cHjhLTvJu4FA33AGWWjCpTnA' \
-  -H 'x-guest-token: 1945748957512028451' \
-  -H 'x-twitter-client-language: en' \
+  -H 'cache-control: no-cache' \
+  -H 'content-type: application/json' \
+  -H 'Cookie: guest_id=v1%3A177825193349654388; __cuid=660c69ccdfa44dbbbdec8b0f8def2bfb; __cuid=660c69ccdfa44dbbbdec8b0f8def2bfb; gt=2082732292510752843; g_state={\"i_l\":0,\"i_ll\":1785398028357,\"i_b\":\"uuJazTIyCsGGnRpAueC4M3AP+qMsCZftFnl0ROWwGPo\",\"i_e\":{\"enable_itp_optimization\":24},\"i_et\":1785398028357}; twid=u%3D1632536605; auth_token=af61bd5f3081f1de1176b9f45b891e0bd32e7737; lang=en-gb; ct0=469c42f2e7ec07eeb835393c6807fd8823568e8d5d23a364b181fd8f11a8656e4ffc625a3af9d65d75347e61c67e28d374c570da3eafccdaeb03c38760b6602cf232a4cf4d7295c6541bf8ba87b911ca; d_prefs=MToxLGNvbnNlbnRfdmVyc2lvbjoyLHRleHRfdmVyc2lvbjoxMDAw; guest_id_ads=v1%3A177825193349654388; guest_id_marketing=v1%3A177825193349654388; personalization_id=\"v1_sr99TBLB43XWJFbObEbmhQ==\"; __eoi=ID=901e4be8a5cce0ab:T=1785398148:RT=1785398148:S=AA-Afjbc6IIvw0USuoei_0jNyzMd; __cf_bm=tEvicPKziyzqTVniInO0z.1NU3c8am.icSXR5BkYjOM-1785398232.84372-1.0.1.1-8KGcI1axtOgIeLU.q.8aQ.MX1ZxrKJLivbwivHIYB.gQGtLrSXdv2FBQJMViiBYLdgAmE.SiWHkaeAJN2TwUM.uoIFej3QEPjHb9Pwwv4CRJfNssiBvvr82fZ8xWWmOa' \
+  -H 'pragma: no-cache' \
+  -H 'priority: u=1, i' \
+  -H 'referer: https://x.com/EssexSumSchool' \
+  -H 'sec-ch-ua: \"Not;A=Brand\";v=\"8\", \"Chromium\";v=\"150\"' \
+  -H 'sec-ch-ua-mobile: ?0' \
+  -H 'sec-ch-ua-platform: \"Linux\"' \
+  -H 'sec-fetch-dest: empty' \
+  -H 'sec-fetch-mode: cors' \
+  -H 'sec-fetch-site: same-origin' \
+  -H 'user-agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36' \
+  -H 'x-client-transaction-id: wnIueAigYpZD63Ns4zTPCTUi2jZeRCzdtpcpu1xfwJRPgXk9kjN89FUzwr2SvC6vcKli2cRfxIQ7DjM62HySvhlPs3ABwQ' \
+  -H 'x-csrf-token: 469c42f2e7ec07eeb835393c6807fd8823568e8d5d23a364b181fd8f11a8656e4ffc625a3af9d65d75347e61c67e28d374c570da3eafccdaeb03c38760b6602cf232a4cf4d7295c6541bf8ba87b911ca' \
   -H 'x-twitter-active-user: yes' \
-  -H 'x-client-transaction-id: /+X/QU0nFKRUwDDhoNpOxN6hcq7l28ulNkNdcfdFEE3U31BgOAEaTqD7IWkFeJUVWBa71vsj/XOKKVUiqywC4VnCqcTD/A' \
-  -H 'x-xp-forwarded-for: 07099bf3db1505b55e501219de247298d63e25c7a99657e84445e2b0b408ca3484c1f8b62fe6e09da632121120e31ebee903a69b84d0b97628cb3249588cf1e752bbe7137fa549048abb4e8a2e6be33b425ca540a3563942559e9547c77a87f2d12c7fdf5f2d55f42a342ce6deb594ccf69563ebf09c2f2f874426a71861d43e81a8ca2e17e44ff85031a512c015e925e74e3c82029c9ca206bc1b56c74eca99b481c137a6be132d8847424a594c6598b2860b54ae015ad05050947034615b147623213dc862af21edf26ec464c6bad4a8b6' \
-  -H 'Origin: https://x.com' \
-  -H 'Sec-GPC: 1' \
-  -H 'Connection: keep-alive' \
-  -H 'Referer: https://x.com/' \
-  -H 'Cookie: guest_id=v1%3A175206553082584585; twtr_pixel_opt_in=Y; __cf_bm=kt7jUopsRK0SahsJuTtuGxY.BWNhKqnaxlCx2CPJF9w-1752737676-1.0.1.1-GUgsMYuLL4uw8QeP5leUchXGdroVhoI8E2HalWnyoDecTcVKHkYfCbzqAUjsodmz48D8flKxs1HsltfUTRYbJPbp9q0spQcCy2.cn56VSXE; gt=1945748957512028451' \
-  -H 'Sec-Fetch-Dest: empty' \
-  -H 'Sec-Fetch-Mode: cors' \
-  -H 'Sec-Fetch-Site: same-site' \
-  -H 'TE: trailers'"
+  -H 'x-twitter-auth-type: OAuth2Session' \
+  -H 'x-twitter-client-language: en-GB'"
 )
 ```
 :::
@@ -739,34 +487,43 @@ curl_translate(
 ```{r twitter_req}
 #| error: true
 twitter_resp <- request(
-  "https://api.x.com/graphql/Le1DChzkS7ioJH_yEPMi3w/UserTweets"
+  "https://x.com/i/api/graphql/eoJ5zbv51Z_KVl81v9PmLQ/UserTweets"
 ) |>
   req_url_query(
-    variables = '{"userId":"44196397","count":20,"includePromotedContent":true,"withQuickPromoteEligibilityTweetFields":true,"withVoice":true}^',
-    features = '{"rweb_video_screen_enabled":false,"payments_enabled":false,"profile_label_improvements_pcf_label_in_post_enabled":true,"rweb_tipjar_consumption_enabled":true,"verified_phone_label_enabled":false,"creator_subscriptions_tweet_preview_api_enabled":true,"responsive_web_graphql_timeline_navigation_enabled":true,"responsive_web_graphql_skip_user_profile_image_extensions_enabled":false,"premium_content_api_read_enabled":false,"communities_web_enable_tweet_community_results_fetch":true,"c9s_tweet_anatomy_moderator_badge_enabled":true,"responsive_web_grok_analyze_button_fetch_trends_enabled":false,"responsive_web_grok_analyze_post_followups_enabled":false,"responsive_web_jetfuel_frame":true,"responsive_web_grok_share_attachment_enabled":true,"articles_preview_enabled":true,"responsive_web_edit_tweet_api_enabled":true,"graphql_is_translatable_rweb_tweet_is_translatable_enabled":true,"view_counts_everywhere_api_enabled":true,"longform_notetweets_consumption_enabled":true,"responsive_web_twitter_article_tweet_consumption_enabled":true,"tweet_awards_web_tipping_enabled":false,"responsive_web_grok_show_grok_translated_post":false,"responsive_web_grok_analysis_button_from_backend":true,"creator_subscriptions_quote_tweet_preview_enabled":false,"freedom_of_speech_not_reach_fetch_enabled":true,"standardized_nudges_misinfo":true,"tweet_with_visibility_results_prefer_gql_limited_actions_policy_enabled":true,"longform_notetweets_rich_text_read_enabled":true,"longform_notetweets_inline_media_enabled":true,"responsive_web_grok_image_annotation_enabled":true,"responsive_web_grok_community_note_auto_translation_is_enabled":false,"responsive_web_enhance_cards_enabled":false}^',
+    variables = '{"userId":"1525016244","count":20,"includePromotedContent":true,"withQuickPromoteEligibilityTweetFields":true,"withVoice":true}',
+    features = '{"rweb_video_screen_enabled":false,"rweb_cashtags_enabled":true,"profile_label_improvements_pcf_label_in_post_enabled":true,"responsive_web_profile_redirect_enabled":true,"rweb_tipjar_consumption_enabled":false,"verified_phone_label_enabled":false,"creator_subscriptions_tweet_preview_api_enabled":true,"responsive_web_graphql_timeline_navigation_enabled":true,"premium_content_api_read_enabled":false,"communities_web_enable_tweet_community_results_fetch":true,"c9s_tweet_anatomy_moderator_badge_enabled":true,"responsive_web_grok_analyze_button_fetch_trends_enabled":false,"responsive_web_grok_analyze_post_followups_enabled":true,"rweb_cashtags_composer_attachment_enabled":true,"responsive_web_jetfuel_frame":true,"responsive_web_grok_share_attachment_enabled":true,"responsive_web_grok_annotations_enabled":true,"articles_preview_enabled":true,"responsive_web_edit_tweet_api_enabled":true,"rweb_conversational_replies_downvote_enabled":false,"graphql_is_translatable_rweb_tweet_is_translatable_enabled":true,"view_counts_everywhere_api_enabled":true,"longform_notetweets_consumption_enabled":true,"responsive_web_twitter_article_tweet_consumption_enabled":true,"content_disclosure_indicator_enabled":true,"content_disclosure_ai_generated_indicator_enabled":true,"responsive_web_grok_show_grok_translated_post":false,"responsive_web_grok_analysis_button_from_backend":true,"post_ctas_fetch_enabled":false,"freedom_of_speech_not_reach_fetch_enabled":true,"standardized_nudges_misinfo":true,"tweet_with_visibility_results_prefer_gql_limited_actions_policy_enabled":true,"longform_notetweets_rich_text_read_enabled":true,"longform_notetweets_inline_media_enabled":false,"responsive_web_grok_image_annotation_enabled":true,"responsive_web_grok_imagine_annotation_enabled":true,"responsive_web_grok_community_note_auto_translation_is_enabled":false,"responsive_web_enhance_cards_enabled":false}',
     fieldToggles = '{"withArticlePlainText":false}',
   ) |>
   req_cookies_set(
-    guest_id = "v1:175206553082584585",
-    twtr_pixel_opt_in = "Y",
-    `__cf_bm` = "kt7jUopsRK0SahsJuTtuGxY.BWNhKqnaxlCx2CPJF9w-1752737676-1.0.1.1-GUgsMYuLL4uw8QeP5leUchXGdroVhoI8E2HalWnyoDecTcVKHkYfCbzqAUjsodmz48D8flKxs1HsltfUTRYbJPbp9q0spQcCy2.cn56VSXE",
-    gt = "1945748957512028451",
+    guest_id = "v1:177825193349654388",
+    `__cuid` = "660c69ccdfa44dbbbdec8b0f8def2bfb",
+    `__cuid` = "660c69ccdfa44dbbbdec8b0f8def2bfb",
+    gt = "2082732292510752843",
+    g_state = '{"i_l":0,"i_ll":1785398028357,"i_b":"uuJazTIyCsGGnRpAueC4M3AP+qMsCZftFnl0ROWwGPo","i_e":{"enable_itp_optimization":24},"i_et":1785398028357}',
+    twid = "u=1632536605",
+    auth_token = "af61bd5f3081f1de1176b9f45b891e0bd32e7737",
+    lang = "en-gb",
+    ct0 = "469c42f2e7ec07eeb835393c6807fd8823568e8d5d23a364b181fd8f11a8656e4ffc625a3af9d65d75347e61c67e28d374c570da3eafccdaeb03c38760b6602cf232a4cf4d7295c6541bf8ba87b911ca",
+    d_prefs = "MToxLGNvbnNlbnRfdmVyc2lvbjoyLHRleHRfdmVyc2lvbjoxMDAw",
+    guest_id_ads = "v1:177825193349654388",
+    guest_id_marketing = "v1:177825193349654388",
+    personalization_id = '"v1_sr99TBLB43XWJFbObEbmhQ=="',
+    `__eoi` = "ID=901e4be8a5cce0ab:T=1785398148:RT=1785398148:S=AA-Afjbc6IIvw0USuoei_0jNyzMd",
+    `__cf_bm` = "tEvicPKziyzqTVniInO0z.1NU3c8am.icSXR5BkYjOM-1785398232.84372-1.0.1.1-8KGcI1axtOgIeLU.q.8aQ.MX1ZxrKJLivbwivHIYB.gQGtLrSXdv2FBQJMViiBYLdgAmE.SiWHkaeAJN2TwUM.uoIFej3QEPjHb9Pwwv4CRJfNssiBvvr82fZ8xWWmOa",
   ) |>
   req_headers(
-    `User-Agent` = "Mozilla/5.0 (X11; Linux x86_64; rv:140.0) Gecko/20100101 Firefox/140.0",
-    Accept = "*/*",
-    `Accept-Language` = "en-US,en;q=0.5",
-    `Accept-Encoding` = "gzip, deflate, br, zstd",
-    `content-type` = "application/json",
+    accept = "*/*",
+    `accept-language` = "en-GB,en-US;q=0.9,en;q=0.8",
     authorization = "Bearer AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs%3D1Zv7ttfk8LF81IUq16cHjhLTvJu4FA33AGWWjCpTnA",
-    `x-guest-token` = "1945748957512028451",
-    `x-twitter-client-language` = "en",
+    `cache-control` = "no-cache",
+    `content-type` = "application/json",
+    priority = "u=1, i",
+    `user-agent` = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36",
+    `x-client-transaction-id` = "wnIueAigYpZD63Ns4zTPCTUi2jZeRCzdtpcpu1xfwJRPgXk9kjN89FUzwr2SvC6vcKli2cRfxIQ7DjM62HySvhlPs3ABwQ",
+    `x-csrf-token` = "469c42f2e7ec07eeb835393c6807fd8823568e8d5d23a364b181fd8f11a8656e4ffc625a3af9d65d75347e61c67e28d374c570da3eafccdaeb03c38760b6602cf232a4cf4d7295c6541bf8ba87b911ca",
     `x-twitter-active-user` = "yes",
-    `x-client-transaction-id` = "/+X/QU0nFKRUwDDhoNpOxN6hcq7l28ulNkNdcfdFEE3U31BgOAEaTqD7IWkFeJUVWBa71vsj/XOKKVUiqywC4VnCqcTD/A",
-    `x-xp-forwarded-for` = "07099bf3db1505b55e501219de247298d63e25c7a99657e84445e2b0b408ca3484c1f8b62fe6e09da632121120e31ebee903a69b84d0b97628cb3249588cf1e752bbe7137fa549048abb4e8a2e6be33b425ca540a3563942559e9547c77a87f2d12c7fdf5f2d55f42a342ce6deb594ccf69563ebf09c2f2f874426a71861d43e81a8ca2e17e44ff85031a512c015e925e74e3c82029c9ca206bc1b56c74eca99b481c137a6be132d8847424a594c6598b2860b54ae015ad05050947034615b147623213dc862af21edf26ec464c6bad4a8b6",
-    Origin = "https://x.com",
-    `Sec-GPC` = "1",
-    TE = "trailers",
+    `x-twitter-auth-type` = "OAuth2Session",
+    `x-twitter-client-language` = "en-GB",
   ) |>
   req_perform()
 ```
@@ -813,13 +570,213 @@ tweets_df <- map(tweets, function(t) {
 tweets_df
 ```
 
+## Next page?
+
+:::: {.columns}
+::: {.column width="50%"}
+- We only got the first 12 tweets
+- But when scrolling down and meanwhile filter the network tab for "UserTweets", we see more requests are made
+- Checking the difference, we see a URL query parameter `"cursor":"DAAHCgABHOdeg83___ALAAIAAAATMjA3MTYwNDkxODIzNDgxNjcyNggAAwAAAAIAAA"`
+- This is similar to the "next" value we saw the UK parliament API uses
+:::
+::: {.column width="50%" }
+![](media/twitter_API2.png)
+:::
+::::
+
+## Next pages!
+
+```{r}
+get_x_user_json <- function(userId, cursor = NULL) {
+  request("https://x.com/i/api/graphql/eoJ5zbv51Z_KVl81v9PmLQ/UserTweets") |>
+    req_url_query(
+      variables = paste0(
+        '{"userId":"',
+        userId,
+        '","count":20,"cursor":"',
+        cursor,
+        '","includePromotedContent":true,"withQuickPromoteEligibilityTweetFields":true,"withVoice":true}'
+      )
+    ) |>
+    req_cookies_set(
+      guest_id = "v1:177825193349654388",
+      `__cuid` = "660c69ccdfa44dbbbdec8b0f8def2bfb",
+      `__cuid` = "660c69ccdfa44dbbbdec8b0f8def2bfb",
+      gt = "2082732292510752843",
+      g_state = '{"i_l":0,"i_ll":1785398028357,"i_b":"uuJazTIyCsGGnRpAueC4M3AP+qMsCZftFnl0ROWwGPo","i_e":{"enable_itp_optimization":24},"i_et":1785398028357}',
+      twid = "u=1632536605",
+      auth_token = "af61bd5f3081f1de1176b9f45b891e0bd32e7737",
+      lang = "en-gb",
+      ct0 = "469c42f2e7ec07eeb835393c6807fd8823568e8d5d23a364b181fd8f11a8656e4ffc625a3af9d65d75347e61c67e28d374c570da3eafccdaeb03c38760b6602cf232a4cf4d7295c6541bf8ba87b911ca",
+      d_prefs = "MToxLGNvbnNlbnRfdmVyc2lvbjoyLHRleHRfdmVyc2lvbjoxMDAw",
+      guest_id_ads = "v1:177825193349654388",
+      guest_id_marketing = "v1:177825193349654388",
+      personalization_id = '"v1_sr99TBLB43XWJFbObEbmhQ=="',
+      `__eoi` = "ID=901e4be8a5cce0ab:T=1785398148:RT=1785398148:S=AA-Afjbc6IIvw0USuoei_0jNyzMd",
+      `__cf_bm` = "tEvicPKziyzqTVniInO0z.1NU3c8am.icSXR5BkYjOM-1785398232.84372-1.0.1.1-8KGcI1axtOgIeLU.q.8aQ.MX1ZxrKJLivbwivHIYB.gQGtLrSXdv2FBQJMViiBYLdgAmE.SiWHkaeAJN2TwUM.uoIFej3QEPjHb9Pwwv4CRJfNssiBvvr82fZ8xWWmOa",
+    ) |>
+    req_headers(
+      accept = "*/*",
+      `accept-language` = "en-GB,en-US;q=0.9,en;q=0.8",
+      authorization = "Bearer AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs%3D1Zv7ttfk8LF81IUq16cHjhLTvJu4FA33AGWWjCpTnA",
+      `cache-control` = "no-cache",
+      `content-type` = "application/json",
+      priority = "u=1, i",
+      `user-agent` = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36",
+      `x-client-transaction-id` = "wnIueAigYpZD63Ns4zTPCTUi2jZeRCzdtpcpu1xfwJRPgXk9kjN89FUzwr2SvC6vcKli2cRfxIQ7DjM62HySvhlPs3ABwQ",
+      `x-csrf-token` = "469c42f2e7ec07eeb835393c6807fd8823568e8d5d23a364b181fd8f11a8656e4ffc625a3af9d65d75347e61c67e28d374c570da3eafccdaeb03c38760b6602cf232a4cf4d7295c6541bf8ba87b911ca",
+      `x-twitter-active-user` = "yes",
+      `x-twitter-auth-type` = "OAuth2Session",
+      `x-twitter-client-language` = "en-GB",
+    ) |>
+    req_perform(path = "test.json") |>
+    resp_body_json()
+}
+```
+
+### Find the cursor
+
+```{r}
+parse_path <- function(ix) {
+  out <- as.list(ix$p)
+  out[which(ix$p == as.character(ix$pos))] <- ix$pos[
+    ix$p == as.character(ix$pos)
+  ]
+  gsub("list(", "purrr::pluck(DATA, ", deparse1(out), fixed = TRUE)
+}
+
+#' Search a list
+#'
+#' @param l a list
+#' @param f a function to identify the element you are searching
+#'
+#' @return an object containing the searched element with the function to extract it as a name
+#' @export
+list_search <- function(l, f) {
+  paths <- rrapply::rrapply(
+    object = l,
+    condition = f,
+    f = function(x, .xparents, .xname, .xpos) {
+      list(p = .xparents, n = .xname, pos = .xpos)
+    },
+    how = "flatten"
+  )
+
+  out <- purrr::map(paths, function(p) purrr::pluck(l, !!!p$pos))
+  names(out) <- purrr::map_chr(paths, parse_path)
+  return(out)
+}
+```
+
+```{r}
+initial_resp <- get_x_user_json(userId = "1525016244")
+list_search(initial_resp, function(x) str_detect(x, "___"))
+purrr::pluck(
+  initial_resp,
+  "data",
+  "user",
+  "result",
+  "timeline",
+  "timeline",
+  "instructions",
+  3L,
+  "entries",
+  17L,
+  "content"
+)
+```
+
+### Add cursor to next request
+
+```{r}
+next_resp <- get_x_user_json(
+  userId = "1525016244",
+  cursor = pluck(
+    initial_resp,
+    "data",
+    "user",
+    "result",
+    "timeline",
+    "timeline",
+    "instructions",
+    3L,
+    "entries",
+    17L,
+    "content",
+    "value"
+  )
+)
+```
+
+```{r}
+parse_x_user <- function(resp_data) {
+  entries <- pluck(
+    resp_data,
+    "data",
+    "user",
+    "result",
+    "timeline",
+    "timeline",
+    "instructions",
+    3L,
+    "entries"
+  )
+
+  if (is.null(entries)) {
+    entries <- pluck(
+      resp_data,
+      "data",
+      "user",
+      "result",
+      "timeline",
+      "timeline",
+      "instructions",
+      2L,
+      "entries"
+    )
+  }
+
+  tweets <- map(entries, function(x) {
+    pluck(x, "content", "itemContent", "tweet_results", "result", "legacy")
+  })
+
+  map(tweets, function(t) {
+    tibble(
+      id = t$id_str,
+      user_id = t$user_id_str,
+      created_at = lubridate::parse_date_time(t$created_at, "a b d H M S z Y"),
+      full_text = t$full_text,
+      favorite_count = t$favorite_count,
+      retweet_count = t$retweet_count,
+      bookmark_count = t$bookmark_count
+    )
+  }) |>
+    bind_rows()
+}
+```
 
 
-## Mission failure
+```{r}
+bind_rows(
+  parse_x_user(initial_resp),
+  parse_x_user(next_resp)
+)
+```
+
+### Now get the next page. Right?
+
+```{r}
+list_search(next_resp, function(x) str_detect(x, "___"))
+```
+
+This time we got no cursor :(
+
+
+## Looks promising, but...
 
 I stopped at this point since there are three issue that are unclear to resolve:
 
-1. How do we get more than 98 tweets (i.e., scroll the "cursor")?
+1. Can we reliably get the cursor?
 2. How do we find the user ID?
 3. We have to send several identifiers: It is not clear how stable x-csrf-token, authorization, and the cookies are
 
@@ -862,7 +819,7 @@ I stopped at this point since there are three issue that are unclear to resolve:
 :::
 
 ::: {.column width="60%"}
-![](media/0*MPt2rectMhwklT63.jpg)
+![](../06_Introduction_to_the_Web/media/0_MPt2rectMhwklT63.jpg)
 :::
 ::::
 

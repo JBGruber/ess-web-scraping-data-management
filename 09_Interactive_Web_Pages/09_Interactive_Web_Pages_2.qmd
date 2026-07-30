@@ -6,9 +6,9 @@ date: 2026-07-30
 from: markdown+emoji
 format:
   revealjs:
-    smaller: true
-    width: 1600
-    height: 900
+    smaller: false
+    width: 1920
+    height: 1080
     scrollable: true
     code-line-numbers: true
     slide-number: c/t
@@ -68,9 +68,11 @@ library(rvest)
 
 ::: {.column width="45%"}
 ```{r}
-static <- read_html("https://www.google.de/maps/dir/Armadale+St,+Glasgow,+UK/Lilybank+House,+Glasgow,+UK/@55.8626667,-4.2712892,14z/data=!3m1!4b1!4m14!4m13!1m5!1m1!1s0x48884155c8eadf03:0x8f0f8905398fcf2!2m2!1d-4.2163615!2d55.8616765!1m5!1m1!1s0x488845cddf3cffdb:0x7648f9416130bcd5!2m2!1d-4.2904601!2d55.8740368!3e0?entry=ttu")
-static |> 
-  html_elements(".Fk3sm") |> 
+static <- read_html(
+  "https://www.google.de/maps/dir/Armadale+St,+Glasgow,+UK/Lilybank+House,+Glasgow,+UK/@55.8626667,-4.2712892,14z/data=!3m1!4b1!4m14!4m13!1m5!1m1!1s0x48884155c8eadf03:0x8f0f8905398fcf2!2m2!1d-4.2163615!2d55.8616765!1m5!1m1!1s0x488845cddf3cffdb:0x7648f9416130bcd5!2m2!1d-4.2904601!2d55.8740368!3e0?entry=ttu"
+)
+static |>
+  html_elements(".Fk3sm") |>
   html_text2()
 ```
 :::
@@ -91,7 +93,9 @@ The new `read_html_live` from `rvest` solves this by emulating a browser:
 
 ```{r}
 # loads a real web browser
-sess <- read_html_live("https://www.google.de/maps/dir/Armadale+St,+Glasgow,+UK/Lilybank+House,+Glasgow,+UK/@55.8626667,-4.2712892,14z/data=!3m1!4b1!4m14!4m13!1m5!1m1!1s0x48884155c8eadf03:0x8f0f8905398fcf2!2m2!1d-4.2163615!2d55.8616765!1m5!1m1!1s0x488845cddf3cffdb:0x7648f9416130bcd5!2m2!1d-4.2904601!2d55.8740368!3e0?entry=ttu")
+sess <- read_html_live(
+  "https://www.google.de/maps/dir/Armadale+St,+Glasgow,+UK/Lilybank+House,+Glasgow,+UK/@55.8626667,-4.2712892,14z/data=!3m1!4b1!4m14!4m13!1m5!1m1!1s0x48884155c8eadf03:0x8f0f8905398fcf2!2m2!1d-4.2163615!2d55.8616765!1m5!1m1!1s0x488845cddf3cffdb:0x7648f9416130bcd5!2m2!1d-4.2904601!2d55.8740368!3e0?entry=ttu"
+)
 ```
 
 You can have a look at the browser with:
@@ -114,7 +118,9 @@ Unfortunately, we do not get content yet. We first have to click on "Accept all"
 After manipulating something about the session, you need to read it into `R` again:
 
 ```{r}
-sess <- read_html_live("https://www.google.de/maps/dir/Armadale+St,+Glasgow,+UK/Lilybank+House,+Glasgow,+UK/@55.8626667,-4.2712892,14z/data=!3m1!4b1!4m14!4m13!1m5!1m1!1s0x48884155c8eadf03:0x8f0f8905398fcf2!2m2!1d-4.2163615!2d55.8616765!1m5!1m1!1s0x488845cddf3cffdb:0x7648f9416130bcd5!2m2!1d-4.2904601!2d55.8740368!3e0?entry=ttu")
+sess <- read_html_live(
+  "https://www.google.de/maps/dir/Armadale+St,+Glasgow,+UK/Lilybank+House,+Glasgow,+UK/@55.8626667,-4.2712892,14z/data=!3m1!4b1!4m14!4m13!1m5!1m1!1s0x48884155c8eadf03:0x8f0f8905398fcf2!2m2!1d-4.2163615!2d55.8616765!1m5!1m1!1s0x488845cddf3cffdb:0x7648f9416130bcd5!2m2!1d-4.2904601!2d55.8740368!3e0?entry=ttu"
+)
 ```
 
 ```{r loadcookies}
@@ -122,26 +128,28 @@ sess <- read_html_live("https://www.google.de/maps/dir/Armadale+St,+Glasgow,+UK/
 # just for rendering, see below for how to save cookies
 cookies <- readRDS("data/chromote_cookies.rds")
 sess <- sess$session$Network$setCookies(cookies = cookies$cookies)
-sess <- read_html_live("https://www.google.de/maps/dir/Armadale+St,+Glasgow,+UK/Lilybank+House,+Glasgow,+UK/@55.8626667,-4.2712892,14z/data=!3m1!4b1!4m14!4m13!1m5!1m1!1s0x48884155c8eadf03:0x8f0f8905398fcf2!2m2!1d-4.2163615!2d55.8616765!1m5!1m1!1s0x488845cddf3cffdb:0x7648f9416130bcd5!2m2!1d-4.2904601!2d55.8740368!3e0?entry=ttu")
+sess <- read_html_live(
+  "https://www.google.de/maps/dir/Armadale+St,+Glasgow,+UK/Lilybank+House,+Glasgow,+UK/@55.8626667,-4.2712892,14z/data=!3m1!4b1!4m14!4m13!1m5!1m1!1s0x48884155c8eadf03:0x8f0f8905398fcf2!2m2!1d-4.2163615!2d55.8616765!1m5!1m1!1s0x488845cddf3cffdb:0x7648f9416130bcd5!2m2!1d-4.2904601!2d55.8740368!3e0?entry=ttu"
+)
 ```
 
 Then we can extract information:
 
 ```{r}
 # the session behaves like a normal rvest html object
-trip <- sess |> 
-  html_elements("#section-directions-trip-0")
+trip <- sess |>
+  html_elements("div[data-trip-index]")
 
-trip |> 
-  html_element("h1") |> 
+trip |>
+  html_element("h1") |>
   html_text2()
 
-trip |> 
-  html_element(".fontHeadlineSmall") |> 
+trip |>
+  html_element(".fontHeadlineSmall") |>
   html_text2()
 
-trip |> 
-  html_element(".fontBodyMedium") |> 
+trip |>
+  html_element(".fontBodyMedium") |>
   html_text2()
 ```
 
@@ -183,13 +191,13 @@ sess <- sess$session$Network$setCookies(cookies = cookies$cookies)
 ## Can we use `rvest` to get post URLs?
 
 ```{r}
-html_subreddit <- read_html("https://www.reddit.com/r/wallstreetbets/")
+html_subreddit <- read_html_live("https://www.reddit.com/r/wallstreetbets/")
 
-posts <- html_subreddit |> 
-  html_elements("a") |> 
-  html_attr("href") |> 
-  str_subset("/comments/") |> 
-  str_replace_all("^/", "https://www.reddit.com/") |> 
+posts <- html_subreddit |>
+  html_elements("a") |>
+  html_attr("href") |>
+  str_subset("/comments/") |>
+  str_replace_all("^/", "https://www.reddit.com/") |>
   unique()
 posts
 ```
@@ -198,31 +206,29 @@ posts
 This does not look too bad!
 :::
 
-:::{.fragment}
-Although we only get 5 posts :thinking:
-:::
-
 ## Can we use `rvest` to get posts?
 
 ```{r}
-html_post <- read_html("https://www.reddit.com/r/wallstreetbets/comments/1ehcsoq/daily_discussion_thread_for_august_01_2024/")
-post_data <- html_post |> 
+html_post <- read_html_live(
+  "https://www.reddit.com/r/wallstreetbets/comments/1ehcsoq/daily_discussion_thread_for_august_01_2024/"
+)
+post_data <- html_post |>
   html_elements("shreddit-post")
 
-post_data |> 
-  html_attr("created-timestamp") |> 
+post_data |>
+  html_attr("created-timestamp") |>
   lubridate::as_datetime()
 
-post_data |> 
+post_data |>
   html_attr("id")
 
-post_data |> 
+post_data |>
   html_attr("subreddit-id")
 
-post_data |> 
+post_data |>
   html_attr("score")
 
-post_data |> 
+post_data |>
   html_attr("comment-count")
 ```
 
@@ -233,7 +239,7 @@ We actually can!
 ## Can we use `rvest` to get comments?
 
 ```{r}
-comments <- html_post |> 
+comments <- html_post |>
   html_elements("shreddit-comment")
 comments
 ```
@@ -242,44 +248,30 @@ comments
 :expressionless:
 :::
 
-## How about `read_html_live`?
-
-```{r}
-html_post_live <- read_html_live("https://www.reddit.com/r/wallstreetbets/comments/1ehcsoq/daily_discussion_thread_for_august_01_2024/")
-comments <- html_post_live |> 
-  html_elements("shreddit-comment")
-comments
-```
-
-:grin:
-
-:::{.fragment}
-But again, something is missing :thinking:
-:::
 
 ## Interacting with the session
 
 ```{r}
 #| eval: false
-html_post_live$view()
+html_post$view()
 ```
 
 Scrolling down as far as possible:
 
 ```{r}
-html_post_live$scroll_to(top = 10 ^ 5)
+html_post$scroll_to(top = 10^5)
 ```
 
 Then clicking the "load_more_comments"-button
 
 ```{r}
-html_post_live$click("[noun=\"load_more_comments\"]")
+html_post$click("[noun=\"load_more_comments\"]")
 ```
 
 This triggers new content to be loaded:
 
 ```{r}
-comments <- html_post_live |> 
+comments <- html_post |>
   html_elements("shreddit-comment")
 comments
 ```
@@ -291,15 +283,15 @@ comments
 #| eval: false
 last_y <- -1
 #scroll as far as possible
-while (html_post_live$get_scroll_position()$y > last_y) {
-  last_y <- html_post_live$get_scroll_position()$y
-  html_post_live$scroll_to(top = 10 ^ 5)
-  load_more <- html_post_live |> 
-    html_element("[noun=\"load_more_comments\"]") |> 
+while (html_post$get_scroll_position()$y > last_y) {
+  last_y <- html_post$get_scroll_position()$y
+  html_post$scroll_to(top = 10^5)
+  load_more <- html_post |>
+    html_element("[noun=\"load_more_comments\"]") |>
     length()
   if (load_more) {
-    html_post_live$click("[noun=\"load_more_comments\"]")
-    html_post_live$scroll_to(top = 10 ^ 5)
+    html_post$click("[noun=\"load_more_comments\"]")
+    html_post$scroll_to(top = 10^5)
   }
   # wati random number of seconds
   sec_random <- runif(1, 1, 3) * 5
@@ -310,260 +302,173 @@ while (html_post_live$get_scroll_position()$y > last_y) {
 
 
 
-# Alternative: Playwright
-## Introducing Playwright
+# Example: news with Cloudflare protection
+## Goal
 
-![](media/playwright.png)
+:::: {.columns}
+::: {.column width="50%"}
+1. Collect news media data from Manila Bulletin
+:::
+::: {.column width="50%" }
+[![](media/mb.png)](https://mb.com.ph/2021/04/14/drug-suspect-killed-in-buy-bust-operation-in-marilao/){target="_blank"}
+:::
+::::
 
-- Tool for web testing
-- Testing a website and scraping it is actually quite similar
-- It essentially uses a special version of a web browser that can be controlled through code from different languages
-- Unfortunately no `R` package that wraps the API yet (but and `R` package that wraps the Python package)
-- Alternatives you might have heard of: Selenium and Puppeteer
-
-## First, install it
-
-We want to use `playwrightr`, which is an `R` package to control the Python package for Playwright.
-So we need 3 pieces for this:
-
-1. The `R` package: install it with `remotes::install_github("JBGruber/playwrightr")`
-2. The Python package: we install this into a virtual environment using `reticulate`
-3. The Playwright executable, which consists of a modified version of Chrome that can be remote controlled
-
-All three steps are done when you run the code below:
+## Initial attempt with `rvest`
 
 ```{r}
-#| eval: false
-if (!rlang::is_installed("playwrightr")) remotes::install_github("JBGruber/playwrightr")
-if (!reticulate::virtualenv_exists("r-playwright")) {
-  reticulate::virtualenv_install("r-playwright", packages = "playwright")
-  playwright_bin <- reticulate::virtualenv_python("r-playwright") |> 
-    stringr::str_replace("python", "playwright")
-  system(paste(playwright_bin, "install chromium"))
-}
-reticulate::use_virtualenv("r-playwright")
+#| error: true
+mb_link <- "https://mb.com.ph/2021/04/14/drug-suspect-killed-in-buy-bust-operation-in-marilao/"
+read_html(mb_link)
 ```
 
+:::{.fragment}
+:expressionless:
+:::
 
-## Control Playwright from `r` with an experimental package
+## Maybe  attempt with `rvest`
 
-I did not write the package, but made some changes to make it easier to use.
 
-To get started, we first initialize the underlying Python package and then launch Chromium:
+:::: {.columns}
+::: {.column width="50%"}
+```{r}
+sess <- read_html_live(mb_link)
+```
 
 ```{r}
 #| eval: false
+sess$view()
+```
+:::{.fragment}
+:expressionless:
+:::
+
+:::
+::: {.column width="50%" }
+![](media/mb_cf.png)
+:::
+::::
+
+## Introducing Scrapling
+
+![](https://raw.githubusercontent.com/D4Vinci/Scrapling/main/docs/assets/cover_light.svg)
+
+- "An adaptive Web Scraping framework that handles everything from a single request to a full-scale crawl"
+- Uses different special versions of a web browsers that can be controlled through code
+- Essentially an opinionated collection of other packages for automation tasks: 
+  - Can adapt it's own code to look for elements (if you scrape continuously)
+  - Simplifies continuous crawling
+  - Can impersonate other browsers
+  - Can request and collect raw data stealthyly
+- kept up to date with the newest tricks in the "data war"
+  
+  
+:::{.fragment}
+But wait, that's a Python package!
+:::
+
+## Introducing `reticulate`
+
+:::: {.columns}
+
+::: {.column width="60%"}
+- `reticulate` provides an easy interface to use Python functions and packages
+- converts almost all objects with ease from Python to R (and the other way around)
+- you get the best of both worlds:
+  - bleeding edge software from the software engineering community
+  - familiar and intuitive world class packages for statistics, data science, visualization etc.
+- No need to choose between Python and R anmore, you can just use both in the same session
+:::
+
+::: {.column width="40%" }
+![](https://github.com/rstudio/reticulate/raw/main/man/figures/reticulated_python.png)
+![](media/reticulate.jpg)
+:::
+
+::::
+
+
+## Install and import
+
+```{r}
 library(reticulate)
-library(playwrightr)
-pw_init()
-chrome <- browser_launch(
-  browser = "chromium", 
-  headless = !interactive(), 
-  # make sure data like cookies are stored between sessions
-  user_data_dir = "user_data_dir/"
+py_require(c(
+  "scrapling",
+  "curl_cffi",
+  "playwright",
+  "patchright",
+  "msgspec",
+  "browserforge"
+))
+scrapling <- import("scrapling")
+```
+
+## Try the page
+
+```{r}
+#| eval: false
+page <- scrapling$fetchers$StealthyFetcher$fetch(
+  mb_link,
+  headless = FALSE,
+  network_idle = TRUE
 )
 ```
 
-Now we can navigate to a page:
-
 ```{r}
-#| eval: false
-page <- new_page(chrome)
-goto(page, "https://www.facebook.com/groups/911542605899621")
+# echo: false
+page <- scrapling$fetchers$StealthyFetcher$fetch(
+  mb_link,
+  headless = TRUE,
+  network_idle = TRUE
+)
 ```
 
-![](media/fb_1.png)
+Looks good :relieved: :magic_wand:!
 
-When you are in Europe, the page asks for consent to save cookies in your browser:
-
-![](media/fb_1b.png)
-
-```{r sleep}
-#| echo: false
-Sys.sleep(3)
-```
-
-
-## Getting more posts
-
-This page loads new content when you scroll down.
-We can do this using the `scroll` function:
+## Getting the content
 
 ```{r}
-#| eval: false
-scroll(page)
-```
+html <- page$body |>
+  as.character() |>
+  read_html()
 
-![](media/fb_2.png)
+html |>
+  html_text() |>
+  stringr::str_detect("Drug suspect")
 
-## Getting the page content
-
-Okay, we now see the content.
-But what about collecting it?
-We can use several different `get_*` functions to identify specfic elements.
-But wen can also simply get the entire HTML content:
-
-```{r}
-#| eval: false
-html <- get_content(page)
-html
-```
-
-Conveniently, this is already an `rvest` object.
-So we can use our familiar tools to get to the links of the visible posts.
-The page uses a role attribute which Iemploy here and I know that links to posts contain `posts`:
-
-```{r}
-#| eval: false
-post_links <- html |> 
-  html_elements("[role=\"link\"]") |> 
-  html_attr("href") |> 
-  str_subset("posts")
-head(post_links)
-```
-
-## Collecting Post content
-
-Now we can visit the page of one of these posts and collect the content from it:
-
-```{r}
-#| eval: false
-post1 <- new_page(chrome)
-# go to the page
-goto(post1, post_links[1])
-post1_html <- get_content(post1)
-```
-
-We can check the content we collected locally:
-
-```{r}
-#| eval: false
-check_in_browser <- function(html) {
-  tmp <- tempfile(fileext = ".html")
-  writeLines(as.character(html), tmp)
-  browseURL(tmp)
-}
-check_in_browser(post1_html)
-```
-
-## Scraping the content: failure
-
-The site uses a lot of weird classes, Making it almost impossible to get content:
-
-```{r}
-#| eval: false
-author <- post1_html |> 
-  html_elements("#_R_laimqaqdfiqapapd5aqH1_ .x193iq5w") |> 
-  html_text2() |> 
-  head(1)
-
-text <- post1_html |> 
-  html_elements("[data-ad-rendering-role=\"story_message\"] #_R_laimqaqdfiqapapd5aqH2_") |> 
+headline <- html |>
+  html_elements(".article-title") |>
   html_text2()
 
-tibble(author, text)
-```
+author <- html |>
+  html_elements(".author-section a") |>
+  html_text2()
 
-Nevertheless, some success...
+date <- html |>
+  html_elements(".issue_date") |>
+  html_text2() |>
+  stringr::str_extract("\\w{3} \\d{1,2}, \\d{4}") |>
+  lubridate::mdy()
 
-## Scraping the content: Another attempt
 
-Getting json data
+text <- html |>
+  html_elements(".article-full-body p") |>
+  html_text2() |>
+  paste0(collapse = "\n\n")
 
-```{r}
-#| eval: false
-json_data <- post1_html |> 
-  html_elements("[type=\"application/json\"][data-processed]") |> 
-  map(function(x) x |> 
-        as.character() |> 
-        str_extract("\\{.*\\}") |> 
-        jsonlite::fromJSON())
-
-which.max(map_int(json_data, object.size))
-```
-
-```{r}
-parse_path <- function(ix) {
-  out <- as.list(ix$p)
-  out[which(ix$p == as.character(ix$pos))] <- ix$pos[ix$p == as.character(ix$pos)]
-  gsub("list(", "purrr::pluck(DATA, ", deparse1(out), fixed = TRUE)
-}
-
-#' Search a list
-#'
-#' @param l a list
-#' @param f a function to identify the element you are searching
-#'
-#' @return an object containing the searched element with the function to extract it as a name
-#' @export
-list_search <- function(l, f) {
-  
-  paths <- rrapply::rrapply(
-    object = l,
-    condition = f,
-    f = function(x, .xparents, .xname, .xpos) list(p = .xparents, n = .xname, pos = .xpos),
-    how = "flatten"
-  )
-  
-  out <- purrr::map(paths, function(p) purrr::pluck(l, !!!p$pos))
-  names(out) <- purrr::map_chr(paths, parse_path)
-  return(out)
-}
-```
-
-```{r}
-#| eval: false
-list_search(json_data, function(x) str_detect(x, "Nabídka spolehlivé flotily pro řidiče s vlastním"))
-purrr::pluck(json_data, 71L, "require", 1L, 4L, 1L, "__bbox", "require", 111L, 4L, 2L, "__bbox", "result", "data", "node", "comet_sections", "content") |> 
-  View()
+tibble::tibble(
+  url = mb_link,
+  date,
+  author,
+  headline,
+  text
+)
 ```
 
 
-## Mission: success (?)
+## Mission: success!
 
-Not sure how scalable this is or how stable. But it seems like we got the data for one post, at least.
-After getting the content you want (or not), we can close the page:
-
-```{r}
-#| eval: false
-close_page(post1)
-```
-
-## What is cool about Playwright
-
-```{r}
-#| eval: false
-playwright_bin <- reticulate::virtualenv_python("r-playwright") |> 
-  stringr::str_replace("python", "playwright")
-system(paste(playwright_bin, "codegen"))
-```
-
-![](media/codegen.png)
-
-## This can produce Python scripts
-
-```{python}
-#| eval: false
-import playwright
-def run(playwright: Playwright) -> None:
-    browser = playwright.chromium.launch(headless=False)
-    context = browser.new_context()
-    page = context.new_page()
-    page.goto("https://www.google.com/")
-    page.get_by_role("button", name="Accept all").click()
-    page.get_by_label("Search", exact=True).click()
-    page.get_by_label("Search", exact=True).fill("amsterdam bijstand")
-    page.get_by_role("link", name="Bijstandsuitkering Gemeente").click()
-
-    # ---------------------
-    context.close()
-    browser.close()
-
-
-with sync_playwright() as playwright:
-    run(playwright)
-```
-
+![](https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExM3cwdDc0YTRpOWRmbm5obnBrcXJxcnozejJ4djh3M3RwcGQwdTZ0dyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/zaqclXyLz3Uoo/giphy.gif)
 
 # Summary: Browser Automation
 ## What is it
@@ -574,6 +479,8 @@ with sync_playwright() as playwright:
   - native `Python`: `Playwright`, can be used from `R` with `playwrightr` (experimental)
   - native `Java`: `Selenium`, can be used from `R` with  `RSelenium` (buggy and outdated)
   - native `JavaScript`: `Puppeteer` not `R` bindings
+- Opinionated tool collections:
+  - `scrapling`: combines different tools for "stealthy" scraping
 
 ## What are they good for?
 
@@ -603,7 +510,7 @@ with sync_playwright() as playwright:
 :::
 
 ::: {.column width="60%"}
-![](media/0*MPt2rectMhwklT63.jpg)
+![](../06_Introduction_to_the_Web/media/0_MPt2rectMhwklT63.jpg)
 :::
 ::::
 

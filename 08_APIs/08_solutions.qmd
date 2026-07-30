@@ -1,46 +1,439 @@
 ---
 title: "solutions session 8"
 format: html
+execute:
+  eval: false
 ---
 
 ## Exercises 1
 
-First, review the material and make sure you have a broad understanding how to:
+1. `httr2` has several more functions to customize how a request is performed. What do these functions do
 
-- build a request to an API
-- perform the request
-- handle the response
+- `req_throttle`: makes sure to not exceed rate limits of the API by stopping and waiting at a given rate
+- `req_error`: controls how errors should be handled. Can change the interpretation of http codes and display a different error body using a function
+- `req_retry`: if a request fails, this function controls whether, after how long and how often the request is retired
+
+2. You might want to add more information to the data.frame. Adapt the function parse_response to also extract: apiUrl, lastModifiedDate, pillarId
+
+```{r}
+parse_response <- function(res) {
+  tibble(
+    id = res$id,
+    type = res$type,
+    time = lubridate::ymd_hms(res$webPublicationDate),
+    headline = res$webTitle,
+    text = read_html(pluck(res, "blocks", "body", 1, "bodyHtml")) |>
+      html_text2(),
+    api_url = res$apiUrl,
+    pillar_id = res$pillarId,
+    last_modified = pluck(res, "blocks", "body", 1, "lastModifiedDate")
+  )
+}
+parse_response(res)
+```
 
 
-1. `httr2` has several more functions to customize how a request is performed. What do these functions do?
+3. Make your own request to the API with a different search term
 
-- `req_throttle`:
-- `req_error`:
-- `req_retry`:
+```{r}
+library(httr2)
+library(tidyverse, warn.conflicts = FALSE)
+req <- request("https://content.guardianapis.com") |>
+  req_url_path("search") |>
+  req_method("GET") |>
+  req_timeout(seconds = 60) |>
+  req_headers("User-Agent" = "httr2 guardian test") |>
+  req_url_query(
+    q = "my own request", # <- this is where the search term goes
+    "show-blocks" = "all"
+  ) |>
+  req_url_query(
+    "api-key" = Sys.getenv("GUARDIAN_KEY")
+  )
 
-2. Make your own request to the API with a different search term
+# we can also directly parse this
+req |>
+  req_perform() |>
+  resp_body_json() |>
+  pluck("response", "results") |>
+  map(parse_response) |>
+  bind_rows()
+```
 
-3. You might want to add more information to the data.frame. Adapt the function parse_response to also extract: apiUrl, lastModifiedDate, pillarId
 
-4. Request page 2 from the API. You can search for the correct query parameter in the documentation here: <https://open-platform.theguardian.com/documentation/>
+4. Request page 2 from the API
+
+The documenation at <https://open-platform.theguardian.com/documentation/> tells us the following:
+
+> In order to page through the results, you can add the page keyword to your query.
+
+```{r}
+req <- request("https://content.guardianapis.com") |>
+  req_url_path("search") |>
+  req_method("GET") |>
+  req_timeout(seconds = 60) |>
+  req_headers("User-Agent" = "httr2 guardian test") |>
+  req_url_query(
+    q = "my own request",
+    "show-blocks" = "all",
+    page = 2 # <- this is where we can add the page parameter
+  ) |>
+  req_url_query(
+    "api-key" = Sys.getenv("GUARDIAN_KEY")
+  )
+```
 
 
 ## Exercises 2
 
-First, review the material and make sure you have a broad understanding how to:
-
-- read the documentation of the UK Parliament API (the documentation is specific to the API, but the Swagger format they use is very common)
-- how to translate a curl call
-- What the individual parts of the `search_members` function are doing
-
 To get more information about an MP, we can use the endpoint "/api/Members/{id}/Biography"
 
 1. Search for an MP you are interested in with the function above and use the id on the documentation website with "Try it out"
+
+- you can just search the page <https://members-api.parliament.uk/index.html> for "/api/Members/{id}/Biography"
+- the ID of John Major is 119, which you can use as an example
+- It produces this call
+
+```
+curl -X 'GET' \
+  'https://members-api.parliament.uk/api/Members/119/Biography' \
+  -H 'accept: text/plain'
+```
+
 2. Copy the Curl call and translate it into `httr2` code
+
+```{r}
+library(httr2)
+curl_translate(
+  "curl -X 'GET' \
+  'https://members-api.parliament.uk/api/Members/119/Biography' \
+  -H 'accept: text/plain'"
+)
+```
+
 3. Wrangle the `governmentPosts` returned in the data into a tabular format
+
+```{r}
+resp <- request(
+  "https://members-api.parliament.uk/api/Members/119/Biography"
+) |>
+  req_method("GET") |>
+  req_headers(
+    accept = "text/plain",
+  ) |>
+  req_perform()
+
+# you could check which content type is returned
+resp_content_type(resp)
+
+
+major <- resp |>
+  resp_body_json()
+
+government_posts <- purrr::pluck(major, "value", "governmentPosts")
+dplyr::bind_rows(government_posts)
+```
 
 Bonus:
 
 4. Write a function which lets you request information given an ID and which wrangles the results
+
+```{r}
+get_government_posts <- function(id) {
+  resp <- request("https://members-api.parliament.uk") |>
+    req_url_path("/api/Members", id, "Biography") |>
+    req_method("GET") |>
+    req_headers(
+      accept = "text/plain",
+    ) |>
+    req_perform()
+
+  # you could check which content type is returned
+  if (resp_content_type(resp) != "application/json") {
+    stop("incorrect data type returned from API")
+  }
+
+  major <- resp |>
+    resp_body_json()
+
+  government_posts <- purrr::pluck(major, "value", "governmentPosts")
+  dplyr::bind_rows(government_posts)
+}
+get_government_posts(119)
+```
+
+
 5. Two more interesting endpoints are "/api/Posts/GovernmentPosts" and "/api/Posts/OppositionPosts". What do they do and how can you request data from them
 
+
+- "/api/Posts/GovernmentPosts": Returns a list of government posts.
+
+```{r}
+curl_translate(
+  "curl -X 'GET' \
+  'https://members-api.parliament.uk/api/Posts/OppositionPosts?departmentId=51' \
+  -H 'accept: text/plain'"
+)
+
+request("https://members-api.parliament.uk/api/Posts/OppositionPosts") |>
+  req_method("GET") |>
+  req_url_query(
+    departmentId = "51",
+  ) |>
+  req_headers(
+    accept = "text/plain",
+  ) |>
+  req_perform()
+```
+
+- "/api/Posts/OppositionPosts": Returns a list of opposition posts.
+
+```{r}
+curl_translate(
+  "curl -X 'GET' \
+  'https://members-api.parliament.uk/api/Posts/GovernmentPosts?departmentId=51' \
+  -H 'accept: text/plain'"
+)
+
+request("https://members-api.parliament.uk/api/Posts/GovernmentPosts") |>
+  req_method("GET") |>
+  req_url_query(
+    departmentId = "51",
+  ) |>
+  req_headers(
+    accept = "text/plain",
+  ) |>
+  req_perform()
+```
+
+- Now what is not immediately clear about these two endpoints is how to obtain the department ID. However, there is another endpoint, "/api/Posts/Departments/{type}" which returns a list of departments, including their ID. I made a request and looked through the list to find the ID for the home office (51). This is what I used above. But you can of course use any other ID here.
+
+## Exercises 3
+
+1. Document the function we just created. This is mainly to let you think about the parameters and how you would describe their working to someone else
+
+```{r}
+#' Find a scholar on the Semantic Scholar API
+#'
+#' @param name name of a scholar
+#' @param fields fields to be included separated by comma in one string. By default all fields are included
+#' @param limit how many results to return
+#'
+#' @returns a data.frame
+#' @export
+#'
+#' @examples
+find_scholar <- function(
+  name,
+  fields = "name,papers.title,papers.title,papers.year,papers.fieldsOfStudy,papers.authors",
+  limit = 100
+) {
+  # make initial request
+  res <- request("https://api.semanticscholar.org/graph/v1/author/search") |>
+    req_url_query(query = name) |>
+    req_url_query(fields = fields, limit = limit) |>
+    req_headers(accept = "application/json") |>
+    req_perform() |>
+    resp_body_json()
+
+  # note total
+  total <- pluck(res, "total")
+  # display user message
+  message("Found ", total, " authors")
+  # note offset
+  nxt <- pluck(res, "next")
+
+  # wrangle initial data
+  data <- parse_response(res)
+  page <- 1
+
+  # loop through pages until no new ones exist
+  while (!is.null(nxt)) {
+    page <- page + 1
+    message("\t...fetching page ", page)
+
+    res <- request("https://api.semanticscholar.org/graph/v1/author/search") |>
+      req_url_query(
+        query = name,
+        offset = nxt,
+        fields = fields,
+        limit = limit
+      ) |>
+      req_throttle(rate = 30 / 60) |> # make only 30 requests per minute
+      req_headers(accept = "application/json") |>
+      req_perform() |>
+      resp_body_json()
+
+    # get next offset; will be NULL on the last page
+    nxt <- pluck(res, "next")
+
+    data_new <- pluck(res, "data") |>
+      bind_rows()
+    data <- data |>
+      bind_rows(data_new)
+  }
+
+  return(data)
+}
+
+# we don't need to document this auxiliariy function
+parse_response <- function(resp) {
+  pluck(resp, "data") |>
+    # bind initial data into a tibble
+    bind_rows() |>
+    # unnest papers list into columns
+    unnest_wider(papers) |>
+    # unnest authors into rows
+    unnest(authors) |>
+    # unnest the new authors into columns
+    unnest_wider(authors, names_sep = "_") |>
+    # fieldsOfStudy is a list within a list, so we call unnest twice
+    unnest(fieldsOfStudy, keep_empty = TRUE) |>
+    unnest(fieldsOfStudy, keep_empty = TRUE)
+}
+```
+
+
+2. Use the function to search for a couple of scholars of your choice. Who has the most co-authors and unique papers?
+
+```{r}
+find_scholar("Johannes Gruber")
+```
+
+
+3. Say you found an authors ID with the search function. How could you use "/author/{author_id}" and "/author/{author_id}/papers" to request more information about them?
+
+- I'm using my own ID from the search above: 2060423302
+
+```{r}
+author_details <- request("https://api.semanticscholar.org") |>
+  req_url_path("/graph/v1/author/") |>
+  req_url_path_append("2060423302") |>
+  req_url_query(
+    fields = "authorId,externalIds,url,name,affiliations,homepage,paperCount,citationCount,hIndex"
+  ) |>
+  req_perform() |>
+  resp_body_json()
+author_details
+```
+
+```{r}
+author_papers_details <- request("https://api.semanticscholar.org") |>
+  req_url_path("/graph/v1/author/") |>
+  req_url_path_append("2060423302") |>
+  req_url_path_append("papers") |>
+  req_url_query(
+    fields = "title,fieldsOfStudy,references"
+  ) |>
+  req_perform() |>
+  resp_body_json()
+author_papers_details |>
+  lobstr::tree(max_length = 25)
+```
+
+Bonus:
+
+4. Write a function that wraps "/author/{author_id}"
+
+- since there is no paginations, things become quite easy
+
+```{r}
+author_details <- function(
+  author_id,
+  fields = "authorId,externalIds,url,name,affiliations,homepage,paperCount,citationCount,hIndex"
+) {
+  author_details <- request("https://api.semanticscholar.org") |>
+    req_url_path("/graph/v1/author/") |>
+    req_url_path_append(author_id) |>
+    req_url_query(
+      fields = fields
+    ) |>
+    req_perform() |>
+    resp_body_json()
+
+  # very quick and dirty parsing
+  author_details |>
+    map(function(x) {
+      # replace NULL with NA
+      if (is.null(x)) {
+        return(NA)
+      }
+      # nest lists, so they can go into tibble
+      if (is.list(x)) {
+        return(list(x))
+      }
+      return(x)
+    }) |> # <- removes NULL values
+    as_tibble()
+}
+```
+
+
+```{r}
+author_details("47731828")
+```
+
+5. Two more interesting endpoints are "/api/Posts/GovernmentPosts" and "/api/Posts/OppositionPosts". What do they do and how can you request data from them
+
+- "/api/Posts/GovernmentPosts" Returns a list of government posts.
+- "/api/Posts/OppositionPosts" Returns a list of opposition posts.
+
+They are mostly straightforward to use:
+
+
+```{r}
+curl_translate(
+  "curl -X 'GET' \
+  'https://members-api.parliament.uk/api/Posts/GovernmentPosts?departmentId=1' \
+  -H 'accept: text/plain'"
+)
+```
+
+
+```{r}
+request("https://members-api.parliament.uk") |>
+  req_url_path("/api/Posts/GovernmentPosts") |>
+  req_method("GET") |>
+  req_url_query(
+    departmentId = "1",
+  ) |>
+  req_headers(
+    accept = "text/plain",
+  ) |>
+  req_perform() |>
+  resp_body_json()
+```
+
+However, it is unclear what valid `departmentId`s exist. 1 doesn't seem to be one of them. However, just below those two, there is another endpoint we can use:
+
+
+```{r}
+request("https://members-api.parliament.uk") |>
+  req_url_path("/api/Posts/Departments/") |>
+  # 3 valid values according to the docs 0, 1, 2
+  req_url_path_append("0") |>
+  req_method("GET") |>
+  req_headers(
+    accept = "text/plain",
+  ) |>
+  req_perform() |>
+  resp_body_json()
+```
+
+We can see that, for example, the *HM Treasury* has the ID *50*:
+
+```{r}
+request("https://members-api.parliament.uk") |>
+  req_url_path("/api/Posts/GovernmentPosts") |>
+  req_method("GET") |>
+  req_url_query(
+    departmentId = "50",
+  ) |>
+  req_headers(
+    accept = "text/plain",
+  ) |>
+  req_perform() |>
+  resp_body_json()
+```
+
+And now we get some useful information back.

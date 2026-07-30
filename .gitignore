@@ -50,3 +50,4 @@ data/
 !05_Scaling_Reporting_and_Database_Software/data
 05_Scaling_Reporting_and_Database_Software/data/setup_public_server.R
 05_Scaling_Reporting_and_Database_Software/media/*.tex
+09_Interactive_Web_Pages/cookies.txt
