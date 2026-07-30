@@ -401,6 +401,10 @@ py_require(c(
   "browserforge"
 ))
 scrapling <- import("scrapling")
+py_config() |> 
+  pluck("python") |> 
+  str_replace("python.exe|python", "patchright install") |> 
+  system()
 ```
 
 ## Try the page
@@ -410,7 +414,8 @@ scrapling <- import("scrapling")
 page <- scrapling$fetchers$StealthyFetcher$fetch(
   mb_link,
   headless = FALSE,
-  network_idle = TRUE
+  network_idle = TRUE,
+  solve_cloudflare =TRUE
 )
 ```
 
@@ -419,7 +424,8 @@ page <- scrapling$fetchers$StealthyFetcher$fetch(
 page <- scrapling$fetchers$StealthyFetcher$fetch(
   mb_link,
   headless = TRUE,
-  network_idle = TRUE
+  network_idle = TRUE,
+  solve_cloudflare =TRUE
 )
 ```
 
