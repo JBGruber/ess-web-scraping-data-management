@@ -233,6 +233,18 @@ We will:
 ::::
 
 # Some more things...
+## Web-scraping Checklist
+
+1. Can you get content with `rvest::read_html`?
+2. Does the content contain known values that are interesting?
+3. Can you get content with `rvest::read_html_live`?
+4. Does the content contain known values that are interesting?
+5. Have you checked `$view` on the object you got from `rvest::read_html_live`?
+6. Can you manipulate the page you see in `$view`?
+7. Does this give you all content or do you need `click` or `scroll_*`?
+8. Can you get the content with `scrapling`?
+9. Last resort: is the page supported by <https://github.com/digitalmethodsinitiative/zeeschuimer>?
+
 ## Using 'AI' web scrapers
 
 Essentially two kinds of 'AI' web scrapers:

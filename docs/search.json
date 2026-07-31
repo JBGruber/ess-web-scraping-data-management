@@ -3337,5 +3337,12 @@
     "title": "Session 10: Conclusion",
     "section": "paperboy goes AI: my current approach",
     "text": "paperboy goes AI: my current approach\n\n\nWLink to command"
+  },
+  {
+    "objectID": "10_Conclusion/10_Conclusion.html#web-scraping-checklist",
+    "href": "10_Conclusion/10_Conclusion.html#web-scraping-checklist",
+    "title": "Session 10: Conclusion",
+    "section": "Web-scraping Checklist",
+    "text": "Web-scraping Checklist\n\nCan you get content with rvest::read_html?\nDoes the content contain known values that are interesting?\nCan you get content with rvest::read_html_live?\nDoes the content contain known values that are interesting?\nHave you checked $view on the object you got from rvest::read_html_live?\nCan you manipulate the page you see in $view?\nDoes this give you all content or do you need click or scroll_*?\nCan you get the content with scrapling?\nLast resort: is the page supported by https://github.com/digitalmethodsinitiative/zeeschuimer?"
   }
 ]
