@@ -18,7 +18,7 @@
     "href": "index.html#schedule",
     "title": "Introduction to Web Scraping and Data Management for Social Scientists",
     "section": "Schedule",
-    "text": "Schedule\nSlides are uploaded here as the course progresses.\n\n\n\n\n\nDay\nDate\nSession\nMaterials\nExercises\n\n\n\n\n1\nMon, 20 July\nIntroduction\nSlides\nExercises\n\n\n2\nTue, 21 July\nData Structures and Wrangling\nSlides\nExercises\n\n\n3\nWed, 22 July\nWorking with Files\nSlides\nExercises\n\n\n4\nThu, 23 July\nLinking and Joining Data & SQL\nSlides\nExercises\n\n\n5\nFri, 24 July\nDatabase Software and Scaling your Analyses\nSlides\nExercises\n\n\n6\nMon, 27 July\nIntroduction to the Web\nSlides\nExercises\n\n\n7\nTue, 28 July\nStatic Web Pages\nSlides\nExercises\n\n\n8\nWed, 29 July\nApplication Programming Interfaces (APIs)\nSlides\nExercises\n\n\n9\nThu, 30 July\nInteractive Web Pages\nPart 1 / Part 2\n–\n\n\n10\nFri, 31 July\nBuilding a Reproducible Research Project\nnot yet available\n–"
+    "text": "Schedule\nSlides are uploaded here as the course progresses.\n\n\n\n\n\nDay\nDate\nSession\nMaterials\nExercises\n\n\n\n\n1\nMon, 20 July\nIntroduction\nSlides\nExercises\n\n\n2\nTue, 21 July\nData Structures and Wrangling\nSlides\nExercises\n\n\n3\nWed, 22 July\nWorking with Files\nSlides\nExercises\n\n\n4\nThu, 23 July\nLinking and Joining Data & SQL\nSlides\nExercises\n\n\n5\nFri, 24 July\nDatabase Software and Scaling your Analyses\nSlides\nExercises\n\n\n6\nMon, 27 July\nIntroduction to the Web\nSlides\nExercises\n\n\n7\nTue, 28 July\nStatic Web Pages\nSlides\nExercises\n\n\n8\nWed, 29 July\nApplication Programming Interfaces (APIs)\nSlides\nExercises\n\n\n9\nThu, 30 July\nInteractive Web Pages\nPart 1 / Part 2\n–\n\n\n10\nFri, 31 July\nBuilding a Reproducible Research Project\nSlides\n–"
   },
   {
     "objectID": "index.html#required-software",
@@ -3218,5 +3218,124 @@
     "title": "Session 9: Scraping Interactive Web Pages (part 2)",
     "section": "Issues",
     "text": "Issues\n\n\n\nCompanies have mechanisms to counter scraping:\n\nrate limiting requests per second/minute/day and user/IP(Twitter)\ncaptchas (can be solved but quite complex)\n\nWon’t get you around very obscure HTML code (Facebook)\nQuite heavy and very slow compared to requests"
+  },
+  {
+    "objectID": "10_Conclusion/10_Conclusion.html#this-course",
+    "href": "10_Conclusion/10_Conclusion.html#this-course",
+    "title": "Session 10: Conclusion",
+    "section": "This Course",
+    "text": "This Course\n\n\n\n\n\n    \n\n    \n\n    \n    \n    \n      \n        \n        \n              \n                Day\n                Session\n              \n        \n        \n        \n                \n                  1\n                  Introduction\n                \n                \n                  2\n                  Data Structures and Wrangling\n                \n                \n                  3\n                  Working with Files\n                \n                \n                  4\n                  Linking and joining data & SQL\n                \n                \n                  5\n                  Database Software and Scaling your Analyses\n                \n                \n                  6\n                  Introduction to the Web\n                \n                \n                  7\n                  Static Web Pages\n                \n                \n                  8\n                  Application Programming Interface (APIs)\n                \n                \n                  9\n                  Interactive Web Pages\n                \n                \n                  10\n                  Conclusion"
+  },
+  {
+    "objectID": "10_Conclusion/10_Conclusion.html#introduction-what-we-learned-about",
+    "href": "10_Conclusion/10_Conclusion.html#introduction-what-we-learned-about",
+    "title": "Session 10: Conclusion",
+    "section": "1. Introduction: What we learned about",
+    "text": "1. Introduction: What we learned about\n\nUsing Quarto and RStudio projects in the course\nPackages and functions in R\nHow to use the R help docs and other ways to learn more\nFunctions, Data, Loops and If in R\nTidyverse vs. base R and the pipe |&gt;\nLiterate programming"
+  },
+  {
+    "objectID": "10_Conclusion/10_Conclusion.html#data-structures-and-wrangling-what-we-learned-about",
+    "href": "10_Conclusion/10_Conclusion.html#data-structures-and-wrangling-what-we-learned-about",
+    "title": "Session 10: Conclusion",
+    "section": "2. Data Structures and Wrangling: What we learned about",
+    "text": "2. Data Structures and Wrangling: What we learned about\n\n\n\nhow data plays into the research process\nthe difference between content and structure of data\nabout the basic data structures in R and what they are good for\nhow to turn information into data\nthe key role of tables\nand how to turn bad data structures into good tables\n\n\n Zane Lee via unsplash.com"
+  },
+  {
+    "objectID": "10_Conclusion/10_Conclusion.html#working-with-files-what-we-learned-about",
+    "href": "10_Conclusion/10_Conclusion.html#working-with-files-what-we-learned-about",
+    "title": "Session 10: Conclusion",
+    "section": "3. Working with Files: What we learned about",
+    "text": "3. Working with Files: What we learned about\n\n\n\nhow to use files efficiently and how to solve problems using files\ngood practices for transparent and efficient file usage\nhow to work with many files at the same time\nand how you can facilitate collaborative working with files\n\n\n JF Martin via unsplash.com"
+  },
+  {
+    "objectID": "10_Conclusion/10_Conclusion.html#linking-and-joining-data-sql-what-we-learned-about",
+    "href": "10_Conclusion/10_Conclusion.html#linking-and-joining-data-sql-what-we-learned-about",
+    "title": "Session 10: Conclusion",
+    "section": "4. Linking and joining data & SQL: What we learned about",
+    "text": "4. Linking and joining data & SQL: What we learned about\n\n\n\nwhy and how to work with relational data\nhow to join data from different tables in R\nhow to join data from different tables in SQL\n\n\n Via DALL-E"
+  },
+  {
+    "objectID": "10_Conclusion/10_Conclusion.html#database-software-and-scaling-your-analyses-what-we-learned-about",
+    "href": "10_Conclusion/10_Conclusion.html#database-software-and-scaling-your-analyses-what-we-learned-about",
+    "title": "Session 10: Conclusion",
+    "section": "5. Database Software and Scaling your Analyses: What we learned about",
+    "text": "5. Database Software and Scaling your Analyses: What we learned about\n\n\n\nRepetition: DBMS\nWorking with PostgreSQL\nWorking with text databases\nBenchmarking\nFinal scaling tips\n\n\n Nik via unsplash.com"
+  },
+  {
+    "objectID": "10_Conclusion/10_Conclusion.html#introduction-to-the-web-what-we-learned-about",
+    "href": "10_Conclusion/10_Conclusion.html#introduction-to-the-web-what-we-learned-about",
+    "title": "Session 10: Conclusion",
+    "section": "6. Introduction to the Web: What we learned about",
+    "text": "6. Introduction to the Web: What we learned about\n\n\nIn this session, we learned how to scout data in the wild. We will:\n\ndiscuss web scraping from a theoretical point of view:\n\nWhat is web scraping?\nWhy should you learn it?\nWhat legal and ethical implications should you keep in mind?\n\nlearn a bit more about how the Internet works\n\nWhat is HTML\nWhat is CSS\n\n\n\n Angie Gade via unsplash.com"
+  },
+  {
+    "objectID": "10_Conclusion/10_Conclusion.html#static-web-pages-what-we-learned-about",
+    "href": "10_Conclusion/10_Conclusion.html#static-web-pages-what-we-learned-about",
+    "title": "Session 10: Conclusion",
+    "section": "7. Static Web Pages: What we learned about",
+    "text": "7. Static Web Pages: What we learned about\n\n\nIn this session, we trapped some docile data that wants to be found. We will:\n\nGo over some parsing examples:\n\nWikipedia: World World Happiness Report\n\nDiscuss some examples of good approaches to data wrangling\nGo into a bit more detail on requesting raw data\n\n\n\n\nOriginal Image Source: prowebscraper.com\n\n\n\n Joe Caione via unsplash.com"
+  },
+  {
+    "objectID": "10_Conclusion/10_Conclusion.html#application-programming-interface-apis-what-we-learned-about",
+    "href": "10_Conclusion/10_Conclusion.html#application-programming-interface-apis-what-we-learned-about",
+    "title": "Session 10: Conclusion",
+    "section": "8. Application Programming Interface (APIs) : What we learned about",
+    "text": "8. Application Programming Interface (APIs) : What we learned about\n\n\nIn this session, we learned how to adopt data from someone else. We will:\n\nLearn what an API is and what parts it consists of\nLearn about httr2, a modern intuitive package to communicate with APIs\nDiscuss some examples:\n\nA simple first API: The Guardian API\nUK Parliament API\nSemantic Scholar API\n\nGo into a bit more detail on requesting raw data\n\n\n\n\nOriginal Image Source: prowebscraper.com\n\n\n\n By Emily Gantt"
+  },
+  {
+    "objectID": "10_Conclusion/10_Conclusion.html#interactive-web-pages-what-we-learned-about",
+    "href": "10_Conclusion/10_Conclusion.html#interactive-web-pages-what-we-learned-about",
+    "title": "Session 10: Conclusion",
+    "section": "9. Interactive Web Pages: What we learned about",
+    "text": "9. Interactive Web Pages: What we learned about\n\n\nIn this session, we learned how to hunt down wild data. We will:\n\nLearn how to find secret APIs\nEmulate a Browser\nWe focus specifically on step 1 below\n\n\n\n\nOriginal Image Source: prowebscraper.com\n\n\n\n Philipp Pilz via unsplash.com"
+  },
+  {
+    "objectID": "10_Conclusion/10_Conclusion.html#using-ai-web-scrapers",
+    "href": "10_Conclusion/10_Conclusion.html#using-ai-web-scrapers",
+    "title": "Session 10: Conclusion",
+    "section": "Using ‘AI’ web scrapers",
+    "text": "Using ‘AI’ web scrapers\nEssentially two kinds of ‘AI’ web scrapers:\n\n\n‘AI’ parsers\n\ndownload html of a website\nprompt ‘AI’ to extract certain information and return in a good structure\n\nadvantages ➕:\n\nno scraping skills needed whatsoever\ncan deal with complicated structures\n\ndisadvantages ➖:\n\nexpensive (computational, time, but also 💸)\ndoes not scale well\nlimit on the length of html content (depends on model context)\npotential for hallucination\n\n\nverdict:\n👉 don’t believe the hype, skip this one"
+  },
+  {
+    "objectID": "10_Conclusion/10_Conclusion.html#using-ai-web-scrapers-1",
+    "href": "10_Conclusion/10_Conclusion.html#using-ai-web-scrapers-1",
+    "title": "Session 10: Conclusion",
+    "section": "Using ‘AI’ web scrapers",
+    "text": "Using ‘AI’ web scrapers\nEssentially two kinds of ‘AI’ web scrapers:\n\n\n\n\n‘AI’ written parsers\n\ndownload html of a website\nprompt ‘AI’ to extract appropriate CSS selectors / write R code\n\nadvantages ➕:\n\nonly some scraping skills needed\ncan deal with complicated structures\nscales well\n\ndisadvantages ➖:\n\npotential for hallucination (and inaccuracies)\nlimit on the length of html content (depends on model context)\n\n\nverdict:\n👉 try to use them (but with tests and caution!)"
+  },
+  {
+    "objectID": "10_Conclusion/10_Conclusion.html#using-ai-web-scrapers-2",
+    "href": "10_Conclusion/10_Conclusion.html#using-ai-web-scrapers-2",
+    "title": "Session 10: Conclusion",
+    "section": "Using ‘AI’ web scrapers",
+    "text": "Using ‘AI’ web scrapers\nEssentially two kinds of ‘AI’ web scrapers:\n\n\n‘AI’ parsers\n\ndownload html of a website\nprompt ‘AI’ to extract certain information and return in a good structure\n\nadvantages ➕:\n\nno scraping skills needed whatsoever\ncan deal with complicated structures\n\ndisadvantages ➖:\n\nexpensive (computational, time, but also 💸)\ndoes not scale well\nlimit on the length of html content (depends on model context)\npotential for hallucination\n\nverdict:\n👉 don’t believe the hype, skip this one\n\n‘AI’ written parsers\n\ndownload html of a website\nprompt ‘AI’ to extract appropriate CSS selectors / write R code\n\nadvantages ➕:\n\nonly some scraping skills needed\ncan deal with complicated structures\nscales well\n\ndisadvantages ➖:\n\npotential for hallucination (and inaccuracies)\nlimit on the length of html content (depends on model context)\n\nverdict:\n👉 try to use them (but with tests and caution!)"
+  },
+  {
+    "objectID": "10_Conclusion/10_Conclusion.html#creating-literate-programming-reports-from-r",
+    "href": "10_Conclusion/10_Conclusion.html#creating-literate-programming-reports-from-r",
+    "title": "Session 10: Conclusion",
+    "section": "Creating literate programming reports from R",
+    "text": "Creating literate programming reports from R\n\ninstead of creating code in one file and documentation/description in another: combine into literate programming\nsome popular systems: Jupyter Notebook, Quarto/R Markdown\nwhen rendered, code is executed from top to bottom, making sure the data collection/analysis/communication is reproducible\nby keeping text and code together, you can make sure both are on the newest version\n\nMy personal template:\n\n# eval: false\nremotes::install_github(\"JBGruber/jbgtemplates\")\njbgtemplates::report_template(\"ESS_exam\")"
+  },
+  {
+    "objectID": "10_Conclusion/10_Conclusion.html#paperboy-my-webscraping-framework-for-news",
+    "href": "10_Conclusion/10_Conclusion.html#paperboy-my-webscraping-framework-for-news",
+    "title": "Session 10: Conclusion",
+    "section": "paperboy: my webscraping framework (for news)",
+    "text": "paperboy: my webscraping framework (for news)\n\nA recent presentation on paperboy: https://github.com/JBGruber/ica25_tool-demos\nPackage: https://github.com/JBGruber/paperboy\nPaper: http://dx.doi.org/10.31235/osf.io/hu6qw_v1"
+  },
+  {
+    "objectID": "10_Conclusion/10_Conclusion.html#about-the-exam",
+    "href": "10_Conclusion/10_Conclusion.html#about-the-exam",
+    "title": "Session 10: Conclusion",
+    "section": "About the exam",
+    "text": "About the exam\n\nYou will receive instroctions for 2 exam papers and a Honesty declaration immediatly after class today"
+  },
+  {
+    "objectID": "10_Conclusion/10_Conclusion.html#paperboy-goes-ai-my-current-approach",
+    "href": "10_Conclusion/10_Conclusion.html#paperboy-goes-ai-my-current-approach",
+    "title": "Session 10: Conclusion",
+    "section": "paperboy goes AI: my current approach",
+    "text": "paperboy goes AI: my current approach\n\n\nWLink to command"
   }
 ]

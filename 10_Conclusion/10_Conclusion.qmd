@@ -33,23 +33,28 @@ library(tinytable)
 library(tidyverse)
 library(httr2)
 tibble::tribble(
-  ~Day, ~Session,
-  1,  "Introduction",
-  2,  "Data Structures and Wrangling",
-  3,  "Working with Files",
-  4,  "Linking and joining data & SQL",
-  5,  "Database Software and Scaling your Analyses",
-  6,  "Introduction to the Web",
-  7,  "Static Web Pages",
-  8,  "Application Programming Interface (APIs) ",
-  9,  "Interactive Web Pages",
-  10, "Conclusion",
-) |> 
-  tt() |> 
-  style_tt() |> 
+  ~Day , ~Session                                      ,
+     1 , "Introduction"                                ,
+     2 , "Data Structures and Wrangling"               ,
+     3 , "Working with Files"                          ,
+     4 , "Linking and joining data & SQL"              ,
+     5 , "Database Software and Scaling your Analyses" ,
+     6 , "Introduction to the Web"                     ,
+     7 , "Static Web Pages"                            ,
+     8 , "Application Programming Interface (APIs) "   ,
+     9 , "Interactive Web Pages"                       ,
+    10 , "Conclusion"                                  ,
+) |>
+  tt() |>
+  style_tt() |>
   style_tt(i = 10, background = "#FDE000")
 ```
 </center>
+
+## About the exam
+
+- You will receive instroctions for 2 exam papers and a Honesty declaration immediatly after class today
+- 
 
 # 1. Introduction
 ## 1. Introduction: What we learned about
@@ -347,6 +352,23 @@ verdict:
 :::
 ::::
 
+## paperboy: my webscraping framework (for news)
+
+- A recent presentation on paperboy: <https://github.com/JBGruber/ica25_tool-demos>
+- Package: <https://github.com/JBGruber/paperboy>
+- Paper: <http://dx.doi.org/10.31235/osf.io/hu6qw_v1>
+
+![](https://jbgruber.github.io/paperboy/logo.svg){.absolute top=100 right=100 width="400px"}
+
+## paperboy goes AI: my current approach
+
+<video class="r-stretch" controls preload="metadata" src="media/paperboy.mp4" title="paperboy: new-parser Claude"></video>
+
+W[Link to command](https://github.com/JBGruber/paperboy/blob/8e1850ef7910eefe7cbfd0d4d9a2167567245d2d/.claude/commands/new-parser.md)
+
+
+
+
 ## Creating literate programming reports from R
 
 - instead of creating code in one file and documentation/description in another: combine into literate programming
@@ -363,10 +385,3 @@ jbgtemplates::report_template("ESS_exam")
 ```
 
 
-## paperboy: my webscraping framework (for news)
-
-- A recent presentation on paperboy: <https://github.com/JBGruber/ica25_tool-demos>
-- Package: <https://github.com/JBGruber/paperboy>
-- Paper: <http://dx.doi.org/10.31235/osf.io/hu6qw_v1>
-
-![](https://jbgruber.github.io/paperboy/logo.svg){.absolute top=100 right=100 width="400px"}
